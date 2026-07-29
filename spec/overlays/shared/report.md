@@ -1,6 +1,6 @@
 # Report overlay module
 
-**ITWS version:** 0.6.0-draft · **Status:** normative
+**ITWS version:** 0.8.0-draft · **Status:** normative
 
 **Family:** report · **Profiles:** `technical-report`, `research-paper`
 

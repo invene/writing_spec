@@ -4,10 +4,32 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import TYPE_CHECKING, Protocol
 
-from itws.document import StructuralManifest
+from itws.document import Declarations, StructuralManifest
 from itws.model import Specification
 from itws.vocab import SEVERITY_BY_CLASS
+
+if TYPE_CHECKING:
+    from itws.comments.changeset import CommentSetManifest
+
+
+class GovernedManifest(Protocol):
+    """What the shared text checks require of any governed surface.
+
+    :class:`itws.document.StructuralManifest` satisfies the protocol for a
+    Markdown document, and :func:`itws.comments.structural_manifest` builds
+    a satisfying view of a hosted comment set from stripped comment units.
+    The protocol keeps one text-check implementation for both surfaces.
+    """
+
+    path: str
+    document_hash: str
+    declarations: Declarations | None
+    line_count: int
+
+    @property
+    def units(self): ...
 
 #: What a finding asserts.
 FINDING_KINDS = ("violation", "candidate", "review", "skipped", "blocked")
@@ -71,6 +93,27 @@ class Evidence:
     artifact_problems: tuple[str, ...] = ()
     network_checks_enabled: bool = False
 
+    @classmethod
+    def from_json_file(cls, path: Path | None) -> "Evidence":
+        """Load recorded evidence from a JSON file, or return the empty record."""
+        if path is None:
+            return cls()
+        import json
+
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        checklist = payload.get("checklist_path")
+        return cls(
+            checklist_path=Path(checklist) if checklist else None,
+            checklist_annex_hash=payload.get("checklist_annex_hash", ""),
+            self_check_recorded=payload.get("self_check_recorded"),
+            lint_run_version=payload.get("lint_run_version", ""),
+            lint_run_profile=payload.get("lint_run_profile", ""),
+            waivers=tuple(payload.get("waivers", ())),
+            owner_review_recorded=payload.get("owner_review_recorded"),
+            proxy_review_recorded=payload.get("proxy_review_recorded"),
+            reader_test_recorded=payload.get("reader_test_recorded"),
+        )
+
     def to_json(self) -> dict[str, object]:
         return {
             "checklist_path": (
@@ -92,13 +135,19 @@ class Evidence:
 
 @dataclass
 class LintContext:
-    """Everything a checker may read."""
+    """Everything a checker may read.
+
+    ``comment_set`` is present only when the governed unit is a hosted
+    comment set; the §4.13 and §8.7 checkers read it, and every other
+    checker ignores it.
+    """
 
     spec: Specification
     manifest: StructuralManifest
     profile: str
     tier: str
     evidence: Evidence = field(default_factory=Evidence)
+    comment_set: "CommentSetManifest | None" = None
 
     def severity_for(self, rule_id: str) -> str:
         rule = self.spec.rule(rule_id)

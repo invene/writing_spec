@@ -1,18 +1,18 @@
 # Annex E — Document skeletons
 
-**Status:** v0.6.0-draft.
+**Status:** v0.8.0-draft.
 
 This annex defines the shared slot policy and registers the required-section skeleton of every profile.
 
 Every governed document has one profile ID. The registry contains exactly these IDs:
 
-`design-rfc`, `decision-record`, `procedure`, `explanation`, `incident`, `technical-report`, `research-paper`, `investigation-log`, `epic`, `task`, `subtask`.
+`design-rfc`, `decision-record`, `procedure`, `explanation`, `incident`, `technical-report`, `research-paper`, `investigation-log`, `epic`, `task`, `subtask`, `maintenance-comment`.
 
 Human-readable labels may vary. Label variations do not create additional IDs.
 
 Every document also has a title. Every document must include the exact §0.4.3 declaration fields:
 
-`ITWS version: 0.6.0-draft`, `Profile: <canonical ID>`, and `Conformance tier: <permitted tier>`.
+`ITWS version: 0.8.0-draft`, `Profile: <canonical ID>`, and `Conformance tier: <permitted tier>`.
 
 The title and declaration fields are required document elements, not profile sections.
 
@@ -69,11 +69,15 @@ A skeleton file **may** declare a limit on rewriting content that already exists
 
 The policy value is `append-only`, `replace-permitted`, or `owner-approval`. A tool reads the declaration and refuses a rewrite that the policy forbids. A skeleton without a declaration permits ordinary revision under the shared core.
 
-## E.1–E.11 Profile skeleton registry
+### E.0.4 Hosted-surface slots
+
+A `hosted-comment-set` skeleton binds the fields of a JSON declaration carrier instead of Markdown headings (§0.2.1). Each slot names one carrier field, and a repeating slot names one field of each repeated record. Renames, merges, and section maps do not apply to a carrier: the field names are fixed. The empty-slot policy is unchanged: a required field with no content states `None` or `Not applicable` with a reason.
+
+## E.1–E.12 Profile skeleton registry
 
 Each profile keeps its skeleton in the `skeleton.md` file of its overlay directory. Section 1.5 defines that layout. Each file states the profile's dependency order, required sections, permitted renames, and permitted merges.
 
-The following table is the complete skeleton registry for ITWS 0.6.0-draft. Each row is normative through the file it names.
+The following table is the complete skeleton registry for ITWS 0.8.0-draft. Each row is normative through the file it names.
 
 | Skeleton | Profile | File |
 |---|---|---|
@@ -88,7 +92,8 @@ The following table is the complete skeleton registry for ITWS 0.6.0-draft. Each
 | §E.9 | `epic` | [../overlays/epic/skeleton.md](../overlays/epic/skeleton.md) |
 | §E.10 | `task` | [../overlays/task/skeleton.md](../overlays/task/skeleton.md) |
 | §E.11 | `subtask` | [../overlays/subtask/skeleton.md](../overlays/subtask/skeleton.md) |
+| §E.12 | `maintenance-comment` | [../overlays/maintenance-comment/skeleton.md](../overlays/maintenance-comment/skeleton.md) |
 
-A citation of the form "Annex E §E.9" resolves to the row above and to the file it names. The section numbers are stable across the reorganization in 0.6.0-draft.
+A citation of the form "Annex E §E.9" resolves to the row above and to the file it names. The section numbers are stable across the reorganization in 0.8.0-draft.
 
 The rename and merge policy in §E.0.1 governs every skeleton. A skeleton file adds only the renames and merges permitted for its profile.

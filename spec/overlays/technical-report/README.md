@@ -1,6 +1,6 @@
 # `technical-report` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `reviewed`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `reviewed`
 
 **Job:** answer a bounded technical question or document a system, method, evaluation, or result at sustained detail.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for a `technical-report
 - The shared overlay module [../shared/report.md](../shared/report.md).
 
 No other profile overlay applies to a `technical-report` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the technical question or outcome, its evidential strength, and its validity boundary.
 
 ## Reader-test outcome
 

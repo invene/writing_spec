@@ -1,6 +1,6 @@
 # A persistent queue for accepted background jobs
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: design-rfc
 Conformance tier: reviewed
 

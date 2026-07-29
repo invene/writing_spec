@@ -1,6 +1,6 @@
 # Annex B §B.4.9 — `epic` reader overlay
 
-**ITWS version:** 0.6.0-draft · **Status:** normative
+**ITWS version:** 0.8.0-draft · **Status:** normative
 
 This overlay adds one navigation convention to the §B.1 base reader.
 

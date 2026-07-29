@@ -1,6 +1,6 @@
 # Checking generated sentences against their input before accepting them
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: research-paper
 Conformance tier: publication
 

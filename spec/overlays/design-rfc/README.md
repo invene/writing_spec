@@ -1,6 +1,6 @@
 # `design-rfc` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `reviewed`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `reviewed`
 
 **Job:** specify a technical design before implementation or rollout.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for a `design-rfc` docu
 - Shared overlay modules: none.
 
 No other profile overlay applies to a `design-rfc` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state what the design proposes, its approval status, and where the proposal stops.
 
 ## Reader-test outcome
 

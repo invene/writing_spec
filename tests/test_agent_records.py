@@ -8,12 +8,18 @@ from tests.support import CONFORMING, PATCHES, catalog, spec
 
 from itws.analysis import (
     AgentAnalysis,
+    FoilResponse,
     LedgerEntry,
     OpenQuestion,
+    ScanKeyField,
+    ScanTestKey,
+    ScanTestRecord,
+    StrengthenedFoil,
     contradictions,
     validate_analysis,
+    validate_scan_test,
 )
-from itws.document import parse_document
+from itws.document import parse_document, scan_path
 from itws.patch import changed_ranges, detect_collisions, inspect
 from itws.work import (
     DependencyNote,
@@ -123,6 +129,121 @@ class TestAgentAnalysis(unittest.TestCase):
         self.assertEqual(
             validate_analysis(self.analysis, self.manifest, known_rules=self.known), []
         )
+
+
+class TestScanTestRecords(unittest.TestCase):
+    def setUp(self) -> None:
+        self.manifest = manifest_for("decision-record.md", "decision-record")
+        self.path = scan_path(self.manifest)
+        self.known = {rule.number for rule in spec().rules}
+        by_heading = {
+            segment.heading: segment
+            for segment in self.path.segments
+        }
+        title = self.path.segments[0]
+        self.field_spans = {
+            "purpose": title.heading_id,
+            "main_point": by_heading["Decision"].opening_unit_id,
+            "status_or_strength": by_heading["Status"].opening_unit_id,
+            "material_boundaries": by_heading["Consequences"].opening_unit_id,
+        }
+        self.key = ScanTestKey(
+            document_path=self.manifest.path,
+            document_hash=self.manifest.document_hash,
+            profile="decision-record",
+            scan_path_hash=self.path.scan_path_hash,
+            fields=tuple(
+                ScanKeyField(
+                    name=name,
+                    expected=f"expected {name}",
+                    span_ids=(span_id,),
+                    support=("4.12.2",),
+                )
+                for name, span_id in self.field_spans.items()
+            ),
+            foils=(
+                StrengthenedFoil(
+                    id="F-status",
+                    protected_field="status_or_strength",
+                    text="The decision is permanent.",
+                    span_ids=(self.field_spans["status_or_strength"],),
+                    support=("5.6.1",),
+                ),
+                StrengthenedFoil(
+                    id="F-boundary",
+                    protected_field="material_boundaries",
+                    text="The retry limit applies to imports and exports.",
+                    span_ids=(self.field_spans["material_boundaries"],),
+                    support=("7.4.1",),
+                ),
+            ),
+        )
+
+    def _record(self, *, accept_status: bool = False) -> ScanTestRecord:
+        linked = tuple(
+            (span_id, self.manifest.unit(span_id).source_hash)
+            for span_id in dict.fromkeys(self.field_spans.values())
+        )
+        return ScanTestRecord(
+            role="reader_proxy",
+            profile="decision-record",
+            document_hash=self.manifest.document_hash,
+            scan_path_hash=self.path.scan_path_hash,
+            key_hash=self.key.key_hash,
+            linked_source_hashes=linked,
+            intervening_task="Sort six unrelated identifiers.",
+            elapsed_seconds=90.0,
+            response_fields=tuple(
+                (name, f"recalled {name}") for name in self.field_spans
+            ),
+            foil_responses=(
+                FoilResponse("F-status", accept_status),
+                FoilResponse("F-boundary", False),
+            ),
+            result="pass",
+        )
+
+    def test_a_complete_scan_record_validates_mechanically(self) -> None:
+        self.assertEqual(
+            validate_scan_test(
+                self.key,
+                self._record(),
+                self.manifest,
+                self.path,
+                known_rules=self.known,
+            ),
+            [],
+        )
+
+    def test_accepting_a_strengthened_foil_is_rejected(self) -> None:
+        problems = validate_scan_test(
+            self.key,
+            self._record(accept_status=True),
+            self.manifest,
+            self.path,
+            known_rules=self.known,
+        )
+        self.assertTrue(any("accepts strengthened foil" in p for p in problems))
+
+    def test_a_stale_linked_source_hash_is_rejected(self) -> None:
+        record = self._record()
+        stale = ScanTestRecord(
+            **{
+                **record.__dict__,
+                "linked_source_hashes": (
+                    (record.linked_source_hashes[0][0], "sha256:stale"),
+                    *record.linked_source_hashes[1:],
+                ),
+            }
+        )
+        problems = validate_scan_test(
+            self.key,
+            stale,
+            self.manifest,
+            self.path,
+            known_rules=self.known,
+        )
+        self.assertTrue(any("stale source hash" in p for p in problems))
 
 
 class TestWorkPlan(unittest.TestCase):

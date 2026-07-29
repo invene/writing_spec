@@ -1,12 +1,12 @@
 # Part 1 — Foundations and principles
 
-Part 1 defines the architecture behind Parts 2–8. Part 1 covers one shared core, eleven profiles, two prose layers, tiered evidence, fixed rule anatomy, deterministic precedence, the file layout that separates each overlay from the core, and the navigation metadata that indexes every rule. The architecture serves every profile in §0.2. Research is one overlay, not the default document model.
+Part 1 defines the architecture behind Parts 2–8. Part 1 covers one shared core, twelve profiles, two prose layers, tiered evidence, fixed rule anatomy, deterministic precedence, the file layout that separates each overlay from the core, and the navigation metadata that indexes every rule. The architecture serves every profile in §0.2. Research is one overlay, not the default document model.
 
 ## 1.1 Purpose and design principles
 
 Concrete rules elsewhere in the specification enforce each principle below. Each principle lists its trace, and Annex F records it.
 
-**P1 — Clarity over brevity.** When a shorter sentence costs comprehension, the longer sentence wins. Compression is never a goal. The document spends the reader's effort.
+**P1 — Optimize reader effort, not word count.** Use the most economical form that preserves comprehension, exactness, safety, and profile completeness. Add words when they prevent inference or rereading. Remove or layer words that do not serve those needs.
 *Enforced by:* §3.1 (length caps exist to serve clarity, not concision), §6.5 (deliberate redundancy is permitted), §4.6 (detail is layered, not deleted).
 
 **P2 — One word, one meaning.** A term means one thing everywhere in a document, and one thing across all governed documents once it enters the glossary. Synonym variation for style is prohibited.
@@ -15,8 +15,8 @@ Concrete rules elsewhere in the specification enforce each principle below. Each
 **P3 — Exactness preserved under plain prose.** Plain language carries technical content. Plain language never replaces or weakens that content. A simplification may omit nonessential detail from an explanation. A simplification may not change a claim, definition, requirement, interface, invariant, procedure, observation, or measurement.
 *Enforced by:* §1.2 (the two-layer model), §5.1 (traceability of simplified statements), §5.6 (calibrated claim strength), and profile-specific exact-content rules.
 
-**P4 — Reader effort is spent deliberately.** The base reader plus the selected genre-knowledge overlay (§0.3) gets a defined budget of new concepts. The document spends this budget explicitly. The document admits domain terms in order (§2.3), caps density (§4.8), and bounds skippable detail (§4.6).
-*Enforced by:* §2.3, §4.6, §4.8.
+**P4 — Reader effort is budgeted by reading depth.** The scan path gives a correct shallow model. Main text completes the declared profile job. Bounded blocks and appendices add optional resolution. The base reader plus the selected genre-knowledge overlay (§0.3) gets a defined budget of new concepts. The document spends this budget explicitly. Profile completeness requires every fact needed for the profile's purpose. It does not require every relevant fact about the subject.
+*Enforced by:* §2.3, §4.6, §4.8, §4.12.
 
 **P5 — Specific over generic.** Every sentence should convey information that could not describe a different subject. The central failure is loss of specificity. Specific, verifiable facts become generic significance claims that fit any subject. Machine-generated prose often shows this failure. Most prohibitions in §§2.6, 3.10, 4.10, and 6.5 address this failure.
 *Enforced by:* §2.6 (hype vocabulary and vague attribution), §3.10 (formulaic constructions), and §4.10 (canned section formulas).
@@ -47,12 +47,13 @@ The plain layer **wraps** the exact layer. The plain layer **shall not replace**
 
 ### 1.2.1 Acceptance questions
 
-The two layers create two acceptance questions:
+The two layers create three acceptance questions:
 
 - **Exactness and ownership:** Is the exact layer correct, complete for the profile's purpose, internally consistent, and precise enough to verify or act on?
-- **Reader utility:** Can the intended reader follow the declared purpose from the §0.3 baseline and selected overlay? Can the reader proceed without inventing missing domain knowledge?
+- **Scan utility:** Does the §4.12 scan path give the assumed reader the profile's correct shallow model? Does that model preserve applicable status, strength, and material boundaries?
+- **Main-path utility:** Can the assumed reader follow the declared purpose from the §0.3 baseline and selected overlay? Can the reader proceed without inventing missing domain knowledge?
 
-A document that answers only the first question is precise but unusable. A document that answers only the second is fluent but untrustworthy. Every tier addresses both questions, but the required evidence is proportional to the tier.
+A document can be precise but unusable, scannable but false, or fluent but untrustworthy. Every tier addresses all three questions. The required evidence remains proportional to the tier.
 
 ### 1.2.2 Tier-proportional evidence
 
@@ -91,7 +92,7 @@ Every rule uses the following template, adapted from ASD-STE100's rule format. T
 Conventions:
 
 - **One independently testable outcome per rule.** A rule may use multiple normative verbs only when the clauses express one invariant. Examples include positive and prohibited forms or both directions of a one-to-one mapping. Clauses that can pass or fail independently are separate rules with separate permanent IDs.
-- **Universal by default.** A rule with no `**Profiles:**` line applies to all eleven profiles. The universal form is the normal shared-core form.
+- **Universal by default.** A rule with no `**Profiles:**` line applies to all twelve profiles. The universal form is the normal shared-core form.
 - **Explicit profile scope.** Any rule that does not apply to all profiles carries a `**Profiles:**` line. This requirement includes profile additions and exceptions. The line lists every applicable profile. The list uses canonical IDs from §0.2 in registry order. Labels, aliases, `all`, wildcards, and negative forms such as `except` are invalid.
 - **Scoped rules live with their profile.** A rule that carries a `Profiles` line moves to the overlay file that §1.5 assigns. The move changes the rule's location only. The rule keeps its permanent ID, its section number, and its applicability.
 - **Construct scope is not profile scope.** A rule about equations can remain universal even though only equations trigger it. The equation rule receives no `Profiles` line unless some profiles treat equations differently.
@@ -100,7 +101,7 @@ Conventions:
 - **Active is the default status.** Active rules omit `Status`. A withdrawn rule remains with `**Status:** deprecated since <version>; replacement <rule ID | none>`. Annex C retains its permanent ID.
 - **The example pair is not optional.** A rule without a contrasting pair is not enforceable (P7). Examples use governed technical prose, not aerospace or generic filler.
 - **Rule numbers are permanent** (§0.8). Numbers are assigned per section in drafting order and never reused.
-- **Examples match applicability.** A universal rule may use any governed profile. A scoped rule's compliant and non-compliant examples use one of the listed profiles. The corpus as a whole represents all eleven profiles rather than defaulting to research prose.
+- **Examples match applicability.** A universal rule may use any governed profile. A scoped rule's compliant and non-compliant examples use one of the listed profiles. The corpus as a whole represents all twelve profiles rather than defaulting to research prose.
 - **Source traceability is mandatory.** `Source` names the adopted or adapted framework, or it names `original`. Framework examples include Diátaxis, ISO/IEC/IEEE 26514, and IEC/IEEE 82079-1. Annex F records the nature of reuse. A profile scope does not erase the source.
 - **Machine-checkable** feeds §8.2. `yes` means a linter can flag violations without human judgment. `partial` means a linter can flag candidates for human confirmation.
 - **Navigation metadata is mandatory and closed.** Every active rule carries the four §1.6 lines. Section 1.6 fixes their permitted values. An unknown value is a specification defect.
@@ -111,7 +112,7 @@ Applicability metadata examples:
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** PlainLanguage.gov
 ```
 
-With no `Profiles` line, this rule applies to all eleven profiles.
+With no `Profiles` line, this rule applies to all twelve profiles.
 
 ```text
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** IEC/IEEE 82079-1
@@ -149,7 +150,7 @@ Unresolved collisions found during drafting or review are specification defects.
 
 ## 1.5 Specification layout and the load set
 
-ITWS separates the shared core from eleven profile overlays. The separation lets a reader, writer, or tool load one profile without loading unrelated genres.
+ITWS separates the shared core from twelve profile overlays. The separation lets a reader, writer, or tool load one profile without loading unrelated genres. A profile's overlay also declares its governed surface (§0.2.1); `maintenance-comment` is the only hosted-surface profile.
 
 ### 1.5.1 Layout
 
@@ -201,9 +202,9 @@ A tool **shall not** decide which construct, chunk type, prose layer, skeleton s
 
 ### 1.6.2 Closed values
 
-**Target** names the unit the rule judges. One rule names exactly one target: `document`, `collection`, `section`, `heading`, `chunk`, `sentence`, `list`, `word`, `term`, `symbol`, `equation`, `citation`, `figure`, `table`, `bounded-block`, `procedure-step`, `declaration`, or `conformance-record`.
+**Target** names the unit the rule judges. One rule names exactly one target: `document`, `collection`, `section`, `heading`, `chunk`, `sentence`, `list`, `word`, `term`, `symbol`, `equation`, `citation`, `figure`, `table`, `bounded-block`, `procedure-step`, `declaration`, `conformance-record`, `comment`, or `comment-set`.
 
-**Constructs** names the conditions the rule states. The permitted values are `any`, `acronym`, `admitted-term`, `analogy`, `bounded-block`, `caveat`, `citation`, `claim`, `comparison`, `connective`, `cross-reference`, `declaration`, `definition`, `diagram`, `domain-term`, `equation`, `figure`, `generalization`, `heading`, `hedge`, `interface`, `invariant`, `limitation`, `list`, `measurement`, `name`, `noun-cluster`, `number`, `observation`, `parent-link`, `procedure-step`, `prohibited-phrase`, `pronoun`, `quantity`, `requirement`, `risk`, `section`, `speculation`, `statistic`, `symbol`, `table`, `title`, `tool-artifact`, `user-journey`, `verb`, `waiver`, `warning`, `word`, and `worked-example`. The value `any` **shall not** appear beside another value.
+**Constructs** names the conditions the rule states. The permitted values are `any`, `acronym`, `admitted-term`, `analogy`, `bounded-block`, `caveat`, `citation`, `claim`, `comment`, `comparison`, `connective`, `cross-reference`, `declaration`, `definition`, `diagram`, `domain-term`, `equation`, `figure`, `generalization`, `heading`, `hedge`, `host-anchor`, `interface`, `invariant`, `limitation`, `list`, `marker`, `measurement`, `name`, `noun-cluster`, `number`, `observation`, `parent-link`, `procedure-step`, `prohibited-phrase`, `pronoun`, `proposal-record`, `quantity`, `removal-condition`, `requirement`, `risk`, `section`, `speculation`, `statistic`, `symbol`, `table`, `title`, `tool-artifact`, `user-journey`, `verb`, `waiver`, `warning`, `word`, and `worked-example`. The value `any` **shall not** appear beside another value.
 
 **Chunks** lists the §4.1 purposes the rule can reach, or `any`.
 
@@ -220,7 +221,7 @@ A tool **shall not** decide which construct, chunk type, prose layer, skeleton s
 - `review` — a reader must decide the repair.
 - `prohibited` — no repair may change the governed content on tooling authority alone.
 
-**Resources** names what the rule reads and writes: `none`, `chunk-text`, `heading`, `declaration-block`, `term-ledger`, `symbol-ledger`, `exact-item-ledger`, `claim-ledger`, `evidence-ledger`, `cross-reference-ledger`, `skeleton-order`, `figure-ledger`, `citation-ledger`, `conformance-record`, or `waiver-record`. Two repairs that write one resource can collide. Section 8.6 states the check.
+**Resources** names what the rule reads and writes: `none`, `chunk-text`, `heading`, `declaration-block`, `term-ledger`, `symbol-ledger`, `exact-item-ledger`, `claim-ledger`, `evidence-ledger`, `cross-reference-ledger`, `skeleton-order`, `figure-ledger`, `citation-ledger`, `conformance-record`, `waiver-record`, `comment-text`, `host-anchor-ledger`, or `proposal-record`. Two repairs that write one resource can collide. Section 8.6 states the check.
 
 **Relations** lists typed edges to other rules, separated by semicolons, or `none`. The permitted types are `requires`, `constrains`, `overrides`, `pairs-with`, and `validates`. A generated `exemplified-by` edge links a rule to its Annex D examples; an author never writes that edge. Every edge **shall** name an existing permanent rule ID.
 

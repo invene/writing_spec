@@ -1,6 +1,6 @@
 # Preserve billing data after an expired-card response
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: subtask
 Conformance tier: core
 

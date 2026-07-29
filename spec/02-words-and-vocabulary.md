@@ -613,4 +613,4 @@ Covered external artifacts include libraries, tools, services, standards, models
 
 ---
 
-> **Drafting note (ITWS 0.6.0-draft):** The prohibited-word seed list in Rule 2.6.4 is a versioned linter asset. The inline list above is the ITWS 0.6.0-draft snapshot. Organization-specific naming conventions belong in a separately versioned policy layered on this shared core.
+> **Drafting note (ITWS 0.8.0-draft):** The prohibited-word seed list in Rule 2.6.4 is a versioned linter asset. The inline list above is the ITWS 0.8.0-draft snapshot. Organization-specific naming conventions belong in a separately versioned policy layered on this shared core.

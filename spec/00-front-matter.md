@@ -1,16 +1,18 @@
 # Invene Technical Writing Specification (ITWS) — Front matter
 
-**Version:** 0.6.0-draft · **Status:** agent-navigation draft
+**Version:** 0.8.0-draft · **Status:** agent-navigation draft
 
-**Governs:** the eleven technical-document profiles in §0.2
+**Governs:** the twelve technical-writing profiles in §0.2
 
 ---
 
 ## 0.1 Foreword
 
-This specification defines controlled English for technical documents. ITWS keeps content exact and usable by working technical readers who may not know the subject.
+This specification defines controlled English for technical documents. ITWS gives working technical readers a correct shallow model at low reading cost. Main text remains complete for the document's declared purpose. Bounded blocks and appendices preserve optional resolution. Exact content remains available when the reader descends. This guarantee concerns access and orientation, not full-document learning or comprehension.
 
-ITWS has one shared core and eleven profiles. The core supplies the language, structure, exactness, explanation, and compliance rules that technical genres share. A profile supplies only the purpose, skeleton, and exceptions needed by one genre. This architecture avoids eleven divergent style guides. The architecture also gives each genre distinct evidence and release obligations.
+The reader may use the §0.3 baseline but need not know the document's subject. The design is especially useful for long or machine-drafted documents. Conformance does not depend on authorship.
+
+ITWS has one shared core and twelve profiles. The core supplies the language, structure, exactness, explanation, and compliance rules that technical genres share. A profile supplies only the purpose, skeleton, and exceptions needed by one genre. This architecture avoids twelve divergent style guides. The architecture also gives each genre distinct evidence and release obligations.
 
 The specification adapts existing work. Its rule architecture comes from ASD-STE100 (Simplified Technical English). The architecture uses permanent numbered rules, one normative statement per rule, contrasting examples, explicit applicability, and controlled vocabulary. Existing standards and guides supply relevant content. Every rule names its source. Annex F preserves source-framework traceability.
 
@@ -19,7 +21,7 @@ The principal source frameworks are:
 - ASD-STE100 — rule architecture, sentence rules, controlled vocabulary, and dictionary-entry format.
 - PlainLanguage.gov federal plain-language guidelines — audience focus, voice, headings, and main-point-first ordering.
 - Google Developer Style Guide and Microsoft Writing Style Guide — word use, punctuation, acronyms, naming, and developer-document conventions.
-- Diátaxis — separation by reader need and discipline against mixing procedural and explanatory modes. ITWS generalizes that discipline across all eleven profiles rather than adopting Diátaxis's four types as the profile registry.
+- Diátaxis — separation by reader need and discipline against mixing procedural and explanatory modes. ITWS generalizes that discipline across all twelve profiles rather than adopting Diátaxis's four types as the profile registry.
 - Information Mapping and DITA topic typing — chunk purpose, modular structure, and reusable information units.
 - ISO/IEC/IEEE 26514 — software-documentation planning, audience analysis, content design, review, evaluation, and lifecycle controls.
 - IEC/IEEE 82079-1 — principles for information for use, task-oriented procedures, warning placement, usability, and quality evaluation.
@@ -35,7 +37,7 @@ The external sources are informative unless §0.5 says otherwise. Their requirem
 
 ## 0.2 Scope
 
-ITWS governs prose documents that design, direct, explain, assess, or record technical work. A governed document uses the shared core and declares exactly one profile from the registry below. The profile identifier (ID) is canonical. Its label is the human-readable name.
+ITWS governs prose that designs, directs, explains, assesses, or records technical work. A governed unit uses the shared core and declares exactly one profile from the registry below. The profile identifier (ID) is canonical. Its label is the human-readable name.
 
 | Canonical profile ID | Canonical label | Purpose |
 |---|---|---|
@@ -50,14 +52,24 @@ ITWS governs prose documents that design, direct, explain, assess, or record tec
 | `epic` | Epic | Define one strategic product outcome, its scope, success measures, technical invariants, cross-task risks, and child-task boundaries. |
 | `task` | Task | Specify one independently acceptable tactical outcome through a user journey or an explicit engineering-only contract. |
 | `subtask` | Subtask | Verify one named completion condition under exactly one parent `task`, without creating an independent outcome. |
+| `maintenance-comment` | Maintenance comment set | Preserve durable code knowledge by governing the comments one maintenance change adds, modifies, or removes. |
 
-The registry contains the only ITWS 0.6.0-draft profiles. A document **shall** use one canonical ID and **shall not** combine profile IDs. A collection may contain several governed documents, but each document declares its own profile. Companion documents are preferable to a hybrid whose purpose and acceptance conditions cannot be determined.
+The registry contains the only ITWS 0.8.0-draft profiles. A governed unit **shall** use one canonical ID and **shall not** combine profile IDs. A collection may contain several governed units, but each unit declares its own profile. Companion documents are preferable to a hybrid whose purpose and acceptance conditions cannot be determined.
+
+### 0.2.1 Governed surfaces
+
+Each profile governs exactly one surface form:
+
+- **`markdown-document`** — a prose Markdown document. The first eleven profiles govern this surface, and every reference to a "governed document" concerns it.
+- **`hosted-comment-set`** — a comment change set inside a host source file, declared and recorded by a JSON declaration carrier. Only `maintenance-comment` governs this surface. The host source file itself remains outside ITWS conformance, and governed comments carry no ITWS boilerplate.
+
+A rule that names a document element, such as a heading, a section, a figure, or an equation, is inapplicable to a hosted comment set when the construct is absent, exactly as §1.4 item 3 already provides. A hosted-surface profile states any genuine exceptions as named §1.4 layer-2 exceptions in its overlay.
 
 An issue-tracker item is governed only when it declares `epic`, `task`, or `subtask`. The item **shall** also contain every required Annex E slot. Issue-tracker comments, status events, and unstructured tickets remain outside ITWS conformance.
 
 The following are outside ITWS conformance:
 
-- Source code and code comments.
+- Source code. A code comment is governed only through a declared `maintenance-comment` comment change set; every other code comment remains outside conformance.
 - Standalone application programming interface (API) or command reference material. Interface definitions may appear inside an applicable governed profile.
 - Slide decks, posters, and talk scripts.
 - Marketing and general-audience communication.
@@ -108,6 +120,12 @@ The same rule applies outside research. A procedure does not inherit a service's
 
 Annex B decides whether the reader may know a concept, symbol, or genre convention. The reader does not know items absent from the base-reader list and selected overlay. A profile overlay cannot settle a domain-term dispute by adding domain knowledge. The document must admit the term. A proposal to add it to Annex B follows §0.8.
 
+### 0.3.4 Host-language reader supplement
+
+A hosted-comment-set profile adds one conditional supplement to the assumed reader. When the declaration carrier names a host adapter, the reader also has reading literacy in that host language's surface syntax and may treat an identifier visible in the anchored code as a repeatable name.
+
+The supplement grants nothing else. The reader is not assumed to know the project's history, the product's vocabulary, the behavior of any library or service the code calls, or the author's intent. Annex B §B.4.12 states the complete supplement, and §0.3.3 governs disputes about it unchanged.
+
 ## 0.4 Conformance
 
 ### 0.4.1 Keywords
@@ -124,7 +142,7 @@ Every rule carries exactly one class:
 
 ### 0.4.3 Conformance statement
 
-**Rule applicability.** A rule applies to all eleven profiles by default. If a rule carries a `**Profiles:**` metadata line, it applies only to the canonical IDs on that line. Construct conditions still apply: for example, a universal equation rule is relevant only when a document contains an equation. §1.3 defines the metadata syntax. §1.5 states which file holds each rule.
+**Rule applicability.** A rule applies to all twelve profiles by default. If a rule carries a `**Profiles:**` metadata line, it applies only to the canonical IDs on that line. Construct conditions still apply: for example, a universal equation rule is relevant only when a document contains an equation. §1.3 defines the metadata syntax. §1.5 states which file holds each rule.
 
 **Conformance tiers.** ITWS has three cumulative tiers:
 
@@ -147,18 +165,19 @@ The profile sets the minimum tier:
 | `epic` | `reviewed` |
 | `task` | `core` |
 | `subtask` | `core` |
+| `maintenance-comment` | `core` |
 
 A document **may** declare a tier above its profile minimum. The document **shall not** declare a lower tier. A higher tier adds assurance evidence. The higher tier does not remove or substitute any applicable content rule.
 
-**Required declaration.** A conforming document **shall** declare the exact ITWS version, one canonical profile ID, and one permitted conformance tier:
+**Required declaration.** A conforming governed unit **shall** declare the exact ITWS version, one canonical profile ID, and one permitted conformance tier:
 
 ```text
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: design-rfc
 Conformance tier: reviewed
 ```
 
-The human-readable profile label may accompany the ID but does not replace it. Conformance requires the declaration and complete evidence for the declared tier. The document must satisfy every applicable mandatory rule or receive a waiver under §8.5.
+A Markdown document carries the declaration in its front matter. A hosted comment set carries the same three fields in its declaration carrier (§0.2.1, §4.3.1). The human-readable profile label may accompany the ID but does not replace it. Conformance requires the declaration and complete evidence for the declared tier. The governed unit must satisfy every applicable mandatory rule or receive a waiver under §8.5.
 
 A partial audit may identify the parts or rules it checked, but it **shall not** claim ITWS conformance or declare a conformance tier. Cherry-picking rules does not establish conformance.
 
@@ -181,7 +200,17 @@ The standards and guides listed in §0.1 are informative sources. Annex F identi
 
 The following meta-vocabulary is available throughout ITWS without further definition.
 
-- **governed document** — a document in §0.2's scope that declares one ITWS profile.
+- **governed document** — a Markdown document in §0.2's scope that declares one ITWS profile.
+- **governed surface** — the artifact form a profile governs: `markdown-document` or `hosted-comment-set` (§0.2.1).
+- **governed unit** — a governed document or a governed comment change set.
+- **comment change set** — the governed comments changed between one recorded base version and one recorded proposed version of a host source file, identified by one change-set ID and one declaration carrier.
+- **declaration carrier** — the JSON record that holds a comment change set's declarations, comment records, judgments, and conformance evidence.
+- **host adapter** — the language-specific component that extracts comment units and host anchors and applies the exclusion policy for one host language.
+- **host anchor** — the host file, line span, and enclosing named construct a governed comment attaches to.
+- **information delta** — the knowledge a comment adds beyond what its anchored code states to a reader with the declared host-language supplement.
+- **cognitive debt** — the future reader effort created when recorded knowledge is missing, stale, or misplaced.
+- **removal condition** — the observable fact whose occurrence ends a temporary comment's or marker's life.
+- **comment proposal record** — the record that ties one machine-proposed comment to its provenance, bases, pinned hashes, and human disposition (§8.7).
 - **work item** — a governed `epic`, `task`, or `subtask` document that directs and verifies one unit of planned work.
 - **product requirements document** — a document that states a product problem, outcome, scope, measures, and constraints.
 - **strategic outcome** — an outcome that requires several independently acceptable tactical outcomes.

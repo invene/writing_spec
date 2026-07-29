@@ -1,6 +1,6 @@
 # Annex B — Assumed-reader baseline (normative)
 
-**Status:** v0.6.0-draft. Members across software engineering pod roles have not yet validated this annex.
+**Status:** v0.8.0-draft. Members across software engineering pod roles have not yet validated this annex.
 
 Until that review, treat borderline items as not assumed (§0.3.3).
 
@@ -201,7 +201,7 @@ Examples that remain unassumed include venue prestige as evidence, "SOTA," "came
 
 Each overlay adds only navigation or document conventions. Each overlay states its own conventions in the `reader.md` file of its overlay directory. Section 1.5 defines that layout.
 
-The following table is the complete profile registry for ITWS 0.6.0-draft. Each row is normative through the file it names.
+The following table is the complete profile registry for ITWS 0.8.0-draft. Each row is normative through the file it names.
 
 | Overlay | Profile | File |
 |---|---|---|
@@ -216,8 +216,11 @@ The following table is the complete profile registry for ITWS 0.6.0-draft. Each 
 | §B.4.9 | `epic` | [../overlays/epic/reader.md](../overlays/epic/reader.md) |
 | §B.4.10 | `task` | [../overlays/task/reader.md](../overlays/task/reader.md) |
 | §B.4.11 | `subtask` | [../overlays/subtask/reader.md](../overlays/subtask/reader.md) |
+| §B.4.12 | `maintenance-comment` | [../overlays/maintenance-comment/reader.md](../overlays/maintenance-comment/reader.md) |
 
 These conventions let the writer use the corresponding section functions without teaching the genre. The conventions do not permit unexplained domain terms within those sections.
+
+The `maintenance-comment` overlay additionally carries the §0.3.4 host-language reader supplement. The supplement is conditional on the declared host adapter. It grants reading literacy in the host language's surface syntax and the use of identifiers visible in the anchored code. It grants no project history, product vocabulary, library behavior, or author intent.
 
 The `research-paper` overlay expressly assumes no machine-learning knowledge. Its file states that boundary and what remains ladder-required.
 

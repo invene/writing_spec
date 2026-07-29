@@ -174,6 +174,16 @@ class TestAgentCommands(unittest.TestCase):
         payload = json.loads(process.stdout)
         self.assertIn("units", payload)
         self.assertTrue(payload["units"])
+        process = run(
+            str(TOOLS / "itws_document.py"),
+            "scan-path",
+            "--input",
+            str(CONFORMING / "incident.md"),
+            "--json",
+        )
+        payload = json.loads(process.stdout)
+        self.assertTrue(payload["segments"])
+        self.assertTrue(payload["scan_path_hash"].startswith("sha256:"))
 
     def test_lint_reports_json(self) -> None:
         process = run(
@@ -268,9 +278,10 @@ class TestStandardLibraryOnly(unittest.TestCase):
 
         allowed = {
             "argparse", "ast", "collections", "dataclasses", "datetime",
-            "difflib", "functools", "hashlib", "itertools", "json", "pathlib",
-            "re", "shutil", "subprocess", "sys", "tempfile", "textwrap",
-            "typing", "unittest", "os", "itws", "tests", "__future__",
+            "difflib", "functools", "hashlib", "io", "itertools", "json",
+            "pathlib", "re", "shutil", "subprocess", "sys", "tempfile",
+            "textwrap", "tokenize", "typing", "unittest", "os", "itws",
+            "tests", "__future__",
             "itws_index", "itws_checklist", "itws_overlays",
         }
         roots = [

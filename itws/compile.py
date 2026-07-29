@@ -20,6 +20,7 @@ from itws.vocab import (
     PRECEDENCE_LAYERS,
     PROFILE_FAMILIES,
     PROFILE_IDS,
+    PROFILE_SURFACES,
     SEVERITY_BY_CLASS,
     TIERS,
     profile_families,
@@ -149,6 +150,11 @@ def build_artifacts(spec: Specification) -> list[Artifact]:
                         profile.id: list(profile.reader_overlay)
                         for profile in spec.profiles
                     },
+                    "host_supplements": {
+                        profile.id: list(profile.reader_overlay)
+                        for profile in spec.profiles
+                        if profile.surface == "hosted-comment-set"
+                    },
                 }
             ),
         )
@@ -239,6 +245,7 @@ def build_manifest(spec: Specification, artifacts: list[Artifact]) -> Artifact:
         "profile_families": {
             family: list(members) for family, members in sorted(PROFILE_FAMILIES.items())
         },
+        "profile_surfaces": dict(PROFILE_SURFACES),
         "minimum_tiers": dict(MINIMUM_TIER),
         "counts": {
             "rules": len(spec.rules),

@@ -1,8 +1,8 @@
 # Annex D — Examples corpus
 
-**Status:** v0.6.0-draft. The corpus has 23 paired examples, at least two for every ITWS profile.
+**Status:** v0.8.0-draft. The corpus has 25 paired examples, at least two for every ITWS profile.
 
-Both original research examples remain. The other 21 examples are constructed and cover every profile.
+Both original research examples remain. The other 23 examples are constructed and cover every profile.
 
 The corpus provides training material for writers.
 
@@ -967,9 +967,72 @@ Annotation:
 - SP-2 is the case the original omitted: a timeout after the charge leaves the payment result unknown, and offering an immediate retry risks a double charge. Naming the safe state is what Rule 4.11.19 buys.
 - The double-charge risk appears only when both completion conditions interact, which is the behavior Rule 5.9.5 requires integrated acceptance to cover.
 
+### Example D.24 — Machine narration that restates the code it annotates
+Profile: maintenance-comment
+Source: constructed
+Rules applied: 4.13.1, 4.13.2, 4.13.5, 8.7.1, 8.7.2
+Chunk types: any
+Constructs: comment, proposal-record
+Repair operators: delete-restated-code, state-information-delta, replace-inferred-intent-with-basis
+Preservation notes: the 250 ms retry delay; decision record DR-12 as the recorded basis
+
+Before:
+
+> ```python
+> # Increment the retry counter and sleep for 250 milliseconds.
+> # This ensures compliance with our performance requirements.
+> retries += 1
+> time.sleep(0.25)
+> ```
+
+After:
+
+> ```python
+> # 250 ms holds retries under the gateway's 4-per-second burst limit (DR-12).
+> retries += 1
+> time.sleep(0.25)
+> ```
+
+Annotation:
+
+- "Increment the retry counter and sleep" restates the two lines below it. Rule 4.13.1 requires an information delta, and the delta here is the burst limit that the code cannot show.
+- "Ensures compliance with our performance requirements" names a requirement that exists nowhere. Rule 4.13.5 forbids intent inferred from the implementation alone; the rewrite cites the decision record that actually fixed the number.
+- One comment carried narration and an intent claim. Rule 4.13.2 gives the surviving comment one purpose, `rationale`.
+- The comment was machine-proposed, so Rule 8.7.1 requires a proposal record, and Rule 8.7.2 requires that record to cite DR-12 rather than its generation prompt.
+
+### Example D.25 — A bare marker with no route back to its work
+Profile: maintenance-comment
+Source: constructed
+Rules applied: 4.13.8, 4.13.7, 4.13.4
+Chunk types: any
+Constructs: marker, removal-condition
+Repair operators: add-work-item-reference, state-removal-condition
+Preservation notes: the shim itself; the v2 totals endpoint as the replacement
+
+Before:
+
+> ```python
+> # TODO: clean this up later.
+> def totals_shim(order):
+> ```
+
+After:
+
+> ```python
+> # TODO(TASK-142): remove this shim when the v2 API returns order totals
+> # directly and test T-9 passes against the v2 endpoint.
+> def totals_shim(order):
+> ```
+
+Annotation:
+
+- "Clean this up later" names no work item and no end state. Rule 4.13.8 requires the marker keyword, one durable reference, and a removal condition.
+- The record declares lifecycle `temporary`, so Rule 4.13.7 requires the removal condition to be observable; a shipped v2 endpoint and a passing named test are checkable facts, "later" is not.
+- TASK-142 is also the marker's durable basis under Rule 4.13.4: a future maintainer can open it and recover the context this line cannot carry.
+
 ## D.3 Coverage and next milestone
 
-The corpus contains 23 examples. Every profile has at least two, and `research-paper` has three.
+The corpus contains 25 examples. Every profile has at least two, and `research-paper` has three.
 
 Every `Rules applied` field carries permanent rule IDs. The compiler resolves each ID against the rule set and fails on an unknown one.
 

@@ -1,6 +1,6 @@
 # `incident` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `reviewed`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `reviewed`
 
 **Job:** establish what happened, who or what was affected, how responders restored service, what evidence supports causes or contributing factors, and which follow-ups result.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for an `incident` docum
 - Shared overlay modules: none.
 
 No other profile overlay applies to an `incident` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the impact, causal status, unresolved point, and follow-up state.
 
 ## Reader-test outcome
 

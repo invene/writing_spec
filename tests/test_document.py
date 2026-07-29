@@ -6,9 +6,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tests.support import CONFORMING, conforming_documents, spec
+from tests.support import CONFORMING, VIOLATIONS, conforming_documents, spec
 
-from itws.document import outline, parse_document
+from itws.document import outline, parse_document, scan_path
 from itws.vocab import CHUNK_TYPES
 
 
@@ -96,6 +96,63 @@ class TestStructuralIndex(unittest.TestCase):
             self.assertGreaterEqual(row["end_line"], row["start_line"])
 
 
+class TestScanPath(unittest.TestCase):
+    def _write(self, text: str) -> Path:
+        handle = tempfile.NamedTemporaryFile(
+            "w", suffix=".md", delete=False, encoding="utf-8"
+        )
+        handle.write(text)
+        handle.close()
+        return Path(handle.name)
+
+    def test_scan_path_extracts_title_headings_and_opening_sentences(self) -> None:
+        manifest = parse_document(CONFORMING / "decision-record.md")
+        result = scan_path(manifest)
+        self.assertEqual(result.problems, ())
+        self.assertEqual(result.segments[0].kind, "title")
+        self.assertEqual(result.segments[1].heading, "Status")
+        self.assertEqual(
+            result.segments[1].opening_sentence,
+            "Accepted on 2026-06-14 by the platform pod.",
+        )
+        self.assertTrue(result.scan_path_hash.startswith("sha256:"))
+
+    def test_scan_path_excludes_appendix_content(self) -> None:
+        path = self._write(
+            "# Queue design\n\n"
+            "ITWS version: 0.8.0-draft\nProfile: design-rfc\n"
+            "Conformance tier: reviewed\n\n"
+            "## Summary\n\nThe proposal bounds concurrent writes.\n\n"
+            "## Appendix A\n\nThe appendix gives formal details.\n\n"
+            "### Semaphore proof\n\nThe proof uses invariant I.\n"
+        )
+        result = scan_path(parse_document(path))
+        self.assertEqual(
+            [segment.heading for segment in result.segments],
+            ["Queue design", "Summary"],
+        )
+        path.unlink()
+
+    def test_scan_path_reports_a_section_without_an_opening_chunk(self) -> None:
+        path = self._write(
+            "# Queue design\n\n"
+            "ITWS version: 0.8.0-draft\nProfile: design-rfc\n"
+            "Conformance tier: reviewed\n\n"
+            "## Risks\n\n### Shared clock\n\n"
+            "A shared clock failure can stop writes.\n"
+        )
+        result = scan_path(parse_document(path))
+        self.assertTrue(any("Risks" in problem for problem in result.problems))
+        path.unlink()
+
+    def test_scan_extraction_does_not_claim_semantic_agreement(self) -> None:
+        manifest = parse_document(VIOLATIONS / "scan-widened-status.md")
+        result = scan_path(manifest)
+        self.assertEqual(result.problems, ())
+        self.assertEqual(result.segments[0].heading, "Approved region-proof queue design")
+        self.assertIn("regional failures", result.segments[1].opening_sentence)
+
+
 class TestDeclarationProblems(unittest.TestCase):
     def _write(self, text: str) -> Path:
         handle = tempfile.NamedTemporaryFile(
@@ -107,7 +164,7 @@ class TestDeclarationProblems(unittest.TestCase):
 
     def test_conflicting_declarations_are_reported(self) -> None:
         path = self._write(
-            "# T\n\nITWS version: 0.6.0-draft\nProfile: epic\n"
+            "# T\n\nITWS version: 0.8.0-draft\nProfile: epic\n"
             "Profile: task\nConformance tier: core\n"
         )
         manifest = parse_document(path)
@@ -138,7 +195,7 @@ class TestSectionMap(unittest.TestCase):
 
     def test_a_section_map_links_a_heading_to_a_slot(self) -> None:
         path = self._document(
-            "# T\n\nITWS version: 0.6.0-draft\nProfile: decision-record\n"
+            "# T\n\nITWS version: 0.8.0-draft\nProfile: decision-record\n"
             "Conformance tier: core\n\n"
             "```itws-section-map\n"
             '"Why we did this" -> Context\n'
@@ -158,7 +215,7 @@ class TestSectionMap(unittest.TestCase):
 
     def test_a_repeated_heading_or_slot_is_rejected(self) -> None:
         path = self._document(
-            "# T\n\nITWS version: 0.6.0-draft\nProfile: decision-record\n"
+            "# T\n\nITWS version: 0.8.0-draft\nProfile: decision-record\n"
             "Conformance tier: core\n\n"
             "```itws-section-map\n"
             '"A" -> Context\n'
@@ -173,7 +230,7 @@ class TestSectionMap(unittest.TestCase):
 
     def test_a_cross_profile_slot_is_rejected(self) -> None:
         path = self._document(
-            "# T\n\nITWS version: 0.6.0-draft\nProfile: decision-record\n"
+            "# T\n\nITWS version: 0.8.0-draft\nProfile: decision-record\n"
             "Conformance tier: core\n\n"
             "```itws-section-map\n"
             '"A" -> Rollback\n'

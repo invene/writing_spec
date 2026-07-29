@@ -1,6 +1,6 @@
 # Replace the worker binary on one host
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: procedure
 Conformance tier: reviewed
 

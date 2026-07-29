@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from itws.document import outline, parse_document
+from itws.document import outline, parse_document, scan_path
 from itws.jsonio import dumps
 from itws.parser import SpecError, parse_specification
 from itws.vocab import PROFILE_IDS
@@ -30,7 +30,9 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "action", choices=("index", "outline"), help="full manifest or heading list"
+        "action",
+        choices=("index", "outline", "scan-path"),
+        help="full manifest, heading list, or Rule 4.12.1 scan path",
     )
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--spec-dir", type=Path, default=Path("spec"))
@@ -87,6 +89,24 @@ def main() -> int:
                 )
                 for row in rows
             )
+    elif args.action == "scan-path":
+        result = scan_path(manifest)
+        for problem in result.problems:
+            print(f"{args.input}: {problem}", file=sys.stderr)
+        if args.json or args.out:
+            payload = dumps(result.to_json())
+        else:
+            lines = []
+            for segment in result.segments:
+                lines.append(
+                    f"{'#' * segment.heading_level} {segment.heading}"
+                    f"   [{segment.heading_span.start_line}]"
+                )
+                if segment.opening_sentence:
+                    lines.append(
+                        f"  {segment.opening_sentence}   [{segment.opening_line}]"
+                    )
+            payload = "\n".join(lines)
     else:
         payload = dumps(manifest.to_json())
 

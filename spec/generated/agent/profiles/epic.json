@@ -2,7 +2,9 @@
   "id": "epic",
   "label": "Epic",
   "minimum_tier": "reviewed",
+  "surface": "markdown-document",
   "job": "define one strategic product outcome that requires several independently acceptable tasks.",
+  "scan_test_outcome": "state the strategic outcome, approval status, scope boundary, and success-measure boundary.",
   "reader_test_outcome": "state the strategic outcome, supporting evidence, scope, success measures, technical invariants, child-task boundaries, and definition of done.",
   "owner_review_focus": "product evidence, measures, and inherited invariants",
   "shared_modules": [
@@ -36,10 +38,10 @@
   "source_span": {
     "path": "spec/overlays/epic/README.md",
     "start_line": 1,
-    "end_line": 30
+    "end_line": 34
   },
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0",
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0",
   "permitted_tiers": [
     "reviewed",
     "publication"
@@ -48,7 +50,7 @@
     "work-item"
   ],
   "envelope": {
-    "rule_count": 166,
+    "rule_count": 172,
     "universal": [
       "2.1.1",
       "2.1.2",
@@ -140,6 +142,10 @@
       "4.10.4",
       "4.10.5",
       "4.10.6",
+      "4.12.1",
+      "4.12.2",
+      "4.12.3",
+      "4.12.4",
       "5.1.1",
       "5.1.2",
       "5.2.1",
@@ -187,6 +193,8 @@
       "8.1.1",
       "8.1.2",
       "8.1.3",
+      "8.1.4",
+      "8.1.5",
       "8.2.1",
       "8.2.2",
       "8.2.3",
@@ -320,6 +328,10 @@
         "4.11.1",
         "4.11.8",
         "4.11.10",
+        "4.12.1",
+        "4.12.2",
+        "4.12.3",
+        "4.12.4",
         "6.1.1",
         "6.1.2",
         "6.1.3",
@@ -376,6 +388,8 @@
       "8.1.1",
       "8.1.2",
       "8.1.3",
+      "8.1.4",
+      "8.1.5",
       "8.2.1",
       "8.2.2",
       "8.2.3",

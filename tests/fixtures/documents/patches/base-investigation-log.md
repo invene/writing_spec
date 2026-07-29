@@ -1,6 +1,6 @@
 # Investigation log: client failures on the export path
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: investigation-log
 Conformance tier: core
 

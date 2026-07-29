@@ -1,6 +1,6 @@
 # Annex B §B.4.5 — `incident` reader overlay
 
-**ITWS version:** 0.6.0-draft · **Status:** normative
+**ITWS version:** 0.8.0-draft · **Status:** normative
 
 This overlay adds navigation conventions to the §B.1 base reader.
 

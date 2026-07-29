@@ -83,6 +83,36 @@ class TestRiskFixtures(unittest.TestCase):
         self.assertTrue(found)
         self.assertIn("Steps", found[0].message)
 
+    def test_a_missing_scan_opening_is_a_candidate(self) -> None:
+        report = lint_path(spec(), VIOLATIONS / "scan-missing-opening.md")
+        found = [
+            finding
+            for finding in report.findings
+            if finding.rule == "4.12.1" and finding.kind == "candidate"
+        ]
+        self.assertTrue(found)
+        self.assertIn("Risks", found[0].message)
+
+    def test_a_trailing_scan_qualification_is_a_candidate(self) -> None:
+        report = lint_path(spec(), VIOLATIONS / "scan-trailing-qualification.md")
+        found = [
+            finding
+            for finding in report.findings
+            if finding.rule == "4.12.3" and finding.kind == "candidate"
+        ]
+        self.assertTrue(found)
+        self.assertIn("though", found[0].excerpt.casefold())
+
+    def test_a_negated_scan_qualification_is_a_candidate(self) -> None:
+        report = lint_path(spec(), VIOLATIONS / "scan-negation-qualification.md")
+        found = [
+            finding
+            for finding in report.findings
+            if finding.rule == "4.12.3" and finding.kind == "candidate"
+        ]
+        self.assertTrue(found)
+        self.assertIn("not approved", found[0].excerpt.casefold())
+
     def test_a_stale_version_declaration_blocks_the_run(self) -> None:
         report = lint_path(spec(), BLOCKED / "stale-version.md")
         rules = {finding.rule for finding in violations(report)}
@@ -160,7 +190,7 @@ class TestPhraseDrivenChecks(unittest.TestCase):
             "w", suffix=".md", delete=False, encoding="utf-8"
         )
         handle.write(
-            "# T\n\nITWS version: 0.6.0-draft\nProfile: explanation\n"
+            "# T\n\nITWS version: 0.8.0-draft\nProfile: explanation\n"
             "Conformance tier: core\n\n## Summary\n\n"
             "The cache is a pivotal part of the tapestry.\n"
         )
@@ -182,7 +212,7 @@ class TestPhraseDrivenChecks(unittest.TestCase):
                 "w", suffix=".md", delete=False, encoding="utf-8"
             )
             handle.write(
-                "# T\n\nITWS version: 0.6.0-draft\nProfile: explanation\n"
+                "# T\n\nITWS version: 0.8.0-draft\nProfile: explanation\n"
                 f"Conformance tier: core\n\n## Summary\n\n{body}\n"
             )
             handle.close()

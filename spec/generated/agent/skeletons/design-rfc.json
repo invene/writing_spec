@@ -1,6 +1,7 @@
 {
   "profile": "design-rfc",
   "annex_section": "E.1",
+  "surface": "markdown-document",
   "dependency_order": "A `design-rfc` seeds the problem, constraints, and specialized vocabulary before exact design and risk detail (§4.4).",
   "slots": [
     {
@@ -133,6 +134,6 @@
     "start_line": 1,
     "end_line": 36
   },
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0"
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0"
 }

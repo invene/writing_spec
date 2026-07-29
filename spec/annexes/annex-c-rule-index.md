@@ -1,6 +1,6 @@
 # Annex C — Rule index (generated)
 
-**Status:** generated 2026-07-29 from ITWS 0.6.0-draft. Do not edit this annex by hand.
+**Status:** generated 2026-07-29 from ITWS 0.8.0-draft. Do not edit this annex by hand.
 
 ## C.1 Generation contract
 
@@ -53,7 +53,7 @@ Generate a document's §8.1 checklist from this annex:
 
 ```text
 python3 tools/itws_checklist.py \
-  --spec-version 0.6.0-draft \
+  --spec-version 0.8.0-draft \
   --profile <canonical profile ID> \
   --tier <core | reviewed | publication> \
   --out <document-checklist.md>
@@ -61,7 +61,7 @@ python3 tools/itws_checklist.py \
 
 ## C.3 Index
 
-**Rule count:** 195
+**Rule count:** 214
 
 | Rule | Short name | Class | Machine-checkable | Profiles | Status | Target | Constructs | Layers | Context | Rewrite | Precedence | Source | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -145,7 +145,7 @@ python3 tools/itws_checklist.py \
 | 4.7.1 | A section opens by locating itself | mandatory | no | all profiles | active | section | section | plain | section | candidate | 3 | original | `04-structure.md` |
 | 4.7.2 | Forward pointers are few and explicit | recommended | partial | all profiles | active | section | cross-reference | plain | document | candidate | 3 | original | `04-structure.md` |
 | 4.7.3 | Cross-references cite numbers, not positions | mandatory | yes | all profiles | active | sentence | cross-reference | both | document | mechanical | 3 | Google Developer Style Guide | `04-structure.md` |
-| 4.8.1 | At most three term admissions per page | mandatory | yes | all profiles | active | document | domain-term | both | document | review | 3 | original | `04-structure.md` |
+| 4.8.1 | At most three term admissions per page | mandatory | yes | all profiles | active | document | domain-term | both | document | review | 3 | Cowan 2001; Sweller 1988; original | `04-structure.md` |
 | 4.8.2 | Sections stay under the length ceiling | recommended | yes | all profiles | active | section | section | plain | section | candidate | 3 | original | `04-structure.md` |
 | 4.8.3 | Subsections stay under the length ceiling | recommended | yes | all profiles | active | section | section | plain | section | candidate | 3 | original | `04-structure.md` |
 | 4.9.1 | No residual-history asides | mandatory | partial | all profiles | active | sentence | prohibited-phrase | plain | local | candidate | 3 | Google Developer Style Guide (timeless documentation, extended) | `04-structure.md` |
@@ -178,6 +178,19 @@ python3 tools/itws_checklist.py \
 | 4.11.19 | Sad paths state failure and recovery | mandatory | partial | `task` | active | document | user-journey | exact | document | review | 3 | IEC/IEEE 82079-1 / original | `overlays/task/rules.md` |
 | 4.11.20 | Engineering success paths state the technical outcome | mandatory | partial | `task` | active | document | any | exact | document | review | 3 | ISO/IEC/IEEE 26514 / original | `overlays/task/rules.md` |
 | 4.11.21 | Engineering failure paths state recovery | mandatory | partial | `task` | active | document | any | exact | document | review | 3 | IEC/IEEE 82079-1 / original | `overlays/task/rules.md` |
+| 4.12.1 | Use the defined scan path | mandatory | partial | all profiles | active | document | any | plain | document | candidate | 3 | Duggan and Payne 2009, 2011; Hyönä and Lorch 2004; original | `04-structure.md` |
+| 4.12.2 | Scan path preserves the shallow model | mandatory | no | all profiles | active | document | any | plain | document | review | 3 | Kintsch and van Dijk 1978; Pirolli and Card 1999; original | `04-structure.md` |
+| 4.12.3 | Scan assertions carry their qualifications | mandatory | partial | all profiles | active | sentence | any | both | document | review | 3 | Gilbert, Tafarodi, and Malone 1993; Kaup, Yaxley, Madden, Zwaan, and Lüdtke 2007; Glenberg, Wilkinson, and Epstein 1982; original | `04-structure.md` |
+| 4.12.4 | Scan elements stand alone | mandatory | no | all profiles | active | sentence | any | plain | document | candidate | 3 | Schotter, Tran, and Rayner 2014; Google Developer Style Guide; original | `04-structure.md` |
+| 4.13.1 | Comments state their information delta | mandatory | no | `maintenance-comment` | active | comment | comment | both | local | review | 3 | Ousterhout 2018; Google style guides (adapted) | `overlays/maintenance-comment/rules.md` |
+| 4.13.2 | One purpose per comment | mandatory | yes | `maintenance-comment` | active | comment | comment | both | local | candidate | 3 | Information Mapping (adapted) | `overlays/maintenance-comment/rules.md` |
+| 4.13.3 | Comments attach to one host anchor | mandatory | yes | `maintenance-comment` | active | comment | comment, host-anchor | exact | local | candidate | 3 | original | `overlays/maintenance-comment/rules.md` |
+| 4.13.4 | Rationale, invariants, and history carry a durable basis | mandatory | partial | `maintenance-comment` | active | comment | comment | exact | document | review | 3 | original | `overlays/maintenance-comment/rules.md` |
+| 4.13.5 | Intent is not inferred from implementation alone | mandatory | no | `maintenance-comment` | active | comment | comment | exact | local | prohibited | 3 | original | `overlays/maintenance-comment/rules.md` |
+| 4.13.6 | Code-comment conflicts are reported, not reconciled | mandatory | no | `maintenance-comment` | active | comment | comment | exact | local | prohibited | 3 | original | `overlays/maintenance-comment/rules.md` |
+| 4.13.7 | Temporary comments carry a removal condition | mandatory | yes | `maintenance-comment` | active | comment | comment, removal-condition | exact | local | candidate | 3 | original | `overlays/maintenance-comment/rules.md` |
+| 4.13.8 | Markers are complete | mandatory | yes | `maintenance-comment` | active | comment | marker | exact | local | candidate | 3 | Google style guides (TODO format, adapted) | `overlays/maintenance-comment/rules.md` |
+| 4.13.9 | Comment sets use the defined scan path | mandatory | partial | `maintenance-comment` | active | comment-set | comment | plain | document | candidate | 2 | Duggan and Payne 2009; original | `overlays/maintenance-comment/rules.md` |
 | 5.1.1 | Simplification preserves exact meaning | mandatory | no | all profiles | active | chunk | claim | both | neighboring | prohibited | 1 | original | `05-mathematical-and-empirical-content.md` |
 | 5.1.2 | Simplified statements trace to exact statements | mandatory | partial | all profiles | active | chunk | cross-reference, claim | both | document | candidate | 1 | original | `05-mathematical-and-empirical-content.md` |
 | 5.2.1 | Define every non-baseline symbol at first use | mandatory | partial | all profiles | active | symbol | symbol | exact | document | review | 1 | original (mechanism from §2.3) | `05-mathematical-and-empirical-content.md` |
@@ -240,6 +253,8 @@ python3 tools/itws_checklist.py \
 | 8.1.1 | Checklist is generated, not authored | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | STE checker workflows | `08-review-compliance-tooling.md` |
 | 8.1.2 | Four self-check passes | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
 | 8.1.3 | Regeneration on rule change | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
+| 8.1.4 | Complete the scan test | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | Thiede, Anderson, and Therriault 2003; Glenberg, Wilkinson, and Epstein 1982; Duggan and Payne 2009; original | `08-review-compliance-tooling.md` |
+| 8.1.5 | Retest after a dependent change | mandatory | partial | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
 | 8.2.1 | Lint gate | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | STE checker practice | `08-review-compliance-tooling.md` |
 | 8.2.2 | Severity maps to rule class | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
 | 8.2.3 | Version-pinned checking | mandatory | yes | all profiles | active | conformance-record | declaration | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
@@ -260,3 +275,7 @@ python3 tools/itws_checklist.py \
 | 8.6.3 | Validation reports one of four states | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
 | 8.6.4 | Agent-authored judgments cite their support | mandatory | partial | all profiles | active | conformance-record | cross-reference | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
 | 8.6.5 | Colliding rewrites are reported, not merged | mandatory | yes | all profiles | active | conformance-record | any | both | collection | prohibited | 4 | original | `08-review-compliance-tooling.md` |
+| 8.7.1 | Every machine-proposed comment has a proposal record | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | both | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |
+| 8.7.2 | Proposal bases are durable | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | exact | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |
+| 8.7.3 | A human disposition gates pass | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | both | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |
+| 8.7.4 | Stale records invalidate their disposition | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | both | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |

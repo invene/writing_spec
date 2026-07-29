@@ -32,6 +32,22 @@ QUOTE_RE = re.compile(r"^ *> ?")
 LINK_RE = re.compile(r"\[(?P<label>[^\]]*)\]\((?P<target>[^)]*)\)")
 BARE_URL_RE = re.compile(r"(?<![(\w])(?P<url>https?://[^\s)\]]+)")
 IDENTIFIER_RE = re.compile(r"\b(?:[A-Z]{1,4}-\d+|CC-\d+|INV-\d+|SP-\d+)\b")
+SENTENCE_END_RE = re.compile(r"(?<=[.!?])[\"')\]]*\s+")
+APPENDIX_HEADING_RE = re.compile(r"^appendix(?:\s|$)", re.IGNORECASE)
+ABBREVIATIONS = {
+    "e.g.",
+    "i.e.",
+    "etc.",
+    "cf.",
+    "vs.",
+    "approx.",
+    "Fig.",
+    "No.",
+    "St.",
+    "Dr.",
+    "Mr.",
+    "Ms.",
+}
 SECTION_MAP_FENCE = "itws-section-map"
 SECTION_MAP_LINE_RE = re.compile(
     r'^(?:"(?P<quoted>[^"]+)"|(?P<plain>[^"][^-]*?))\s*->\s*(?P<slot>.+?)\s*$'
@@ -165,6 +181,69 @@ class StructuralManifest:
             "profile_envelope": list(self.profile_envelope),
             "units": [unit.to_json() for unit in self.units],
         }
+
+
+@dataclass(frozen=True)
+class ScanSegment:
+    """One syntactic element of the Rule 4.12.1 scan path."""
+
+    kind: str
+    heading_id: str
+    heading: str
+    heading_level: int
+    heading_span: SourceSpan
+    canonical_slot: str = ""
+    opening_unit_id: str = ""
+    opening_sentence: str = ""
+    opening_line: int = 0
+
+    def to_json(self) -> dict[str, object]:
+        return {
+            "kind": self.kind,
+            "heading_id": self.heading_id,
+            "heading": self.heading,
+            "heading_level": self.heading_level,
+            "heading_span": self.heading_span.to_json(),
+            "canonical_slot": self.canonical_slot,
+            "opening_unit_id": self.opening_unit_id,
+            "opening_sentence": self.opening_sentence,
+            "opening_line": self.opening_line,
+        }
+
+
+@dataclass(frozen=True)
+class ScanPath:
+    """A deterministic scan-path extraction with no semantic verdict."""
+
+    path: str
+    document_hash: str
+    scan_path_hash: str
+    segments: tuple[ScanSegment, ...]
+    problems: tuple[str, ...]
+
+    def to_json(self) -> dict[str, object]:
+        return {
+            "path": self.path,
+            "document_hash": self.document_hash,
+            "scan_path_hash": self.scan_path_hash,
+            "problems": list(self.problems),
+            "segments": [segment.to_json() for segment in self.segments],
+        }
+
+
+def split_sentence_text(line: str) -> list[str]:
+    """Split one line with the sentence convention shared by lint and scans."""
+    pieces: list[str] = []
+    start = 0
+    for match in SENTENCE_END_RE.finditer(line):
+        candidate = line[start : match.start()]
+        tail = candidate.split()[-1] if candidate.split() else ""
+        if tail in ABBREVIATIONS:
+            continue
+        pieces.append(line[start : match.end()])
+        start = match.end()
+    pieces.append(line[start:])
+    return pieces
 
 
 def _span_id(path: str, start: int, end: int, heading_path: tuple[str, ...], text: str) -> str:
@@ -526,3 +605,136 @@ def outline(manifest: StructuralManifest) -> list[dict[str, object]]:
         for unit in manifest.units
         if unit.node_type == "heading"
     ]
+
+
+def scan_path(manifest: StructuralManifest) -> ScanPath:
+    """Extract Rule 4.12.1's title, headings, and opening sentences.
+
+    The function decides syntax only. It reports missing opening units but
+    never decides whether a sentence carries the correct shallow model.
+    """
+    indexed = list(enumerate(manifest.units))
+    headings = [
+        (position, unit)
+        for position, unit in indexed
+        if unit.node_type == "heading"
+    ]
+    problems: list[str] = []
+    segments: list[ScanSegment] = []
+
+    title = next((item for item in headings if item[1].heading_level == 1), None)
+    if title is None:
+        problems.append("the scan path has no level-one document title (§4.12.1)")
+    else:
+        _, unit = title
+        segments.append(
+            ScanSegment(
+                kind="title",
+                heading_id=unit.id,
+                heading=unit.heading_path[-1],
+                heading_level=unit.heading_level,
+                heading_span=unit.span,
+                canonical_slot=unit.canonical_slot,
+            )
+        )
+
+    appendix_level = 0
+    for heading_position, heading in headings:
+        if title is not None and heading.id == title[1].id:
+            continue
+        heading_text = heading.heading_path[-1] if heading.heading_path else ""
+        if appendix_level and heading.heading_level > appendix_level:
+            continue
+        if appendix_level and heading.heading_level <= appendix_level:
+            appendix_level = 0
+        if APPENDIX_HEADING_RE.match(strip_heading_markup(heading_text)):
+            appendix_level = heading.heading_level
+            continue
+
+        next_heading = next(
+            (
+                position
+                for position, candidate in indexed
+                if position > heading_position and candidate.node_type == "heading"
+            ),
+            len(manifest.units),
+        )
+        opening = next(
+            (
+                candidate
+                for position, candidate in indexed
+                if heading_position < position < next_heading
+                and candidate.node_type in {"paragraph", "list"}
+            ),
+            None,
+        )
+        if opening is None:
+            problems.append(
+                f"section {heading_text!r} on line {heading.span.start_line} "
+                "has no opening chunk before its first child heading (§4.12.1)"
+            )
+            segments.append(
+                ScanSegment(
+                    kind="section",
+                    heading_id=heading.id,
+                    heading=heading_text,
+                    heading_level=heading.heading_level,
+                    heading_span=heading.span,
+                    canonical_slot=heading.canonical_slot,
+                )
+            )
+            continue
+
+        opening_sentence = ""
+        opening_line = opening.span.start_line
+        for line_offset, raw_line in enumerate(opening.text.splitlines()):
+            line = raw_line.strip()
+            if not line:
+                continue
+            opening_sentence = next(
+                (piece.strip() for piece in split_sentence_text(line) if piece.strip()),
+                "",
+            )
+            opening_line = opening.span.start_line + line_offset
+            break
+        if not opening_sentence:
+            problems.append(
+                f"section {heading_text!r} on line {heading.span.start_line} "
+                "has an empty opening sentence (§4.12.1)"
+            )
+        segments.append(
+            ScanSegment(
+                kind="section",
+                heading_id=heading.id,
+                heading=heading_text,
+                heading_level=heading.heading_level,
+                heading_span=heading.span,
+                canonical_slot=heading.canonical_slot,
+                opening_unit_id=opening.id,
+                opening_sentence=opening_sentence,
+                opening_line=opening_line,
+            )
+        )
+
+    scan_text = "\n".join(
+        "\x1f".join(
+            (
+                segment.kind,
+                segment.heading,
+                segment.opening_sentence,
+            )
+        )
+        for segment in segments
+    )
+    return ScanPath(
+        path=manifest.path,
+        document_hash=manifest.document_hash,
+        scan_path_hash=content_hash(scan_text),
+        segments=tuple(segments),
+        problems=tuple(problems),
+    )
+
+
+def strip_heading_markup(text: str) -> str:
+    """Remove simple emphasis and trailing punctuation from a heading."""
+    return re.sub(r"[*_`]", "", text).strip().rstrip(":—–-").strip()

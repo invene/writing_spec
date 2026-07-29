@@ -1,6 +1,6 @@
 # `task` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `core`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `core`
 
 **Job:** define the smallest independently acceptable tactical outcome.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for a `task` document:
 - The shared overlay module [../shared/work-item.md](../shared/work-item.md).
 
 No other profile overlay applies to a `task` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the tactical outcome, classification, critical boundary, and integrated-acceptance status.
 
 ## Reader-test outcome
 

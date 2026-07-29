@@ -1,6 +1,6 @@
 # Store the export retry limit in the configuration database
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: decision-record
 Conformance tier: core
 

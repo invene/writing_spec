@@ -1,6 +1,7 @@
 {
   "profile": "task",
   "annex_section": "E.10",
+  "surface": "markdown-document",
   "dependency_order": "A `task` seeds its parent context, classification, and terms before paths, completion conditions, and integrated acceptance (§4.4).",
   "slots": [
     {
@@ -160,6 +161,6 @@
     "start_line": 1,
     "end_line": 52
   },
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0"
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0"
 }

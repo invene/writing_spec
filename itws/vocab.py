@@ -30,6 +30,7 @@ PROFILE_IDS: tuple[str, ...] = (
     "epic",
     "task",
     "subtask",
+    "maintenance-comment",
 )
 
 PROFILE_LABELS: dict[str, str] = {
@@ -44,7 +45,58 @@ PROFILE_LABELS: dict[str, str] = {
     "epic": "Epic",
     "task": "Task",
     "subtask": "Subtask",
+    "maintenance-comment": "Maintenance comment set",
 }
+
+#: §0.2.1 governed surfaces. A profile governs exactly one surface form.
+SURFACES: tuple[str, ...] = ("markdown-document", "hosted-comment-set")
+
+PROFILE_SURFACES: dict[str, str] = {
+    "design-rfc": "markdown-document",
+    "decision-record": "markdown-document",
+    "procedure": "markdown-document",
+    "explanation": "markdown-document",
+    "incident": "markdown-document",
+    "technical-report": "markdown-document",
+    "research-paper": "markdown-document",
+    "investigation-log": "markdown-document",
+    "epic": "markdown-document",
+    "task": "markdown-document",
+    "subtask": "markdown-document",
+    "maintenance-comment": "hosted-comment-set",
+}
+
+#: Host languages with a registered §4.13 adapter. The list is closed: a
+#: change set naming an unregistered adapter is `blocked`, never guessed at.
+HOST_ADAPTERS: tuple[str, ...] = ("python",)
+
+#: Closed §4.13 comment purposes. A governed comment record declares one.
+COMMENT_PURPOSES: tuple[str, ...] = (
+    "rationale",
+    "invariant",
+    "caution",
+    "history",
+    "reference",
+    "marker",
+)
+
+#: Closed §4.13 comment lifecycles.
+COMMENT_LIFECYCLES: tuple[str, ...] = ("durable", "temporary")
+
+#: Closed §8.7 comment provenance values. Tooling never infers these from
+#: prose style; a record states them or the comment is not governed.
+COMMENT_PROVENANCES: tuple[str, ...] = ("human-authored", "ai-proposed")
+
+#: Closed §8.7 human dispositions for one comment proposal record.
+PROPOSAL_DISPOSITIONS: tuple[str, ...] = (
+    "pending",
+    "accepted",
+    "revised",
+    "rejected",
+)
+
+#: Change classifications the extractor assigns to one governed comment.
+COMMENT_CHANGES: tuple[str, ...] = ("added", "modified", "removed")
 
 # Profile families back the shared overlay modules in spec/overlays/shared/.
 # §1.5.2 assigns a multi-profile rule to the module of its family.
@@ -67,6 +119,7 @@ MINIMUM_TIER: dict[str, str] = {
     "epic": "reviewed",
     "task": "core",
     "subtask": "core",
+    "maintenance-comment": "core",
 }
 
 RULE_CLASSES: tuple[str, ...] = ("mandatory", "recommended", "permitted")
@@ -111,6 +164,8 @@ TARGETS: tuple[str, ...] = (
     "procedure-step",
     "declaration",
     "conformance-record",
+    "comment",
+    "comment-set",
 )
 
 #: Which of §1.2's two layers the rule governs.
@@ -145,6 +200,7 @@ CONSTRUCTS: tuple[str, ...] = (
     "caveat",
     "citation",
     "claim",
+    "comment",
     "comparison",
     "connective",
     "cross-reference",
@@ -157,10 +213,12 @@ CONSTRUCTS: tuple[str, ...] = (
     "generalization",
     "heading",
     "hedge",
+    "host-anchor",
     "interface",
     "invariant",
     "limitation",
     "list",
+    "marker",
     "measurement",
     "name",
     "noun-cluster",
@@ -170,7 +228,9 @@ CONSTRUCTS: tuple[str, ...] = (
     "procedure-step",
     "prohibited-phrase",
     "pronoun",
+    "proposal-record",
     "quantity",
+    "removal-condition",
     "requirement",
     "risk",
     "section",
@@ -206,6 +266,9 @@ RESOURCES: tuple[str, ...] = (
     "citation-ledger",
     "conformance-record",
     "waiver-record",
+    "comment-text",
+    "host-anchor-ledger",
+    "proposal-record",
 )
 
 #: Typed edges between rules. ``exemplified-by`` is generated from Annex D and
@@ -289,6 +352,11 @@ NAVIGATION_FIELDS: tuple[str, ...] = (
     "writes",
     "relations",
 )
+
+
+def profile_surface(profile: str) -> str:
+    """Return the §0.2.1 governed surface that ``profile`` declares."""
+    return PROFILE_SURFACES[profile]
 
 
 def profile_families(profile: str) -> tuple[str, ...]:

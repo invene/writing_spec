@@ -1,12 +1,12 @@
-# Reduce checkout abandonment after recoverable payment failures
+# Epic E-7 proposal: reduce checkout abandonment after recoverable payment failures
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: epic
 Conformance tier: reviewed
 
 ## Summary
 
-Buyers who hit a recoverable payment failure often abandon checkout. This epic covers the recovery path from the failure to a completed purchase.
+Epic E-7 requests approval for checkout recovery work. Buyers who hit a recoverable payment failure often abandon checkout. The epic covers the recovery path from the failure to a completed purchase.
 
 ## Strategic outcome
 
@@ -37,6 +37,8 @@ During the 30-day evaluation window, at least 690 of each 1,380 covered buyers c
 Support contacts about failed payments fall below 40 per week, measured over the same window.
 
 ## Technical invariants
+
+Three invariants preserve billing data, order creation, and order identity.
 
 - INV-1: A failed payment **shall not** delete entered billing data.
 - INV-2: Checkout **shall not** create an order before payment succeeds.

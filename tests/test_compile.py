@@ -78,6 +78,7 @@ class TestArtifactContent(unittest.TestCase):
         for profile in PROFILE_IDS:
             record = catalog().get_profile(profile)
             self.assertEqual(record["id"], profile)
+            self.assertTrue(record["scan_test_outcome"])
             self.assertGreater(record["envelope"]["rule_count"], 0)
             skeleton = catalog().get_skeleton(profile)
             self.assertTrue(skeleton["required_slots"])

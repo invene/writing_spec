@@ -1,6 +1,6 @@
 # `subtask` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `core`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `core`
 
 **Job:** verify one named completion condition for exactly one parent `task`.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for a `subtask` documen
 - The shared overlay module [../shared/work-item.md](../shared/work-item.md).
 
 No other profile overlay applies to a `subtask` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): identify the parent condition, bounded contribution, inherited invariant, and evidence status.
 
 ## Reader-test outcome
 

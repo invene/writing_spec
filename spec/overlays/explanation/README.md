@@ -1,6 +1,6 @@
 # `explanation` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `core`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `core`
 
 **Job:** build an accurate mental model of a concept, system, or mechanism.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for an `explanation` do
 - Shared overlay modules: none.
 
 No other profile overlay applies to an `explanation` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): name the central concept or mechanism, its main relationship, and where the model stops.
 
 ## Reader-test outcome
 

@@ -257,7 +257,7 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 
 ## 6.5 Repetition and reinforcement
 
-Many prose traditions prize elegant variation. This specification prohibits elegant variation (P2). The specification permits repetition that restores distant information the assumed reader needs. Examples include a definition recalled at reuse and a ladder recap at a major boundary.
+Many prose traditions prize elegant variation. This specification prohibits elegant variation (P2). The specification permits repetition that restores distant information the assumed reader needs. Examples include a definition recalled at reuse and a ladder recap at a major boundary. Moving from the scan path to main text or a bounded block does not alone justify repetition. Each deeper layer adds resolution under §4.6.
 
 Prohibited restatement repeats recently read content without adding information. Permitted redundancy helps a reader who has forgotten distant information. A hollow summary addresses a reader who just read the section and needs nothing.
 

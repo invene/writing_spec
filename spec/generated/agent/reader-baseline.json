@@ -1,6 +1,6 @@
 {
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0",
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0",
   "shared": [
     {
       "category": "B.1 Assumed concepts — Ordinary English",
@@ -464,6 +464,24 @@
     "investigation-log": [],
     "epic": [],
     "task": [],
-    "subtask": []
+    "subtask": [],
+    "maintenance-comment": [
+      "Reading literacy in the declared host language's surface syntax: comment markers, string and docstring delimiters, and the shape of a function, class, or block.",
+      "The ability to treat an identifier that appears in the anchored code as a name the comment may repeat without admission.",
+      "The project's history, prior versions, or removed behavior.",
+      "The product's vocabulary or any domain term absent from Annex B.",
+      "The behavior of any library, framework, or service the code calls.",
+      "The author's intent, or any fact stated nowhere in the anchored code, the comment, or its cited basis."
+    ]
+  },
+  "host_supplements": {
+    "maintenance-comment": [
+      "Reading literacy in the declared host language's surface syntax: comment markers, string and docstring delimiters, and the shape of a function, class, or block.",
+      "The ability to treat an identifier that appears in the anchored code as a name the comment may repeat without admission.",
+      "The project's history, prior versions, or removed behavior.",
+      "The product's vocabulary or any domain term absent from Annex B.",
+      "The behavior of any library, framework, or service the code calls.",
+      "The author's intent, or any fact stated nowhere in the anchored code, the comment, or its cited basis."
+    ]
   }
 }

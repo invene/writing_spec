@@ -2,7 +2,7 @@
 
 Part 4 is shared core. Part 4 governs everything above the sentence in every ITWS profile. A rule applies to all profiles unless `**Profiles:**` metadata narrows it.
 
-Sections 4.1–4.5 govern chunks, ordering, profile jobs, skeletons, and headings. Sections 4.6–4.10 govern detail, navigation, density, path-agnostic prose, and formatting. Section 4.11 governs the work-item hierarchy and keeps its rules in the overlay directories (§1.5).
+Sections 4.1–4.5 govern chunks, ordering, profile jobs, skeletons, and headings. Sections 4.6–4.10 govern detail, navigation, density, path-agnostic prose, and formatting. Section 4.11 governs the work-item hierarchy and keeps its rules in the overlay directories (§1.5). Section 4.12 defines the scan path.
 
 ASD-STE100 stops at the sentence. This part draws on Information Mapping, Diátaxis, IMRaD, and plain-language ordering guidance.
 
@@ -10,7 +10,7 @@ Annex E registers each profile skeleton, and the overlay `skeleton.md` file hold
 
 ## 4.1 The chunk model: one purpose per chunk
 
-A chunk is a paragraph-level unit with exactly one purpose (§0.6). The taxonomy adapts Information Mapping to the eleven ITWS profile jobs. Profiles need not use every type. However, every body paragraph must fit exactly one type below. A reviewer who cannot classify a paragraph has found mixed or missing purpose.
+A chunk is a paragraph-level unit with exactly one purpose (§0.6). The taxonomy adapts Information Mapping to the twelve ITWS profile jobs. Profiles need not use every type. However, every body paragraph must fit exactly one type below. A reviewer who cannot classify a paragraph has found mixed or missing purpose.
 
 A tool may assign an identifier to a source span while it processes a document. That identifier is a processing handle for one run. It is not a chunk boundary, it is not a chunk type, and an author never writes one into a governed document. Deciding which §4.1 type a passage carries is a reader's judgment, and §1.6.1 keeps it there.
 
@@ -199,7 +199,9 @@ After: "The protocol keeps writes available when one replica fails. Each write g
 
 ## 4.3 Profiles: one job per document
 
-ITWS 0.6.0-draft defines eleven canonical profiles. A profile is a document job in the Diátaxis sense. The profile determines the document's purpose, applicable Annex E skeleton, and narrowed rules. Content with another job belongs in another document. Local, skippable content may use a bounded block.
+ITWS 0.8.0-draft defines twelve canonical profiles. A profile is a document job in the Diátaxis sense. The profile determines the governed unit's purpose, governed surface, applicable Annex E skeleton, and narrowed rules. Content with another job belongs in another document. Local, skippable content may use a bounded block.
+
+A `markdown-document` profile carries its declarations and Annex E slots in the document itself. A `hosted-comment-set` profile carries them in its declaration carrier (§0.2.1). The rules of this section read the same either way: the declaration and the skeleton live on the profile's declared surface.
 
 Each profile states its job in the `README.md` of its overlay directory. Section 0.2 lists the canonical IDs and their purposes. Section 1.5 defines the overlay layout and the load set. The overlay registry is `spec/overlays/README.md`.
 
@@ -210,13 +212,13 @@ Each profile states its job in the `README.md` of its overlay directory. Section
 **Resources:** reads: declaration-block · writes: none
 **Relations:** constrains 4.4.1
 
-> A governed document **shall** declare exactly one canonical §0.2 profile ID in its front matter.
+> A governed unit **shall** declare exactly one canonical §0.2 profile ID on its profile's declaration surface: the front matter of a Markdown document, or the declaration carrier of a hosted comment set.
 
 **Rationale:** Skeleton selection, profile-scoped rules, review, and linting key off the declared profile. An inferred or noncanonical profile makes conformance unverifiable (P7).
 
 **Compliant:**
 ```text
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: decision-record
 Conformance tier: core
 ```
@@ -249,7 +251,7 @@ Subordinate content remains within a profile when Annex E requires it or the dec
 **Resources:** reads: heading, skeleton-order · writes: heading, skeleton-order
 **Relations:** requires 4.4.1
 
-> A governed document **shall** include each required Annex E section and structural slot for its profile. The document **shall** preserve Annex E's order.
+> A governed unit **shall** include each required Annex E section and structural slot for its profile on the profile's declared surface. The unit **shall** preserve Annex E's order.
 
 **Rationale:** The skeleton gives each profile guarantee a stable home. Procedures hold prerequisites, incidents hold impact, and decision records hold consequences. Design RFCs hold risks, and evidence-bearing reports hold limitations. A missing required section is a missing guarantee.
 
@@ -273,7 +275,7 @@ Annex E also controls empty slots: a required job with no content remains presen
 **Resources:** reads: heading, skeleton-order · writes: heading, skeleton-order
 **Relations:** requires 4.3.1; constrains 4.3.3
 
-> A governed document **shall** apply the Annex E skeleton associated with its declared profile.
+> A governed unit **shall** apply the Annex E skeleton associated with its declared profile, on the profile's declared surface.
 
 **Rationale:** One declaration must produce one predictable structure. Substituting another profile's familiar outline silently changes the document's job and its required guarantees. IMRaD remains valuable, but only where Annex E assigns it: `research-paper`.
 
@@ -341,7 +343,7 @@ A heading is the shortest form of its section's takeaway or operational purpose.
 
 ## 4.6 Progressive disclosure: layered detail that skips cleanly
 
-A governed document carries detail in three layers: plain main text, bounded technical blocks, and appendix formalism. The main text serves the assumed reader end to end. Bounded blocks hold exact detail a reader may want in place. Appendices hold full formalism. The load-bearing property is skip-coherence: the main text, with every bounded block removed, still reads as a complete, correct document.
+A governed document carries detail in three layers: plain main text, bounded technical blocks, and appendix formalism. The main text serves the assumed reader end to end. Bounded blocks hold exact detail a reader may want in place. Appendices hold full formalism. Each deeper layer adds resolution. A deeper layer does not restate a shallower layer without a recall or verification purpose (§6.5). The load-bearing property is skip-coherence: the main text, with every bounded block removed, still reads as a complete, correct document.
 
 A bounded block uses a quotation. Its first line has one bold bracketed label: `[Detail — <topic>]`, `[Intuition — <topic>]` (§6.3), or `[Speculation — <topic>]` (§7.3). The block ends with the quotation. In print formats, the same three labels head a framed box.
 
@@ -454,7 +456,7 @@ The ladder makes rigor possible. Budgets make the ladder manageable. A document 
 For Rule 4.8.1, a page is a consecutive, non-overlapping 500-word window. Any remainder forms the document's final page.
 
 #### Rule 4.8.1 — At most three term admissions per page
-**Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Class:** mandatory · **Machine-checkable:** yes · **Source:** Cowan 2001; Sweller 1988; original
 **Constructs:** domain-term
 **Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: review
 **Resources:** reads: chunk-text, term-ledger · writes: chunk-text
@@ -673,3 +675,90 @@ Section 4.11 governs the work-item hierarchy. Its rules apply to `epic`, `task`,
 - Rules scoped to one profile are in that profile's `rules.md`.
 
 Annex C indexes every §4.11 rule with its profile applicability and its file.
+
+## 4.12 The scan path carries a correct shallow model
+
+The scan path is the governed unit's cheapest correct reading. It gives access and orientation, not full comprehension. A reader descends into main text, bounded blocks, and appendices for more resolution.
+
+Rule 4.12.1 defines the path for a Markdown document. A hosted comment set has no title or headings, so Rule 4.13.9 defines its path instead: the change-set ID, then each host anchor and its complete governed comment. Rules 4.12.2–4.12.4 govern either path unchanged.
+
+A **main-text section** is a headed section outside a bounded block or appendix. An appendix begins at a top-level heading identified as an appendix. The **opening chunk** is the first §4.1 chunk under a heading and before any child heading.
+
+A **material boundary** is a §7.1 boundary whose omission would widen or strengthen the scan path's main point. A **truth-preserving qualification** is an applicable status, strength, condition, or material boundary needed to keep a scan assertion true.
+
+The heading and opening sentence have different jobs. The heading identifies the topic. The opening sentence states the point about that topic. Required Annex E headings remain landmarks under §4.5.1, so their opening sentences carry the point.
+
+#### Rule 4.12.1 — Use the defined scan path
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** Duggan and Payne 2009, 2011; Hyönä and Lorch 2004; original
+**Constructs:** any
+**Navigation:** target: document · chunks: any · slots: any · layers: plain · context: document · rewrite: candidate
+**Resources:** reads: heading, chunk-text · writes: heading, chunk-text
+**Relations:** requires 4.2.2; requires 4.2.3; pairs-with 4.5.1
+
+> The scan path **shall** contain the document title. In document order, it **shall** then contain each main-text heading and the first sentence of that section's opening chunk. The path **shall** exclude bounded blocks and appendix content.
+
+**Rationale:** Skimming readers allocate attention to titles, headings, and paragraph openings. A closed path turns that observed behavior into one repeatable review surface (P4). Code can extract the surface and report a missing opening chunk. A reader still judges its meaning.
+
+**Compliant:** A design RFC scan path contains its title, each main-text heading, and each opening sentence. It omits a Detail block and Appendix A.
+**Non-compliant:** A Risks heading has no opening chunk before its first subsection. The scan path therefore supplies a topic with no point.
+
+**Cross-references:** Rules 4.2.2, 4.2.3, 4.5.1, 4.6.3
+
+#### Rule 4.12.2 — Scan path preserves the shallow model
+**Class:** mandatory · **Machine-checkable:** no · **Source:** Kintsch and van Dijk 1978; Pirolli and Card 1999; original
+**Constructs:** any
+**Navigation:** target: document · chunks: any · slots: any · layers: plain · context: document · rewrite: review
+**Resources:** reads: heading, chunk-text, exact-item-ledger · writes: heading, chunk-text
+**Relations:** requires 4.12.1; requires 4.4.3; pairs-with 7.4.1
+
+> The scan path **shall** let the assumed reader produce the selected profile's scan-test outcome. That outcome **shall** preserve each applicable status, strength, and material boundary. The document title **shall not** frame a wider or stronger outcome.
+
+**Rationale:** Text processing distinguishes global gist from local detail. Titles and headings also guide whether a reader descends. A plausible but wider scan model can prevent the reader from reaching its later correction. The scan path therefore carries a correct shallow model, not a promotional summary (P3, P4, P6).
+
+**Compliant:** "Proposed single-region recovery design" frames a proposal. Its Summary says approval is pending and recovery covers one regional failure.
+**Non-compliant:** "Region-proof recovery design" frames an approved general solution. The body later limits an unapproved proposal to one failed region.
+
+**Cross-references:** Rules 4.4.3, 5.6.1, 7.1.2, 7.4.1; §8.1
+
+**Phrase list 4.12.3 — scan-qualification candidates (pattern):** "\b(?:not|no|never|without)\b" (candidate only; a canonical negative fact may be valid); "[,;]\s*(?:although|though|however|but)\b"; "\b(?:may|might|could)\b[^.!?]{0,80}\b(?:unverified|unknown|untested)\b".
+
+#### Rule 4.12.3 — Scan assertions carry their qualifications
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** Gilbert, Tafarodi, and Malone 1993; Kaup, Yaxley, Madden, Zwaan, and Lüdtke 2007; Glenberg, Wilkinson, and Epstein 1982; original
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, exact-item-ledger, claim-ledger · writes: chunk-text
+**Relations:** requires 4.12.2; requires 3.1.4; requires 7.2.1
+
+> A material assertion on the scan path **shall** carry every truth-preserving qualification in its own sentence. The sentence **shall** use affirmative content words when a bare negation or trailing hedge could leave a stronger reading.
+
+**Rationale:** Negated or delayed qualifications are vulnerable under reduced attention. Research on initial belief, negated simulations, and self-assessed comprehension supports treating these forms as review candidates. Same-sentence placement also keeps the qualification inside the Rule 4.12.1 path. When the sentence cap collides, Rule 3.1.4 preserves precision (P3, P4).
+
+**Compliant:** "Proposal D-4 awaits approval and covers one failed region."
+**Non-compliant:** "D-4 handles regional failures. It is not yet approved and may not cover every region." The scan path keeps only the stronger first sentence.
+
+**Cross-references:** Rules 3.1.4, 5.6.1, 7.2.1, 4.12.2
+
+#### Rule 4.12.4 — Scan elements stand alone
+**Class:** mandatory · **Machine-checkable:** no · **Source:** Schotter, Tran, and Rayner 2014; Google Developer Style Guide; original
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, cross-reference-ledger · writes: chunk-text
+**Relations:** requires 4.12.1; pairs-with 4.7.1; pairs-with 4.7.2
+
+> Each scan-path element **shall** state its subject without depending on adjacent body prose or reading order. A dependency **shall** use a local noun or an explicit numbered reference.
+
+**Rationale:** Readers use regressions when comprehension fails. A scan element may also be reached directly. A bare deictic then makes the reader reconstruct context from prose outside the scan path. Local nouns and numbered references preserve non-linear access without repeating the whole argument (P2, P4).
+
+**Compliant:** "The replica tests confirm single-region recovery."
+**Non-compliant:** "This confirms the earlier result." The subject and result exist only outside the scan path.
+
+**Cross-references:** Rules 3.6.1, 4.7.1–4.7.3
+
+## 4.13 Maintenance comments carry durable knowledge
+
+Section 4.13 governs the hosted comment set of the `maintenance-comment` profile. Its rules apply to that profile only. Section 1.5 places them in the overlay directory:
+
+- Every §4.13 rule is in `spec/overlays/maintenance-comment/rules.md`.
+- The machine-proposal gate rules of §8.7 are in the same file.
+
+Annex C indexes every §4.13 rule with its profile applicability and its file. Section 0.6 defines the comment change set, host anchor, information delta, cognitive debt, removal condition, and comment proposal record that these rules use.

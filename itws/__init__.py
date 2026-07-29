@@ -20,4 +20,4 @@ __all__ = ["SCHEMA_VERSION"]
 
 #: Version of the generated-artifact schema under ``spec/generated/agent/``.
 #: The schema version advances independently of the ITWS version.
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"

@@ -50,6 +50,7 @@ from itws.vocab import (
     RULE_CLASSES,
     TIERS,
     profile_families,
+    profile_surface,
     rule_sort_key,
 )
 
@@ -139,6 +140,10 @@ OVERLAY_TIER_RE = re.compile(
     re.MULTILINE,
 )
 JOB_RE = re.compile(r"^\*\*Job:\*\* (?P<job>.+)$")
+SCAN_OUTCOME_RE = re.compile(
+    r"^A scan test at every tier measures this shallow outcome \(§4\.12, §8\.1\): "
+    r"(?P<outcome>.+)$"
+)
 READER_OUTCOME_RE = re.compile(
     r"^A publication-tier document measures this primary outcome \(§8\.3\): "
     r"(?P<outcome>.+)$"
@@ -707,7 +712,7 @@ def parse_phrase_lists(spec_dir: Path) -> list[PhraseListEntry]:
 
 
 def parse_profiles(spec_dir: Path) -> list[ProfileRecord]:
-    """Read each profile's job, tier, reader outcome, focus, and modules."""
+    """Read each profile's job, tier, scan outcome, focus, and modules."""
     overlays = spec_dir / OVERLAY_DIRNAME
     records: list[ProfileRecord] = []
     for profile in PROFILE_IDS:
@@ -728,17 +733,21 @@ def parse_profiles(spec_dir: Path) -> list[ProfileRecord]:
             )
 
         job = ""
+        scan_outcome = ""
         reader_outcome = ""
         owner_focus = ""
         for line in lines:
             if not job and JOB_RE.match(line):
                 job = JOB_RE.match(line).group("job")
+            if not scan_outcome and SCAN_OUTCOME_RE.match(line):
+                scan_outcome = SCAN_OUTCOME_RE.match(line).group("outcome")
             if not reader_outcome and READER_OUTCOME_RE.match(line):
                 reader_outcome = READER_OUTCOME_RE.match(line).group("outcome")
             if not owner_focus and OWNER_FOCUS_RE.match(line):
                 owner_focus = OWNER_FOCUS_RE.match(line).group("focus")
         for field_name, value in (
             ("Job", job),
+            ("scan-test outcome", scan_outcome),
             ("reader-test outcome", reader_outcome),
             ("owner review focus", owner_focus),
         ):
@@ -767,7 +776,9 @@ def parse_profiles(spec_dir: Path) -> list[ProfileRecord]:
                 id=profile,
                 label=PROFILE_LABELS[profile],
                 minimum_tier=MINIMUM_TIER[profile],
+                surface=profile_surface(profile),
                 job=job,
+                scan_outcome=scan_outcome,
                 reader_outcome=reader_outcome,
                 owner_focus=owner_focus,
                 modules=modules,
@@ -942,6 +953,7 @@ def parse_skeletons(spec_dir: Path) -> list[Skeleton]:
             Skeleton(
                 profile=profile,
                 annex_section=title.group("section"),
+                surface=profile_surface(profile),
                 dependency_order=dependency_order,
                 slots=tuple(slots),
                 merges=tuple(merges),

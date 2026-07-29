@@ -1,6 +1,6 @@
 # Profile overlays
 
-**ITWS version:** 0.6.0-draft
+**ITWS version:** 0.8.0-draft
 
 This directory holds one subdirectory for each canonical profile in §0.2. A subdirectory holds only that profile's overlay material.
 
@@ -23,8 +23,11 @@ Section 1.5 defines this layout, the rule-placement policy, and the load set.
 | `epic` | [epic/](epic/) | `reviewed` | [shared/work-item.md](shared/work-item.md) |
 | `task` | [task/](task/) | `core` | [shared/work-item.md](shared/work-item.md) |
 | `subtask` | [subtask/](subtask/) | `core` | [shared/work-item.md](shared/work-item.md) |
+| `maintenance-comment` | [maintenance-comment/](maintenance-comment/) | `core` | none |
 
 Section 0.4.3 remains authoritative for minimum tiers. The tier column above repeats that registry for one-directory loading.
+
+Every profile above governs the `markdown-document` surface except `maintenance-comment`, which governs a `hosted-comment-set`: a comment change set declared by a JSON carrier beside its host source file (§0.2.1). Its skeleton binds carrier fields instead of headings (§E.0.4).
 
 ## Directory contents
 

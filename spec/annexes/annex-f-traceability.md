@@ -1,6 +1,6 @@
 # Annex F — Mapping to source frameworks
 
-**Status:** v0.6.0-draft. This annex is maintained at shared-core and profile granularity.
+**Status:** v0.8.0-draft. This annex is maintained at shared-core and profile granularity.
 
 Annex C exposes generated `Source`, `Profiles`, and `File` metadata for every rule. A disagreement between that metadata and this annex is a traceability defect.
 
@@ -12,11 +12,11 @@ A profile-specific source shall not be the sole basis for a shared-core requirem
 
 ## F.1 General technical-writing anchors
 
-These anchors apply across the shared core and all eleven profiles:
+These anchors apply across the shared core and all twelve profiles:
 
 - **ASD-STE100:** controlled-language architecture, rule anatomy, sentence rules, dictionary format, and checker practice.
 - **PlainLanguage.gov, Google Developer Style Guide, and Microsoft Writing Style Guide:** audience-oriented wording, main-point-first organization, headings, naming, and usage guidance.
-- **Diátaxis:** one-job-per-document discipline and separation of explanation, instruction, and other document modes. ITWS adapts Diátaxis but does not claim that Diátaxis defines all eleven profiles.
+- **Diátaxis:** one-job-per-document discipline and separation of explanation, instruction, and other document modes. ITWS adapts Diátaxis but does not claim that Diátaxis defines all twelve profiles.
 - **ISO 26514 (ISO/IEC/IEEE 26514):** audience analysis, information structure, content quality, review, verification, and documentation lifecycle.
 - **IEC 82079-1:** usable information for use, task-oriented instruction, warning/caveat placement, and evaluation.
 - **ISO/IEC Directives Part 2, ISO 704, and ISO 10241:** requirements language, definitions, notes, and terminology records.
@@ -39,6 +39,27 @@ However, these sources do not independently impose conformance outside `research
 
 A similar shared-core or other-profile rule must cite a general anchor or be marked original.
 
+## F.2.1 Attention, memory, and scan-test evidence
+
+The 0.7.0 scan contract uses the following peer-reviewed evidence:
+
+- Duggan and Payne, "Text skimming: The process and effectiveness of foraging through text under time pressure," *Journal of Experimental Psychology: Applied* 15(3), 2009, 228–242, DOI 10.1037/a0016995.
+- Duggan and Payne, "Skim reading by satisficing," *CHI 2011*, DOI 10.1145/1978942.1979114.
+- Hyönä and Lorch, "Effects of topic headings on text processing," *Learning and Instruction* 14(2), 2004, 131–152, DOI 10.1016/j.learninstruc.2004.01.001.
+- Kintsch and van Dijk, "Toward a model of text comprehension and production," *Psychological Review* 85(5), 1978, 363–394, DOI 10.1037/0033-295X.85.5.363.
+- Pirolli and Card, "Information foraging," *Psychological Review* 106(4), 1999, 643–675, DOI 10.1037/0033-295X.106.4.643.
+- Glenberg, Wilkinson, and Epstein, "The illusion of knowing," *Memory & Cognition* 10, 1982, 597–602, DOI 10.3758/BF03202442.
+- Thiede, Anderson, and Therriault, "Accuracy of metacognitive monitoring affects learning of texts," *Journal of Educational Psychology* 95(1), 2003, 66–73, DOI 10.1037/0022-0663.95.1.66.
+- Gilbert, Tafarodi, and Malone, "You can't not believe everything you read," *Journal of Personality and Social Psychology* 65(2), 1993, 221–233, DOI 10.1037/0022-3514.65.2.221.
+- Kaup, Yaxley, Madden, Zwaan, and Lüdtke, "Experiential simulations of negated text information," *Quarterly Journal of Experimental Psychology* 60(7), 2007, 976–990, DOI 10.1080/17470210600823512.
+- Schotter, Tran, and Rayner, "Don't believe what you read (only once)," *Psychological Science* 25(6), 2014, 1218–1226, DOI 10.1177/0956797614531148.
+- Cowan, "The magical number 4 in short-term memory," *Behavioral and Brain Sciences* 24(1), 2001, 87–114, DOI 10.1017/S0140525X01003922.
+- Sweller, "Cognitive load during problem solving," *Cognitive Science* 12(2), 1988, 257–285, DOI 10.1016/0364-0213(88)90023-0.
+
+Duggan and Payne support attention allocation, not a promise of complete comprehension. Hyönä and Lorch support heading signals, not a universal heading template. Kintsch and van Dijk support a distinction between gist and detail. Glenberg and Thiede support generated checks over confidence ratings. The Thiede procedure delayed keyword generation until participants had read all six texts and set no elapsed-time threshold.
+
+Gilbert and Kaup support review of negated or late qualifications under constrained processing. Schotter supports preserving rereading and non-linear access. Cowan and Sweller support budgeting working-memory demand under Rule 4.8.1. ITWS derives no numeric document-length target or full-comprehension promise from these sources.
+
 ## F.3 Traceability matrix (section granularity)
 
 | ITWS area | Applicability | Source framework(s) | Nature of reuse |
@@ -46,9 +67,10 @@ A similar shared-core or other-profile rule must cite a general anchor or be mar
 | §0.1 Foreword | shared core | ASD-STE100 foreword structure | structural mirror |
 | §0.2, 0.5, 0.6, 0.7 | shared core | ISO/IEC Directives Part 2; ISO 26514 | section and audience framework adapted |
 | §0.3 Assumed reader | shared core | ISO 26514; PlainLanguage.gov; Google audience guidance | audience framework adapted; cross-functional software-pod baseline **original** |
+| §0.2.1, §0.3.4 Governed surfaces and host supplement | shared core + `maintenance-comment` | original | **original**; the hosted comment set, declaration carrier, and conditional host-language supplement |
 | §0.4 Conformance | shared core | RFC 2119 / RFC 8174 | keywords adopted; profile applicability and cumulative tier architecture **original** |
 | §0.8 Versioning | shared core | SemVer 2.0.0; STE issue practice | semantics adopted; conformity mapping original |
-| §1.1 Principles | shared core | PlainLanguage.gov; ASD-STE100; ISO 26514 | adapted |
+| §1.1 Principles | shared core | PlainLanguage.gov; ASD-STE100; ISO 26514; Cowan; Sweller | effort optimization adapted; profile-relative completeness **original** |
 | §1.2 Two-layer model | shared core | — | **original** core doctrine |
 | §1.3 Rule anatomy | shared core | ASD-STE100 rule format | copied with applicability and metadata fields added |
 | §1.4 Precedence | shared core | ISO/IEC Directives Part 2 | mechanism borrowed |
@@ -66,14 +88,16 @@ A similar shared-core or other-profile rule must cite a general anchor or be mar
 | §3.10 Formulaic constructions | shared core | Wikipedia "Signs of AI writing" | catalog converted to rules |
 | §4.1 Chunk model | shared core | Information Mapping; DITA topic typing; ISO 26514 | mapped to an original purpose taxonomy |
 | §4.2 Main point first | shared core | PlainLanguage.gov; BLUF; Minto pyramid | adopted |
-| §4.3 Profile discipline | shared core + all profiles | Diátaxis; ISO 26514 | mode discipline forked; eleven-profile registry original |
+| §4.3 Profile discipline | shared core + all profiles | Diátaxis; ISO 26514 | mode discipline forked; twelve-profile registry original |
 | §4.4 Structure and skeleton application | shared core + all profiles | Diátaxis; ISO 26514; IEC 82079-1 | general structure adapted; exact profile slots traced below |
 | §4.5 Headings | shared core | PlainLanguage.gov; Google; ISO 26514 | adopted |
 | §4.6 Progressive disclosure | shared core | NN/g progressive disclosure; DITA filtering | pattern adopted; skip-coherence test original |
-| §4.7–4.8 Navigation and density budgets | shared core | ISO 26514 (navigation) | navigation adapted; budget values original |
+| §4.7–4.8 Navigation and density budgets | shared core | ISO 26514; Cowan; Sweller | navigation adapted; working-memory rationale supported; budget values original |
 | §4.9 Path-agnostic prose | shared core | Google timeless-documentation guidance | extended from time- to path-relativity; **original** |
 | §4.10 Formatting | shared core | Wikipedia "Signs of AI writing"; ISO 26514 | catalog converted to rules |
 | §4.11 Work-item hierarchy | `epic`, `task`, `subtask` | Diátaxis; ISO 26514; IEC 82079-1; original | one-job and verification principles adapted; hierarchy, classification, path ownership, and hint boundary **original** |
+| §4.12 Scan path | shared core + all profiles | Duggan and Payne; Hyönä and Lorch; Kintsch and van Dijk; Gilbert et al.; Kaup et al.; Schotter et al.; original | attention and retrieval evidence adapted; exact path, truth-preservation contract, and profile outcome binding **original** |
+| §4.13 Maintenance comments | `maintenance-comment` | Ousterhout 2018; Google style guides (code comments); Information Mapping; Duggan and Payne; original | information-delta and marker-format guidance adapted; anchoring, basis, lifecycle, conflict-report, and comment-set scan-path rules **original** |
 | §5.1 Exactness principle | shared core | original | **original** core doctrine |
 | §5.2 Notation | shared core | original; ASD-STE100 | term ladder applied to symbols; symbol reuse adapted |
 | §5.3 Equations in prose | shared core | original | **original** |
@@ -97,12 +121,13 @@ A similar shared-core or other-profile rule must cite a general anchor or be mar
 | §7.3 Research results/discussion | `research-paper` | IMRaD; APA JARS | research overlay formalized |
 | §7.4 Generalization claims | shared core | ISO 26514 | scope discipline generalized |
 | §7.4 Research additions | `research-paper` | NeurIPS checklist; APA JARS; CONSORT | research applicability disclosures adapted |
-| §8.1 Checklist | shared core + profile overlays | STE checker workflows; original | generation approach adopted; pass assignment and regeneration triggers original |
+| §8.1 Checklist and scan test | shared core + profile overlays | STE checker workflows; Glenberg et al.; Thiede et al.; Duggan and Payne; original | generation and delayed-recall evidence adapted; exact-layer key, strengthened foils, pass assignment, and invalidation contract **original** |
 | §8.2 Automated checks | shared core + profile overlays | STE checker practice; Google and Microsoft word-list adjudications; original | checker workflow adopted; word and phrase adjudications restated as generated phrase lists; the repository-local engine, severity map, and version-pin checks **original** |
 | §8.3 Reader testing | shared core + profile overlays | PlainLanguage.gov; ISO 26514; teach-back method | adapted; pass/fail criteria original |
 | §8.4 Reviewer roles | shared core | ISO 26514; IEC 82079-1; original | two-pass review adapted; finding-citation rule original |
 | §8.5 Waivers | shared core | IEC 82079-1; engineering standards-deviation practice | pattern copied |
 | §8.6 Generated artifacts and validation states | shared core + all profiles | reproducible-build practice; requirements-traceability practice; original | content-hash pinning adapted; the four validation states, the agent-record obligation, and the collision report are **original** |
+| §8.7 Machine-proposed comments | `maintenance-comment` | original | **original**; reuses the §8.5 recorded-deviation and §8.6 hash-pinning patterns |
 | Annex A | shared core + tagged profile entries | ASD-STE100 dictionary; ISO 704/10241 | format forked; ladder/profile fields original |
 | Annex B | shared core + convention-only overlays | ISO 26514; Diátaxis | base and overlay boundary **original**; audience-analysis framework adapted |
 | Annex C | shared core + profile applicability | ASD-STE100 rule summary | build artifact |
@@ -126,6 +151,7 @@ A similar shared-core or other-profile rule must cite a general anchor or be mar
 | `epic` | Diátaxis; ISO 26514; general product-requirements convention | one strategic job and requirements structure adapted; exact slots and invariant inheritance original |
 | `task` | ISO 26514; IEC 82079-1; general work-item convention | task orientation and verification adapted; classification, journey, path, and integrated-acceptance structure original |
 | `subtask` | ISO 26514; general work-breakdown convention | traceable contribution adapted; one-parent and one-condition structure original |
+| `maintenance-comment` | Google style guides (TODO format); Ousterhout 2018; original | comment-format guidance adapted; the carrier-field skeleton, anchor and provenance records, and conformance-evidence slot **original** |
 
 ## F.4 Reading the matrix
 
@@ -137,6 +163,7 @@ Sections marked **original** define ITWS's custom surface:
 - term ladder and governance;
 - profile registry and exact slot assembly;
 - path-agnostic prose;
+- the exact scan path, profile binding, and strengthened-foil contract;
 - the overlay layout, placement policy, and load set;
 - work-item hierarchy and path ownership;
 - exactness principle;

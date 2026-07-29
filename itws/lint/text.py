@@ -10,23 +10,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from itws.document import SourceUnit, StructuralManifest
-
-SENTENCE_END_RE = re.compile(r"(?<=[.!?])[\"')\]]*\s+")
-ABBREVIATIONS = {
-    "e.g.",
-    "i.e.",
-    "etc.",
-    "cf.",
-    "vs.",
-    "approx.",
-    "Fig.",
-    "No.",
-    "St.",
-    "Dr.",
-    "Mr.",
-    "Ms.",
-}
+from itws.document import SourceUnit, StructuralManifest, split_sentence_text
 INLINE_MATH_RE = re.compile(r"\$(?P<body>[^$\n]+)\$|`(?P<code>[^`\n]+)`")
 MATH_OPERATOR_RE = re.compile(r"[+\-*/=<>≤≥±×÷^]")
 WORD_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9'’\-]*")
@@ -169,7 +153,7 @@ def split_sentences(unit: SourceUnit) -> list[Sentence]:
         line = raw_line.strip()
         if not line:
             continue
-        pieces = _split_line(line)
+        pieces = split_sentence_text(line)
         offset = 0
         for piece in pieces:
             if piece.strip():
@@ -183,21 +167,6 @@ def split_sentences(unit: SourceUnit) -> list[Sentence]:
                 )
             offset += len(piece)
     return sentences
-
-
-def _split_line(line: str) -> list[str]:
-    pieces: list[str] = []
-    start = 0
-    for match in SENTENCE_END_RE.finditer(line):
-        candidate = line[start : match.start()]
-        tail = candidate.split()[-1] if candidate.split() else ""
-        if tail in ABBREVIATIONS:
-            continue
-        pieces.append(line[start : match.end()])
-        start = match.end()
-    pieces.append(line[start:])
-    return pieces
-
 
 def prose_units(manifest: StructuralManifest) -> list[SourceUnit]:
     """Every unit whose text is governed prose.

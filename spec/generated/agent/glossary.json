@@ -1,6 +1,6 @@
 {
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0",
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0",
   "entries": [
     {
       "term": "parameter",

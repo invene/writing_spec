@@ -1,6 +1,6 @@
 # ITWS agent entry point
 
-**ITWS version:** 0.6.0-draft
+**ITWS version:** 0.8.0-draft
 
 You are reading this because you were asked to rewrite a document so it conforms to the Invene Technical Writing Specification (ITWS). This file is the entry point. Read it once, then follow the sequence in §A.3.
 
@@ -27,7 +27,7 @@ Confirm three things.
 
 **The catalog is current.** Run `python3 tools/itws_compile.py --check`. A clean result means the committed catalog matches the Markdown. A stale result means you should regenerate before trusting a lookup.
 
-**The profile.** Every governed document declares exactly one profile from the eleven in §0.2. If the document already declares one, use it. If it does not, choose from the registry in `spec/overlays/README.md` and say which one you chose and why. If two profiles fit the request equally, ask the person who gave you the document; a wrong profile produces a document with the wrong acceptance conditions.
+**The profile.** Every governed document declares exactly one profile from the twelve in §0.2. If the document already declares one, use it. If it does not, choose from the registry in `spec/overlays/README.md` and say which one you chose and why. If two profiles fit the request equally, ask the person who gave you the document; a wrong profile produces a document with the wrong acceptance conditions.
 
 ## A.3 The sequence
 
@@ -43,9 +43,12 @@ The envelope is every active rule the profile admits. It is the widest correct r
 
 ```text
 python3 tools/itws_document.py index --input <document>.md --out structure.json
+python3 tools/itws_document.py scan-path --input <document>.md --json
 ```
 
 The manifest reports headings, paragraphs, lists, tables, code fences, quotations, links, and source spans. It links a heading to a skeleton slot only when the heading matches a canonical name, a permitted rename, or an authored section map (§E.0.2). Every other heading is yours to classify.
+
+The scan-path command extracts the Rule 4.12.1 surface. It reports a missing opening chunk but never decides whether the path preserves the profile's shallow model. Compare the extracted path with the profile's `scan_test_outcome` and the exact items you identify in Step 3. Record missing information or widening as a judgment. This comparison does not replace a required human scan test.
 
 ### Step 3 — Read the document and classify it yourself
 
@@ -114,6 +117,27 @@ Validation reports one of four states (§8.6.2):
 
 A clean lint run is not conformance. Rule 8.2.4 says so, and the four states exist so a tool can say so too. Report the state you got, not the state you wanted.
 
+## A.3.1 The comment-change-set sequence
+
+The sequence above governs a Markdown document. A `maintenance-comment` unit is a hosted comment set (§0.2.1): the governed comments changed between a base and a proposed version of one host source file, declared by a JSON carrier. One tool covers the mechanical steps:
+
+```text
+python3 tools/itws_retrieve.py get-profile maintenance-comment --json
+python3 tools/itws_comment.py index --carrier <set>.json
+python3 tools/itws_comment.py scan-path --carrier <set>.json
+python3 tools/itws_comment.py lint --carrier <set>.json
+python3 tools/itws_comment.py stale --carrier <set>.json
+python3 tools/itws_comment.py validate --carrier <set>.json
+```
+
+What changes, and what does not:
+
+- **The carrier is the declaration surface.** It holds the §0.4.3 declarations, the change-set ID, the host adapter, the base and proposed hashes, and one record per governed comment (Annex E §E.12). The host file carries no ITWS boilerplate.
+- **The governed set is explicit.** Changed `TODO` and `FIXME` markers are always governed. A natural-language comment is governed only when the carrier records it. Never mark a comment `ai-proposed` or `human-authored` from its style; provenance is declared or it is missing.
+- **Your judgments are the same judgments.** Information delta (Rule 4.13.1), inferred intent (Rule 4.13.5), basis durability (Rule 4.13.4), and a code-comment conflict (Rule 4.13.6) are semantic readings. Record each with its comment ID and rule, exactly as Rule 8.6.4 requires. A conflict is reported, never silently reconciled.
+- **Machine-proposed comments carry a gate.** If you drafted a comment, its record needs a §8.7 proposal record: prompt provenance, durable bases beyond the prompt, pinned hashes, and a human disposition. Validation stays short of `pass` until a person records `accepted` or `revised`, and a stale pinned hash voids the disposition (Rules 8.7.1–8.7.4).
+- **The scan path changes shape.** It is the change-set ID, then each anchor and complete governed comment (Rule 4.13.9). Rules 4.12.2–4.12.4 still govern what it must preserve.
+
 ## A.4 Working from Python instead
 
 Every command above is a thin wrapper. The library is often easier:
@@ -145,11 +169,12 @@ Write your own scripts freely. The supplied records are scaffolds, not a protoco
 - Preserve every exact item, or stop and report why you cannot.
 - Report a missing fact as missing. Do not generate one.
 - Report the validation state you reached, including `needs_review` and `blocked`.
+- Treat a scan-to-body comparison as agent analysis, not human scan-test evidence.
 - Never edit `spec/` while rewriting somebody else's document. See `AGENTS.md` for the maintainer session that may.
 
 ## A.6 Pilot status
 
-The 0.6.0-draft release verified the machine path end to end. `python3 tools/itws_check_all.py` parses the specification, regenerates every artifact, runs the unit tests, and validates eleven conforming profile fixtures to `pass` plus three risk fixtures to their expected non-passing states.
+The 0.8.0-draft release verified the machine path end to end. `python3 tools/itws_check_all.py` parses the specification, regenerates every artifact, runs the unit tests, and validates twelve conforming profile fixtures to `pass` plus seven risk fixtures to their expected non-passing states.
 
 The release did not verify the cold start: whether a fresh session that receives only a repository URL, a raw document, and one sentence of instruction reaches this sequence without further help. Four pilots remain open, and Annex G records them as pending:
 

@@ -8,11 +8,11 @@ Everything runs from a clone with the Python standard library. There is nothing 
 
 ## Invene Technical Writing Specification (ITWS)
 
-`spec/` contains **ITWS 0.6.0-draft**. ITWS is a controlled-language specification for technical writing.
+`spec/` contains **ITWS 0.8.0-draft**. ITWS is a controlled-language specification for technical writing.
 
-The specification combines a shared core with eleven profiles. The profiles cover sustained technical documents and governed work items.
+The specification combines a shared core with twelve profiles. The profiles cover sustained technical documents, governed work items, and governed code-comment changes.
 
-The work-item profiles are `epic`, `task`, and `subtask`.
+The work-item profiles are `epic`, `task`, and `subtask`. The `maintenance-comment` profile governs a comment change set inside a host source file through a JSON declaration carrier; the source code itself stays outside conformance (§0.2.1).
 
 Each profile keeps its overlay in its own directory under [spec/overlays/](spec/overlays/). A reader, writer, or tool loads the shared core, the shared annexes, one profile directory, and the shared modules that directory lists. No other overlay is needed.
 
@@ -28,7 +28,7 @@ See [spec/README.md](spec/README.md) for the profile registry, conformance tiers
 
    ```text
    python3 tools/itws_checklist.py \
-     --spec-version 0.6.0-draft \
+     --spec-version 0.8.0-draft \
      --profile design-rfc \
      --tier reviewed \
      --out design-rfc-checklist.md
@@ -48,6 +48,8 @@ See [spec/README.md](spec/README.md) for the profile registry, conformance tiers
 
 A clean linter run is not conformance. Rule 8.2.4 says so, and the validator reports `needs_review` rather than `pass` until a reader has done their part.
 
+For a comment change set, the same path runs through one tool: `python3 tools/itws_comment.py index | scan-path | lint | validate --carrier <set>.json`. The carrier declares the change set, one record per governed comment, and — for machine-proposed comments — the §8.7 proposal record and human disposition.
+
 ## The application path for a tool author
 
 The Markdown under `spec/` is authoritative. Everything else derives from it.
@@ -58,6 +60,7 @@ The Markdown under `spec/` is authoritative. Everything else derives from it.
 | Compiler | `itws/compile.py` | writes the deterministic catalog under `spec/generated/agent/` |
 | Catalog | `itws/catalog.py` | rule lookup, search, facets, relation traversal, context packets |
 | Structure | `itws/document.py` | syntactic indexing of a governed document |
+| Comments | `itws/comments/` | the hosted comment-set surface: carrier records, host adapters, extraction |
 | Scaffolds | `itws/analysis.py`, `itws/work.py`, `itws/patch.py` | optional records for agent-authored analysis, plans, and patch guards |
 | Checks | `itws/lint/`, `itws/validate.py` | the repository-local linter and four-state validation |
 

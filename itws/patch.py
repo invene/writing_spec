@@ -255,6 +255,43 @@ def _ranges_overlap(left: ChangedRange, right: ChangedRange) -> bool:
     )
 
 
+def detect_comment_collisions(
+    proposals: Sequence[tuple[str, object]]
+) -> list[Collision]:
+    """Report comment change sets that write one host anchor (Rule 8.6.5).
+
+    ``proposals`` pairs a name with a :class:`itws.comments.CommentSetManifest`.
+    Two change sets that record a comment on one construct span of one host
+    file cannot be combined without a decision, exactly as two document
+    rewrites of one source span cannot.
+    """
+    collisions: list[Collision] = []
+    ordered = sorted(proposals, key=lambda item: item[0])
+    for index, (left_name, left) in enumerate(ordered):
+        for right_name, right in ordered[index + 1 :]:
+            left_anchors = {
+                (record.anchor.path, record.anchor.start_line, record.anchor.end_line)
+                for record in left.records
+            }
+            right_anchors = {
+                (record.anchor.path, record.anchor.start_line, record.anchor.end_line)
+                for record in right.records
+            }
+            for path, start, end in sorted(left_anchors & right_anchors):
+                collisions.append(
+                    Collision(
+                        left=left_name,
+                        right=right_name,
+                        kind="host-anchor",
+                        detail=(
+                            f"both change sets write a comment anchored to "
+                            f"{path}:{start}-{end}"
+                        ),
+                    )
+                )
+    return collisions
+
+
 @dataclass
 class AuditRecord:
     """An optional record of one applied or rejected rewrite."""

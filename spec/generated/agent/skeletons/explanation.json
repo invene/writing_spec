@@ -1,6 +1,7 @@
 {
   "profile": "explanation",
   "annex_section": "E.4",
+  "surface": "markdown-document",
   "dependency_order": "An `explanation` builds from the assumed-reader baseline before introducing the mechanism it explains (§4.4).",
   "slots": [
     {
@@ -77,6 +78,6 @@
     "start_line": 1,
     "end_line": 30
   },
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0"
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0"
 }

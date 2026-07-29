@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from typing import Iterable
 
+from itws.document import scan_path
 from itws.lint.model import Finding, LintContext
 from itws.lint.registry import register
 from itws.lint.text import (
@@ -28,6 +29,17 @@ MERMAID_INFO = {"mermaid"}
 
 def _headings(context: LintContext):
     return [unit for unit in context.manifest.units if unit.node_type == "heading"]
+
+
+def _hosted_surface(context: LintContext) -> bool:
+    """Whether the declared profile governs a hosted comment set.
+
+    A hosted surface has no headings and keeps its skeleton in the
+    declaration carrier, so the heading-driven checks below do not apply;
+    `itws.lint.checks_comments` covers the carrier instead (§0.2.1).
+    """
+    profile = context.spec.profile(context.profile)
+    return profile is not None and profile.surface == "hosted-comment-set"
 
 
 @register("4.3.1", name="profile-declaration")
@@ -54,6 +66,8 @@ def profile_declaration(context: LintContext) -> Iterable[Finding]:
 @register("4.3.3", name="required-slots")
 def required_slots(context: LintContext) -> Iterable[Finding]:
     """Every required Annex E slot is present, in the skeleton's order."""
+    if _hosted_surface(context):
+        return []
     skeleton = context.spec.skeleton(context.profile)
     if skeleton is None:
         return []
@@ -97,6 +111,8 @@ def required_slots(context: LintContext) -> Iterable[Finding]:
 @register("4.4.1", name="skeleton-order")
 def skeleton_order(context: LintContext) -> Iterable[Finding]:
     """Resolved slots appear in the order the skeleton fixes."""
+    if _hosted_surface(context):
+        return []
     skeleton = context.spec.skeleton(context.profile)
     if skeleton is None:
         return []
@@ -366,6 +382,79 @@ def heading_case(context: LintContext) -> Iterable[Finding]:
                     end_line=unit.span.end_line,
                     checker="heading-case",
                     excerpt=title,
+                )
+            )
+    return findings
+
+
+@register("4.12.1", name="scan-path-structure")
+def scan_path_structure(context: LintContext) -> Iterable[Finding]:
+    """Report syntax that prevents a complete Rule 4.12.1 extraction."""
+    if _hosted_surface(context):
+        # Rule 4.13.9 replaces the Rule 4.12.1 path on a hosted comment
+        # set; the comment-scan-path checker covers it.
+        return []
+    result = scan_path(context.manifest)
+    findings: list[Finding] = []
+    for problem in result.problems:
+        line_match = re.search(r"\bline (\d+)\b", problem)
+        line = int(line_match.group(1)) if line_match else 1
+        findings.append(
+            Finding(
+                rule="4.12.1",
+                severity=context.severity_for("4.12.1"),
+                kind="candidate",
+                message=problem,
+                path=context.manifest.path,
+                start_line=line,
+                end_line=line,
+                checker="scan-path-structure",
+            )
+        )
+    return findings
+
+
+@register("4.12.3", name="scan-qualification-candidate")
+def scan_qualification_candidate(context: LintContext) -> Iterable[Finding]:
+    """Flag scan sentences whose qualification may disappear while skimming."""
+    entries = [
+        entry
+        for entry in context.spec.phrase_lists
+        if entry.rule == "4.12.3"
+    ]
+    matchers = [
+        (
+            entry,
+            re.compile(
+                entry.pattern,
+                re.IGNORECASE if entry.ignore_case else 0,
+            ),
+        )
+        for entry in entries
+    ]
+    findings: list[Finding] = []
+    for segment in scan_path(context.manifest).segments:
+        if not segment.opening_sentence:
+            continue
+        for entry, matcher in matchers:
+            match = matcher.search(segment.opening_sentence)
+            if not match:
+                continue
+            findings.append(
+                Finding(
+                    rule="4.12.3",
+                    severity=context.severity_for("4.12.3"),
+                    kind="candidate",
+                    message=(
+                        f"{match.group(0)!r} may carry a scan-path qualification; "
+                        "confirm that affirmative content words preserve the "
+                        "assertion's status, strength, and boundary (§4.12.3)"
+                    ),
+                    path=context.manifest.path,
+                    start_line=segment.opening_line,
+                    end_line=segment.opening_line,
+                    checker=f"phrase-list:{entry.id}",
+                    excerpt=segment.opening_sentence,
                 )
             )
     return findings

@@ -84,6 +84,10 @@ class TestRuleParsing(unittest.TestCase):
                 self.assertTrue(rule.example.compliant, rule.number)
                 self.assertTrue(rule.example.non_compliant, rule.number)
 
+    def test_every_profile_has_a_scan_test_outcome(self) -> None:
+        for profile in self.spec.profiles:
+            self.assertTrue(profile.scan_outcome, profile.id)
+
     def test_precedence_layers_follow_section_one_four(self) -> None:
         for rule in self.spec.rules:
             if rule.part in {"5", "7"}:

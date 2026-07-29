@@ -2,8 +2,10 @@
 """Run every ITWS check in one command.
 
 The command runs the overlay-layout check, specification parsing, Annex C
-generation, artifact generation, the unit tests, the eleven-profile fixture
-suite, and the risk fixtures.
+generation, artifact generation, the unit tests, the twelve-profile fixture
+suite, and the risk fixtures. A conforming fixture is validated through the
+path its profile surface requires: `itws_validate` for a Markdown document,
+`itws_comment` for a hosted comment set.
 
 Each step prints the equivalent single command, so a failure can be isolated
 without rerunning the whole suite.
@@ -24,8 +26,8 @@ sys.path.insert(0, str(REPO_ROOT))
 from itws.checklist import annex_revision, render
 from itws.lint.model import Evidence
 from itws.parser import SpecError, parse_specification
-from itws.validate import validate_document
-from itws.vocab import PROFILE_IDS
+from itws.validate import validate_comment_set, validate_document
+from itws.vocab import PROFILE_IDS, PROFILE_SURFACES
 
 
 @dataclass
@@ -49,8 +51,39 @@ def run_command(name: str, args: list[str], cwd: Path) -> Step:
     )
 
 
+def _full_evidence(spec, revision: str, checklist: Path | None) -> Evidence:
+    return Evidence(
+        checklist_path=checklist,
+        checklist_annex_hash=revision,
+        self_check_recorded=True,
+        owner_review_recorded=True,
+        proxy_review_recorded=True,
+        reader_test_recorded=True,
+        artifacts_current=True,
+        lint_run_version=spec.version,
+    )
+
+
+def _validate_fixture(
+    spec, spec_dir: Path, profile: str, path: Path, evidence: Evidence
+):
+    """Dispatch one conforming fixture by the profile's governed surface."""
+    if PROFILE_SURFACES[profile] == "hosted-comment-set":
+        return validate_comment_set(
+            spec, path, spec_dir=spec_dir, evidence=evidence, check_artifacts=False
+        )
+    return validate_document(
+        spec,
+        path,
+        spec_dir=spec_dir,
+        evidence=evidence,
+        network=True,
+        check_artifacts=False,
+    )
+
+
 def check_fixtures(spec_dir: Path, root: Path) -> list[Step]:
-    """Validate the eleven profile fixtures and the risk fixtures."""
+    """Validate every profile fixture and the risk fixtures, by surface."""
     steps: list[Step] = []
     try:
         spec = parse_specification(spec_dir)
@@ -62,8 +95,20 @@ def check_fixtures(spec_dir: Path, root: Path) -> list[Step]:
 
     conforming = root / "tests" / "fixtures" / "documents" / "conforming"
     for profile in PROFILE_IDS:
-        path = conforming / f"{profile}.md"
-        command = f"python3 tools/itws_validate.py --input {path.relative_to(root)}"
+        if PROFILE_SURFACES[profile] == "hosted-comment-set":
+            path = (
+                root / "tests" / "fixtures" / "comments" / "conforming"
+                / "carrier.json"
+            )
+            command = (
+                "python3 tools/itws_comment.py validate --carrier "
+                f"{path.relative_to(root)}"
+            )
+        else:
+            path = conforming / f"{profile}.md"
+            command = (
+                f"python3 tools/itws_validate.py --input {path.relative_to(root)}"
+            )
         if not path.exists():
             steps.append(Step(f"fixture {profile}", command, False, "missing fixture"))
             continue
@@ -80,22 +125,9 @@ def check_fixtures(spec_dir: Path, root: Path) -> list[Step]:
                 ),
                 encoding="utf-8",
             )
-            report = validate_document(
-                spec,
-                path,
-                spec_dir=spec_dir,
-                evidence=Evidence(
-                    checklist_path=checklist,
-                    checklist_annex_hash=revision,
-                    self_check_recorded=True,
-                    owner_review_recorded=True,
-                    proxy_review_recorded=True,
-                    reader_test_recorded=True,
-                    artifacts_current=True,
-                    lint_run_version=spec.version,
-                ),
-                network=True,
-                check_artifacts=False,
+            report = _validate_fixture(
+                spec, spec_dir, profile, path,
+                _full_evidence(spec, revision, checklist),
             )
         steps.append(
             Step(
@@ -119,14 +151,7 @@ def check_fixtures(spec_dir: Path, root: Path) -> list[Step]:
             spec,
             path,
             spec_dir=spec_dir,
-            evidence=Evidence(
-                self_check_recorded=True,
-                owner_review_recorded=True,
-                proxy_review_recorded=True,
-                reader_test_recorded=True,
-                artifacts_current=True,
-                lint_run_version=spec.version,
-            ),
+            evidence=_full_evidence(spec, revision, None),
             check_artifacts=False,
         )
         wanted = expected if isinstance(expected, tuple) else (expected,)
@@ -136,6 +161,35 @@ def check_fixtures(spec_dir: Path, root: Path) -> list[Step]:
                 command,
                 report.state in wanted,
                 f"expected {' or '.join(wanted)}, got {report.state}",
+            )
+        )
+
+    comment_expectations = {
+        "violations/bare-marker": "fail",
+        "violations/unsupported-rationale": "fail",
+        "violations/stale-proposal": "fail",
+        "blocked/pending-disposition": "blocked",
+    }
+    comments = root / "tests" / "fixtures" / "comments"
+    for relative, expected in comment_expectations.items():
+        path = comments / relative / "carrier.json"
+        command = (
+            "python3 tools/itws_comment.py validate --carrier "
+            f"{path.relative_to(root)}"
+        )
+        report = validate_comment_set(
+            spec,
+            path,
+            spec_dir=spec_dir,
+            evidence=_full_evidence(spec, revision, None),
+            check_artifacts=False,
+        )
+        steps.append(
+            Step(
+                f"risk fixture comments/{relative}",
+                command,
+                report.state == expected,
+                f"expected {expected}, got {report.state}",
             )
         )
     return steps

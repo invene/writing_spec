@@ -1,0 +1,129 @@
+{
+  "profile": "maintenance-comment",
+  "annex_section": "E.12",
+  "surface": "hosted-comment-set",
+  "dependency_order": "A `maintenance-comment` change set seeds its scope, host identity, and anchors before the comment content, bases, and lifecycle facts that depend on them (§4.4).",
+  "slots": [
+    {
+      "name": "Change scope",
+      "required": true,
+      "order": 1,
+      "description": "The change-set ID, host adapter, host file, base and proposed hashes, and the change set's one-sentence purpose.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Comment record",
+      "required": true,
+      "order": 2,
+      "description": "One governed comment's complete record.",
+      "renames": [],
+      "parent": "",
+      "repeats": true
+    },
+    {
+      "name": "Anchor",
+      "required": true,
+      "order": 3,
+      "description": "The host file, line span, and enclosing named construct the comment attaches to.",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Comment text",
+      "required": true,
+      "order": 4,
+      "description": "The exact governed comment text, with comment markers stripped.",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Purpose",
+      "required": true,
+      "order": 5,
+      "description": "Exactly one closed purpose from Rule 4.13.2.",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Information delta",
+      "required": true,
+      "order": 6,
+      "description": "The knowledge deleting the comment would lose, stated against the anchored code.",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Basis",
+      "required": true,
+      "order": 7,
+      "description": "The durable code, test, contract, work-item, or decision references that support the comment, or \"None\" with a reason.",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Lifecycle",
+      "required": true,
+      "order": 8,
+      "description": "\"durable\", or \"temporary\" with the observable removal condition.",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Provenance",
+      "required": true,
+      "order": 9,
+      "description": "\"human-authored\", or \"ai-proposed\" with the §8.7 comment proposal record.",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Boundaries",
+      "required": true,
+      "order": 10,
+      "description": "The comments, files, and conditions the change set does not cover.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Conformance evidence",
+      "required": true,
+      "order": 11,
+      "description": "The pinned lint run, self-check, and scan-test records for the declared tier.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    }
+  ],
+  "required_slots": [
+    "Change scope",
+    "Comment record",
+    "Anchor",
+    "Comment text",
+    "Purpose",
+    "Information delta",
+    "Basis",
+    "Lifecycle",
+    "Provenance",
+    "Boundaries",
+    "Conformance evidence"
+  ],
+  "merges": [],
+  "mutation_policies": [],
+  "source_span": {
+    "path": "spec/overlays/maintenance-comment/skeleton.md",
+    "start_line": 1,
+    "end_line": 45
+  },
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0"
+}

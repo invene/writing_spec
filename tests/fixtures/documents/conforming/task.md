@@ -1,6 +1,6 @@
 # A buyer can retry checkout after replacing an expired card
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: task
 Conformance tier: core
 

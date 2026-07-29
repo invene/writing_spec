@@ -84,3 +84,4 @@ def _load() -> None:
     from itws.lint import checks_structure  # noqa: F401
     from itws.lint import checks_exactness  # noqa: F401
     from itws.lint import checks_process  # noqa: F401
+    from itws.lint import checks_comments  # noqa: F401

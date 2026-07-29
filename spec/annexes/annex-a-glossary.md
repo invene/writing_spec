@@ -1,12 +1,12 @@
 # Annex A — Glossary (normative, living)
 
-**Status:** v0.6.0-draft. This living annex contains 24 admitted entries.
+**Status:** v0.8.0-draft. This living annex contains 24 admitted entries.
 
 Maintainers add, revise, and deprecate entries under §2.5. They version each change under §0.8.
 
 Maintainers never delete entries. They mark withdrawn entries as deprecated and retain them.
 
-ITWS has one shared core and eleven profiles. Profile metadata records where maintainers expect a term to be useful.
+ITWS has one shared core and twelve profiles. Profile metadata records where maintainers expect a term to be useful.
 
 Profile metadata does not make the term assumed vocabulary. Each governed document still satisfies the entry's ladder prerequisites before using the term.
 

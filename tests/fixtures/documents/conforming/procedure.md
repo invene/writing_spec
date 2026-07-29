@@ -1,6 +1,6 @@
 # Replace the worker binary on one host
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: procedure
 Conformance tier: reviewed
 
@@ -14,11 +14,15 @@ This procedure covers one worker host in the production environment. The procedu
 
 ## Prerequisites
 
+The replacement requires a drained host, a verified package, and rollback access.
+
 1. Record the current binary version. The rollback step needs the recorded value.
 2. Confirm that another host can accept the queued work.
 3. Confirm that you can reach the host over the administrative network.
 
 ## Steps
+
+The replacement drains, installs, starts, and checks one worker.
 
 1. Disable new work on the selected host.
 2. Wait until the active-job count on the host reaches zero.
@@ -26,6 +30,8 @@ This procedure covers one worker host in the production environment. The procedu
 4. Start the worker.
 
 ## Verification
+
+Verification confirms the new binary, worker health, and job completion.
 
 1. Confirm that the worker reports the new version.
 2. Submit one test job to the host.

@@ -243,6 +243,7 @@ class Skeleton:
 
     profile: str
     annex_section: str
+    surface: str
     dependency_order: str
     slots: tuple[Slot, ...]
     merges: tuple[Merge, ...]
@@ -289,6 +290,7 @@ class Skeleton:
         return {
             "profile": self.profile,
             "annex_section": self.annex_section,
+            "surface": self.surface,
             "dependency_order": self.dependency_order,
             "slots": [slot.to_json() for slot in self.slots],
             "required_slots": [
@@ -400,12 +402,14 @@ class Example:
 
 @dataclass(frozen=True)
 class ProfileRecord:
-    """One profile's job, reader overlay, tier, load set, and review focus."""
+    """One profile's job, reader overlay, outcomes, tier, and review focus."""
 
     id: str
     label: str
     minimum_tier: str
+    surface: str
     job: str
+    scan_outcome: str
     reader_outcome: str
     owner_focus: str
     modules: tuple[str, ...]
@@ -445,7 +449,9 @@ class ProfileRecord:
             "id": self.id,
             "label": self.label,
             "minimum_tier": self.minimum_tier,
+            "surface": self.surface,
             "job": self.job,
+            "scan_test_outcome": self.scan_outcome,
             "reader_test_outcome": self.reader_outcome,
             "owner_review_focus": self.owner_focus,
             "shared_modules": list(self.modules),

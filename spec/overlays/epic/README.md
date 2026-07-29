@@ -1,6 +1,6 @@
 # `epic` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `reviewed`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `reviewed`
 
 **Job:** define one strategic product outcome that requires several independently acceptable tasks.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for an `epic` document:
 - The shared overlay module [../shared/work-item.md](../shared/work-item.md).
 
 No other profile overlay applies to an `epic` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the strategic outcome, approval status, scope boundary, and success-measure boundary.
 
 ## Reader-test outcome
 

@@ -1,7 +1,7 @@
 # `explanation` scoped rules
 
-**ITWS version:** 0.6.0-draft
+**ITWS version:** 0.8.0-draft
 
-This file lists no rule. ITWS 0.6.0-draft scopes no rule to `explanation` alone.
+This file lists no rule. ITWS 0.8.0-draft scopes no rule to `explanation` alone.
 
 Every shared-core rule in Parts 2–8 applies unless its `Profiles` metadata excludes `explanation`. Rule 4.4.3 excludes this profile.

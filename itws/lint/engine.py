@@ -24,12 +24,18 @@ def run_lint(
     tier: str,
     evidence: Evidence | None = None,
     network: bool = False,
+    comment_set=None,
 ) -> LintReport:
     """Run every applicable check and return one combined report."""
     evidence = evidence or Evidence()
     evidence.network_checks_enabled = network
     context = LintContext(
-        spec=spec, manifest=manifest, profile=profile, tier=tier, evidence=evidence
+        spec=spec,
+        manifest=manifest,
+        profile=profile,
+        tier=tier,
+        evidence=evidence,
+        comment_set=comment_set,
     )
 
     findings: list[Finding] = []

@@ -1,6 +1,6 @@
 # `decision-record` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `core`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `core`
 
 **Job:** preserve one settled technical decision, its context and options, its status, and its consequences.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for a `decision-record`
 - Shared overlay modules: none.
 
 No other profile overlay applies to a `decision-record` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the decision, its status, the main reason, and its material consequence or boundary.
 
 ## Reader-test outcome
 

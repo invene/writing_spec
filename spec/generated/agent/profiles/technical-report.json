@@ -2,7 +2,9 @@
   "id": "technical-report",
   "label": "Technical report",
   "minimum_tier": "reviewed",
+  "surface": "markdown-document",
   "job": "answer a bounded technical question or document a system, method, evaluation, or result at sustained detail.",
+  "scan_test_outcome": "state the technical question or outcome, its evidential strength, and its validity boundary.",
   "reader_test_outcome": "explain the main technical claim or operational outcome, its evidence, and its boundaries.",
   "owner_review_focus": "statistical and reproducibility-or-verification rigor",
   "shared_modules": [
@@ -36,10 +38,10 @@
   "source_span": {
     "path": "spec/overlays/technical-report/README.md",
     "start_line": 1,
-    "end_line": 30
+    "end_line": 34
   },
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0",
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0",
   "permitted_tiers": [
     "reviewed",
     "publication"
@@ -48,7 +50,7 @@
     "report"
   ],
   "envelope": {
-    "rule_count": 166,
+    "rule_count": 172,
     "universal": [
       "2.1.1",
       "2.1.2",
@@ -140,6 +142,10 @@
       "4.10.4",
       "4.10.5",
       "4.10.6",
+      "4.12.1",
+      "4.12.2",
+      "4.12.3",
+      "4.12.4",
       "5.1.1",
       "5.1.2",
       "5.2.1",
@@ -187,6 +193,8 @@
       "8.1.1",
       "8.1.2",
       "8.1.3",
+      "8.1.4",
+      "8.1.5",
       "8.2.1",
       "8.2.2",
       "8.2.3",
@@ -317,6 +325,10 @@
         "4.10.4",
         "4.10.5",
         "4.10.6",
+        "4.12.1",
+        "4.12.2",
+        "4.12.3",
+        "4.12.4",
         "6.1.1",
         "6.1.2",
         "6.1.3",
@@ -376,6 +388,8 @@
       "8.1.1",
       "8.1.2",
       "8.1.3",
+      "8.1.4",
+      "8.1.5",
       "8.2.1",
       "8.2.2",
       "8.2.3",

@@ -1,6 +1,6 @@
 # `task` scoped rules
 
-**ITWS version:** 0.6.0-draft · **Status:** normative
+**ITWS version:** 0.8.0-draft · **Status:** normative
 
 This file holds every rule scoped to `task` alone. The work-item rules shared with `epic` and `subtask` are in [../shared/work-item.md](../shared/work-item.md). Every shared-core rule in Parts 2–8 also applies unless its `Profiles` metadata excludes `task`.
 

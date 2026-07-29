@@ -6,9 +6,99 @@ Format: [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/). Section 
 
 - Pending: validate Annex B with members across software engineering pod roles. Also validate that each profile overlay adds conventions only.
 - Pending: pilot the §8.3 reader protocol on documents from multiple profiles. Keep pass/fail criteria provisional until then.
-- Pending: widen Annex D's source mix. Every profile now has at least two examples, but all 21 non-research examples are constructed.
+- Pending: widen Annex D's source mix. Every profile now has at least two examples, but all 23 non-research examples are constructed.
+- Pending: add a second host adapter under the §4.13 adapter contract. The 0.8.0-draft release ships the Python adapter only, so the language neutrality of the contract is designed but not yet exercised.
+- Pending: pilot the `maintenance-comment` workflow on a real repository change. The 0.8.0-draft release verified the machine path with the fixture suite; it did not verify an end-to-end change on production code.
 - Pending: run the four cold-start agent pilots listed in `spec/agent/README.md` §A.7. Each needs a fresh session that receives only the repository URL, a raw document, and a one-sentence rewrite request. The 0.6.0-draft release verified the machine path with the fixture suite; it did not verify the cold start.
 - Pending: calibrate the Rule 3.5.1 noun-cluster detector against reader-test results. The lexical detector reports candidates and produces false positives on verb-noun homographs.
+- Pending: calibrate the §8.1.1 source-independent delay across profiles. The scan record stores the intervening task and elapsed interval; ITWS sets no timing threshold.
+
+## [0.8.0-draft] — 2026-07-29
+
+Draft change that adds `maintenance-comment` as the twelfth canonical profile and the first profile whose governed surface is not a Markdown document. A comment change set inside a host source file becomes one governed unit, declared and recorded by a JSON declaration carrier, with explicit machine-proposal provenance and a human disposition gate.
+
+### Added
+
+- Added the canonical profile ID `maintenance-comment` (label "Maintenance comment set") at minimum tier `core` to §0.2, §0.4.3, Part 8, `spec/overlays/README.md`, Annex B, and Annex E.
+- Added §0.2.1 and the governed-surface registry: `markdown-document` for the first eleven profiles and `hosted-comment-set` for `maintenance-comment`. Section 0.2's exclusion list now excludes source code alone; a code comment is governed only through a declared comment change set.
+- Added the §0.6 terms *governed surface*, *governed unit*, *comment change set*, *declaration carrier*, *host adapter*, *host anchor*, *information delta*, *cognitive debt*, *removal condition*, and *comment proposal record*.
+- Added §0.3.4 and Annex B §B.4.12: the conditional host-language reader supplement. It grants declared host syntax and visible-identifier literacy and never grants project history, product vocabulary, library behavior, or author intent.
+- Added §4.13 and the mandatory scoped Rules 4.13.1–4.13.9 (`maintenance-comment` only): information delta, one closed purpose, one host anchor, durable basis, no intent inferred from implementation alone, report-not-reconcile conflicts, removal conditions, complete markers, and the comment-set scan path. Rule 4.13.9 is a named §1.4 layer-2 exception to Rule 4.12.1.
+- Added §8.7 and the mandatory scoped Rules 8.7.1–8.7.4 (`maintenance-comment` only): one comment proposal record per `ai-proposed` comment, durable bases beyond the generation prompt, a recorded human disposition before `pass`, and disposition invalidation on any stale pinned hash. The gate is construct-specific and leaves the §8.4 two-role `reviewed` tier unchanged.
+- Added Annex E §E.0.4 and the §E.12 `maintenance-comment` skeleton: Change scope, repeating Comment records (Anchor, Comment text, Purpose, Information delta, Basis, Lifecycle, Provenance), Boundaries, and Conformance evidence, as declaration-carrier fields.
+- Added Annex D Examples D.24 and D.25: machine narration that restates its code, and a bare marker with no route back to its work.
+- Added the §1.6 navigation values `comment` and `comment-set` (targets); `comment`, `host-anchor`, `marker`, `proposal-record`, and `removal-condition` (constructs); and `comment-text`, `host-anchor-ledger`, and `proposal-record` (resources).
+- Added the `itws.comments` package: typed carrier records, the language-neutral host-adapter contract, and the standard-library Python adapter. The adapter groups adjacent comment lines, resolves anchors through `ast`, and conservatively excludes docstrings, shebang and encoding lines, tool directives, legal banners, and generated files.
+- Added `itws/lint/checks_comments.py` with registered checkers for Rules 4.3.1, 4.3.3, 4.13.2, 4.13.3, 4.13.4, 4.13.7, 4.13.8, 4.13.9, and 8.7.1–8.7.4 on the hosted surface, `validate_comment_set` beside `validate_document` with the same four §8.6.2 states, and `tools/itws_comment.py` with `index`, `scan-path`, `lint`, `stale`, and `validate` actions.
+- Added `Evidence.from_json_file`, carrier-judgment validation in `itws.analysis`, host-anchor collision detection in `itws.patch`, and the `tests/fixtures/comments/` suite: one conforming mixed set, three failing sets (bare marker, unsupported machine rationale, stale proposal), one blocked set (pending disposition), and the exclusion hosts.
+
+### Changed
+
+- Generalized Rules 4.3.1, 4.3.3, and 4.4.1 from "governed document" to "governed unit": the declaration and the Annex E skeleton live on the profile's declared surface, the Markdown front matter or the declaration carrier.
+- Revised §4.12 and §8.1.1 so each surface names its scan path: the Rule 4.12.1 title-and-headings path for a Markdown document, the Rule 4.13.9 change-set path for a hosted comment set. Rules 4.12.2–4.12.4 govern either path unchanged.
+- Extended the shared text checks to hosted surfaces: a governed comment lints as one stripped paragraph unit at its host line numbers, marker syntax excluded, through the `GovernedManifest` protocol. `StructuralManifest` and every existing document API are unchanged.
+- Guarded the heading-driven checkers for Rules 4.3.3, 4.4.1, and 4.12.1 so they do not run against a surface that has no headings; `itws/lint/checks_comments.py` covers the carrier instead.
+- Refactored `tools/itws_check_all.py` to dispatch conforming fixtures by profile surface. The eleven Markdown fixtures and three Markdown risk fixtures are unchanged in behavior.
+- Advanced the generated-artifact schema to 1.1.0 (additive): `surface` on every profile and skeleton record, `profile_surfaces` in the manifest, and `host_supplements` in the reader baseline.
+- Registered Rules 4.13.1–4.13.9 and 8.7.1–8.7.4 in `spec/rule-ids.txt`, and regenerated Annex C and the agent catalog.
+- Updated current-version declarations to 0.8.0-draft, the profile count to twelve, and the consumer-agent sequence and rewrite skill with the separate comment-change-set workflow.
+
+### Compatibility
+
+- This pre-1.0 minor release is breaking under §0.8: it adds a canonical profile ID and rewords three universal mandatory rules. No existing profile gains or loses a rule; the Rule 4.3.1, 4.3.3, and 4.4.1 rewordings change no obligation for a Markdown document.
+- The `maintenance-comment` reader supplement is conditional on the declared host adapter and grants no domain knowledge. Annex B §B.1–§B.3 are unchanged.
+- The tier registry gains one `core` row. No existing profile's minimum tier changes.
+- The initial governed set is deliberately narrow: changed `TODO` and `FIXME` markers plus explicitly recorded comments, with the Python adapter only. Tooling never classifies a comment as machine-authored from prose style; provenance is declared or the comment is not governed.
+- Documents pinned to 0.7.x retain their earlier rule envelope under §0.4.4 and §0.8.
+
+### Migration notes
+
+- No action for existing Markdown documents beyond re-pinning when they upgrade.
+- To govern a comment change: record the base and proposed sources, write the declaration carrier with `python3 tools/itws_comment.py index` as a starting check, complete one record per governed comment, and validate with `python3 tools/itws_comment.py validate --carrier <set>.json`.
+- A machine-proposed comment needs its proposal record before review: provenance, durable bases, pinned source, anchor, and comment hashes, and a human disposition. Re-dispose after any pinned hash goes stale.
+
+## [0.7.0-draft] — 2026-07-29
+
+Draft change that makes a truth-preserving scan path a conformance outcome. The release gives every profile a shallow outcome, tests recall against an exact-layer key and strengthened foils, and exposes the path without automating semantic agreement.
+
+### Added
+
+- Added §4.12 and mandatory Rules 4.12.1–4.12.4 for the ordered scan path, its profile-specific shallow model, truth-preserving qualifications, and out-of-order interpretation.
+- Added §8.1.1 and mandatory Rules 8.1.4–8.1.5 for the delayed scan-test protocol and dependent-change invalidation.
+- Added one `Scan-test outcome` to every profile: `design-rfc`, `decision-record`, `procedure`, `explanation`, `incident`, `technical-report`, `research-paper`, `investigation-log`, `epic`, `task`, and `subtask`.
+- Added `scan_test_outcome` to generated profile manifests.
+- Added deterministic scan-path records and extraction to `itws/document.py`, plus the `scan-path` action in `tools/itws_document.py`.
+- Added typed scan-test key, strengthened-foil, response, and validation records to `itws/analysis.py`. The validator checks structure, citations, hashes, foil decisions, and staleness without deciding semantic correctness.
+- Added partial checkers for Rules 4.12.1 and 4.12.3. They report missing opening chunks and scan-qualification candidates.
+- Added focused fixtures and tests for ordering, appendix exclusion, spans, CLI JSON, missing openings, negation, trailing qualifications, accepted foils, stale records, and widened scan claims.
+- Added Annex F §F.2.1 with the verified skimming, signaling, metacomprehension, negation, rereading, and working-memory sources.
+
+### Changed
+
+- Revised §0.1, P1, P4, and §1.2.1. ITWS now optimizes reader effort and promises a correct shallow model, profile-complete main text, and preserved exact resolution. The promise concerns access and orientation, not full-document learning or comprehension.
+- Revised §4.6 and §6.5 so deeper layers add resolution and do not repeat a shallower layer without a recall or verification purpose.
+- Changed Rule 8.3.3 so a fresh publication participant completes the scan phase before the full-read outcome.
+- Changed Rule 8.4.2 so the subject-matter owner approves the scan key and strengthened foils at `reviewed` and `publication`.
+- Changed Rule 8.4.3 so the reader proxy performs the scan test before the full plain-layer review.
+- Kept `self_check_recorded`, `proxy_review_recorded`, and `reader_test_recorded` as the tier gates. Their records now include the applicable scan key and response instead of duplicate booleans.
+- Added Cowan and Sweller to the Rule 4.8.1 source trace. The provisional three-admission limit and rule statement are unchanged.
+- Updated the consumer-agent sequence and rewrite skill to extract and compare the scan path without presenting an agent comparison as human evidence.
+- Audited all eleven conforming fixtures for accurate titles, opening assertions, boundaries, and local independence.
+- Updated current-version declarations to 0.7.0-draft and regenerated Annex C and the agent catalog.
+
+### Compatibility
+
+- This pre-1.0 minor release is breaking for documents pinned to 0.6.x. Every profile at `core`, `reviewed`, and `publication` now owes the Rules 4.12.1–4.12.4 scan surface and the Rule 8.1.4 record.
+- Reviewed documents need owner-approved keys and independent proxy scan responses. Publication documents also need a fresh participant's scan response before the existing full-read test.
+- Annex B and every profile reader overlay retain the 0.6.0-draft software-experience baseline. A scan may use that declared baseline but no undeclared product, system, project-history, or subject-domain knowledge.
+- Documents pinned to 0.6.x retain their earlier rule envelope under §0.4.4 and §0.8.
+
+### Migration notes
+
+- Add an opening chunk to every main-text section. Make the title, headings, and first opening sentences true when read as the Rule 4.12.1 path.
+- Add the selected profile's scan-test outcome to the document-specific key. Link every key field and foil to its exact and body source spans.
+- Run `python3 tools/itws_document.py scan-path --input <document>.md --json` before semantic review.
+- Repeat the scan test after a title, heading, opening sentence, or linked source item changes.
 
 ## [0.6.0-draft] — 2026-07-29
 

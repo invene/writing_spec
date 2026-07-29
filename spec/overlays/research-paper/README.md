@@ -1,6 +1,6 @@
 # `research-paper` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `publication`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `publication`
 
 **Job:** report a research question, method, evidence, result, and bounded interpretation to scholarly publication standard.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for a `research-paper` 
 - The shared overlay module [../shared/report.md](../shared/report.md).
 
 No other profile overlay applies to a `research-paper` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the research question, main result, evidential strength, uncertainty, and scope.
 
 ## Reader-test outcome
 

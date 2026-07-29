@@ -1,6 +1,6 @@
 # `investigation-log` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `core`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `core`
 
 **Job:** maintain an append-only working record during an active investigation.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for an `investigation-l
 - Shared overlay modules: none.
 
 No other profile overlay applies to an `investigation-log` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the current question, strongest observation, unresolved hypothesis, and next discriminating check.
 
 ## Reader-test outcome
 

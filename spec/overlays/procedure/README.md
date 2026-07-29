@@ -1,6 +1,6 @@
 # `procedure` overlay
 
-**ITWS version:** 0.6.0-draft · **Minimum conformance tier:** `reviewed`
+**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `reviewed`
 
 **Job:** enable a defined reader to complete or verify a bounded operational or development task safely and repeatably.
 
@@ -16,6 +16,10 @@ A writer, reviewer, or tool loads the following material for a `procedure` docum
 - Shared overlay modules: none.
 
 No other profile overlay applies to a `procedure` document.
+
+## Scan-test outcome
+
+A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the task goal, verified scope, critical precondition, and rollback boundary.
 
 ## Reader-test outcome
 

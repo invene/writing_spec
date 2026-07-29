@@ -1,6 +1,7 @@
 {
   "profile": "epic",
   "annex_section": "E.9",
+  "surface": "markdown-document",
   "dependency_order": "An `epic` seeds the product problem, users, scope, and terms before success measures, technical invariants, risks, and child-task boundaries (§4.4).",
   "slots": [
     {
@@ -157,6 +158,6 @@
     "start_line": 1,
     "end_line": 44
   },
-  "itws_version": "0.6.0-draft",
-  "schema_version": "1.0.0"
+  "itws_version": "0.8.0-draft",
+  "schema_version": "1.1.0"
 }

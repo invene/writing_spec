@@ -10,9 +10,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from itws.analysis import validate_comment_judgments
+from itws.comments.changeset import load_comment_set, structural_manifest
 from itws.compile import compile_all
 from itws.document import parse_document
-from itws.lint.engine import lint_path
+from itws.lint.engine import lint_path, run_lint
 from itws.lint.model import Evidence, LintReport
 from itws.model import Specification
 from itws.parser import parse_specification
@@ -123,7 +125,17 @@ def validate_document(
         network=network,
     )
     report.human_gates = _human_gates(resolved_tier, evidence)
+    _resolve_state(report, spec, evidence, resolved_profile)
+    return report
 
+
+def _resolve_state(
+    report: ValidationReport,
+    spec: Specification,
+    evidence: Evidence,
+    resolved_profile: str,
+) -> None:
+    """Pick the §8.6.2 state from the lint findings and human gates."""
     waived = {waiver.get("rule", "") for waiver in evidence.waivers}
     unwaived_errors = [
         finding for finding in report.lint.errors if finding.rule not in waived
@@ -174,6 +186,82 @@ def validate_document(
     if report.structural_problems and report.state == "pass":
         report.state = "fail"
         report.reasons = list(report.structural_problems)
+
+
+def validate_comment_set(
+    spec: Specification,
+    carrier_path: Path,
+    *,
+    spec_dir: Path,
+    evidence: Evidence | None = None,
+    network: bool = False,
+    check_artifacts: bool = True,
+) -> ValidationReport:
+    """Validate one comment change set through its declaration carrier.
+
+    The run keeps the four §8.6.2 states. A missing source, a hash that no
+    longer matches, or an unknown host adapter is `blocked`, never a pass.
+    """
+    evidence = evidence or Evidence()
+    if check_artifacts and evidence.artifacts_current is None:
+        _, problems = compile_all(spec_dir, check_only=True)
+        evidence.artifacts_current = not problems
+        evidence.artifact_problems = tuple(problems)
+
+    comment_set = load_comment_set(carrier_path)
+    declared = comment_set.declarations
+    resolved_profile = declared.profile if declared else ""
+    resolved_tier = declared.tier if declared and declared.tier else "core"
+
+    report = ValidationReport(
+        path=carrier_path.as_posix(),
+        itws_version=spec.version,
+        profile=resolved_profile,
+        tier=resolved_tier,
+        state="blocked",
+    )
+
+    if not resolved_profile:
+        report.reasons.append(
+            "the carrier declares no canonical profile ID, so no rule set can "
+            "be resolved (§4.3.1)"
+        )
+        return report
+    profile_record = spec.profile(resolved_profile)
+    if profile_record is None:
+        report.state = "fail"
+        report.reasons.append(f"unknown profile ID {resolved_profile!r} (§0.2)")
+        return report
+    if profile_record.surface != "hosted-comment-set":
+        report.state = "fail"
+        report.reasons.append(
+            f"profile {resolved_profile!r} governs a Markdown document, not a "
+            "comment change set (§0.2.1)"
+        )
+        return report
+    if comment_set.problems:
+        report.reasons.extend(comment_set.problems)
+        return report
+
+    report.structural_problems = validate_comment_judgments(
+        comment_set, known_rules=[rule.number for rule in spec.rules]
+    )
+
+    if not evidence.lint_run_version:
+        evidence.lint_run_version = spec.version
+        evidence.lint_run_profile = resolved_profile
+
+    report.lint = run_lint(
+        spec,
+        structural_manifest(comment_set),
+        profile=resolved_profile,
+        tier=resolved_tier,
+        evidence=evidence,
+        network=network,
+        comment_set=comment_set,
+    )
+    report.human_gates = _human_gates(resolved_tier, evidence)
+    _resolve_state(report, spec, evidence, resolved_profile)
     return report
 
 

@@ -1,19 +1,19 @@
 # Invene Technical Writing Specification (ITWS)
 
-ITWS is a controlled-language specification for technical documents. The specification adapts ASD-STE100's rule architecture.
+ITWS is a controlled-language specification for technical writing. The specification adapts ASD-STE100's rule architecture.
 
 ITWS adds practices for software documentation, information for use, and specific genres.
 
-Each document uses one shared core and exactly one declared profile.
+Each governed unit uses one shared core and exactly one declared profile. Eleven profiles govern Markdown documents; `maintenance-comment` governs a comment change set inside a host source file (§0.2.1).
 
-**Version 0.6.0-draft:** agent-navigation draft.
+**Version 0.8.0-draft:** agent-navigation draft.
 
 ## Architecture
 
-Every conforming document declares these fields:
+Every conforming governed unit declares these fields, in its Markdown front matter or in its JSON declaration carrier:
 
 ```text
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: <canonical profile ID>
 Conformance tier: <core | reviewed | publication>
 ```
@@ -34,19 +34,20 @@ An overlay does not admit domain terminology. For example, the `research-paper` 
 
 The canonical profile IDs and labels are:
 
-| Profile ID | Label | Minimum conformance tier |
-|---|---|---|
-| `design-rfc` | Design / RFC | `reviewed` |
-| `decision-record` | Architecture decision record | `core` |
-| `procedure` | Runbook / how-to | `reviewed` |
-| `explanation` | Concept / explanation | `core` |
-| `incident` | Incident report / postmortem | `reviewed` |
-| `technical-report` | Technical report | `reviewed` |
-| `research-paper` | Research paper | `publication` |
-| `investigation-log` | Investigation log | `core` |
-| `epic` | Epic | `reviewed` |
-| `task` | Task | `core` |
-| `subtask` | Subtask | `core` |
+| Profile ID | Label | Minimum conformance tier | Surface |
+|---|---|---|---|
+| `design-rfc` | Design / RFC | `reviewed` | `markdown-document` |
+| `decision-record` | Architecture decision record | `core` | `markdown-document` |
+| `procedure` | Runbook / how-to | `reviewed` | `markdown-document` |
+| `explanation` | Concept / explanation | `core` | `markdown-document` |
+| `incident` | Incident report / postmortem | `reviewed` | `markdown-document` |
+| `technical-report` | Technical report | `reviewed` | `markdown-document` |
+| `research-paper` | Research paper | `publication` | `markdown-document` |
+| `investigation-log` | Investigation log | `core` | `markdown-document` |
+| `epic` | Epic | `reviewed` | `markdown-document` |
+| `task` | Task | `core` | `markdown-document` |
+| `subtask` | Subtask | `core` | `markdown-document` |
+| `maintenance-comment` | Maintenance comment set | `core` | `hosted-comment-set` |
 
 The conformance tiers are cumulative.
 
@@ -113,7 +114,7 @@ The Markdown files in this directory are authoritative. Every artifact below der
 | `reader-baseline.json` | Annex B assumptions, exclusions, and each profile's overlay |
 | `examples.jsonl` | Annex D paired examples and each rule's contrasting pair |
 | `phrase-lists.json` | the generated linter inputs |
-| `profiles/<profile>.json` | the resolved profile envelope, load set, tier, and review focus |
+| `profiles/<profile>.json` | the resolved profile envelope, load set, tier, surface, and review focus |
 | `skeletons/<profile>.json` | ordered slots, renames, merges, and mutation policies |
 
 Generation is byte deterministic. Two runs over one unchanged source tree produce identical bytes.
@@ -144,7 +145,7 @@ Generate a document checklist. Use the exact declared version, profile, and perm
 
 ```text
 python3 tools/itws_checklist.py \
-  --spec-version 0.6.0-draft \
+  --spec-version 0.8.0-draft \
   --profile design-rfc \
   --tier reviewed \
   --out design-rfc-checklist.md
@@ -164,5 +165,6 @@ These read the generated catalog and a governed document. None of them changes t
 | `python3 tools/itws_patch.py check --base <a>.md --proposed <b>.md` | changed ranges, affected spans, stale hashes, and out-of-slice edits |
 | `python3 tools/itws_lint.py --input <document>.md` | the repository-local linter |
 | `python3 tools/itws_validate.py --input <document>.md` | the four-state conformance report |
+| `python3 tools/itws_comment.py validate --carrier <set>.json` | the same four states for a comment change set; `index`, `scan-path`, `lint`, and `stale` cover the earlier steps |
 
 An agent that needs something these commands do not cover imports `itws` directly and writes its own script. [agent/README.md](agent/README.md) describes that path.

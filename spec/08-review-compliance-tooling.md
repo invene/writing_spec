@@ -1,6 +1,6 @@
 # Part 8 — Review, compliance, and tooling
 
-Part 8 defines practical checks for ITWS conformance. Section 8.1 defines the generated profile checklist. Section 8.2 defines automated checks and the author self-check. Section 8.3 defines publication reader testing and release checks. Section 8.4 defines reviewed-tier roles. Section 8.5 defines waivers. Section 8.6 defines the generated artifacts and the states a validation run may report.
+Part 8 defines practical checks for ITWS conformance. Section 8.1 defines the generated profile checklist and scan test. Section 8.2 defines automated checks and the author self-check. Section 8.3 defines publication reader testing and release checks. Section 8.4 defines reviewed-tier roles. Section 8.5 defines waivers. Section 8.6 defines the generated artifacts and the states a validation run may report. Section 8.7 gates machine-proposed comments and keeps its rules in the `maintenance-comment` overlay (§1.5).
 
 Parts 2–7 define a conforming document. Part 8 defines how anyone verifies conformance.
 
@@ -8,7 +8,7 @@ Every governed document declares one canonical profile ID and one conformance ti
 
 The minimum tier for each profile is:
 
-- **Core:** `decision-record`, `explanation`, `investigation-log`, `task`, `subtask`.
+- **Core:** `decision-record`, `explanation`, `investigation-log`, `task`, `subtask`, `maintenance-comment`.
 - **Reviewed:** `design-rfc`, `procedure`, `incident`, `technical-report`, `epic`.
 - **Publication:** `research-paper`.
 
@@ -37,7 +37,7 @@ The conformance checklist is a build artifact. Annex C rule metadata generates t
 
 **Rationale:** A hand-maintained checklist diverges from the rules the first time a rule changes (P7). Generation makes the checklist correct by construction.
 
-**Compliant:** The checklist header records ITWS 0.6.0-draft, profile `procedure`, tier `reviewed`, and the Annex C revision from which it was generated.
+**Compliant:** The checklist header records ITWS 0.8.0-draft, profile `procedure`, tier `reviewed`, and the Annex C revision from which it was generated.
 **Non-compliant:** A reviewer copies the `research-paper` checklist, deletes statistics by hand, and calls the result a procedure checklist.
 
 **Cross-references:** Annex C; Rule 8.1.3.
@@ -87,6 +87,67 @@ The conformance checklist is a build artifact. Annex C rule metadata generates t
 **Non-compliant:** A rule is reclassified recommended → mandatory and existing generated checklists still list it as optional.
 
 **Cross-references:** §0.8; Annex C; Annex G.
+
+### 8.1.1 Scan-test protocol
+
+A scan test measures recall, not confidence. The test uses the selected profile's scan-test outcome and its defined scan path: the Rule 4.12.1 path for a Markdown document, or the Rule 4.13.9 path for a hosted comment set.
+
+A **scan-test key** contains:
+
+1. the expected purpose and main point;
+2. the applicable status or strength, or `Not applicable` with a reason;
+3. every material boundary needed to prevent widening;
+4. links to the exact and body items that support each expected field; and
+5. one strengthened foil for each protected status, strength, or material boundary.
+
+A **strengthened foil** is a plausible paraphrase that raises authority or evidential strength, widens scope, or removes a material boundary.
+
+A **scan-test record** contains the role and profile, document and scan-path hashes, key hash, linked-source hashes, intervening task and elapsed interval, generated response, foil responses, result, and findings.
+
+The scan-test procedure has six steps:
+
+1. Prepare the key before the test. At `reviewed` and `publication`, the subject-matter owner approves it before the proxy or participant sees it.
+2. Let the reader view the complete scan path once without taking notes.
+3. Close the document. Complete a preselected source-independent task that occupies attention without using the document's subject.
+4. Generate the profile's scan-test outcome from memory without viewing the key or foils.
+5. Present each foil and record whether the reader accepts or rejects it.
+6. Compare the response with the approved key and record each mismatch.
+
+The protocol uses an intervening task rather than an invented time threshold. Thiede, Anderson, and Therriault delayed keyword generation until participants had read all six texts. Their procedure fixed no elapsed-time threshold. ITWS adapts that ordering and records its task and elapsed interval for later calibration.
+
+A scan response passes when it states every required key field, rejects every foil, invents nothing, and reports absent information as missing.
+
+#### Rule 8.1.4 — Complete the scan test
+**Class:** mandatory · **Machine-checkable:** no · **Source:** Thiede, Anderson, and Therriault 2003; Glenberg, Wilkinson, and Epstein 1982; Duggan and Payne 2009; original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record, exact-item-ledger · writes: conformance-record
+**Relations:** requires 8.1.2; validates 4.12.2; pairs-with 8.4.3
+
+> Before recording conformance at any tier, the author **shall** prepare a scan-test key and complete the scan-test procedure. The scan-test record **shall** contain every required field. The response **shall** pass.
+
+**Rationale:** Immediate self-reports overstate comprehension. Closed-document generation exposes what the scan path actually left in memory. The exact-layer key and strengthened foils test both failure directions: omission and widening. Core receives an author check; higher tiers repeat the protocol independently (P4, P7).
+
+**Compliant:** An author closes a decision record after scanning it, completes the preselected task, recalls the proposed decision and scope, and rejects the foil that calls it approved.
+**Non-compliant:** The author rereads each heading while checking "clear" boxes. No generated response, key, foil result, or delayed recall exists.
+
+**Cross-references:** Rules 4.12.1–4.12.4, 8.3.3, 8.4.2, 8.4.3
+
+#### Rule 8.1.5 — Retest after a dependent change
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record, heading, chunk-text, exact-item-ledger · writes: conformance-record
+**Relations:** requires 8.1.4; pairs-with 8.1.3
+
+> A scan-test key and record **shall** become stale after a change to the title, a heading, an opening sentence, or a linked source item. A stale scan-test record **shall not** support conformance.
+
+**Rationale:** A smoothing edit can change the scan model or its relation to the body. Hashes detect changes to recorded dependencies. A reader confirms that the key links every source item it summarizes (P3, P7).
+
+**Compliant:** An editor changes the Summary opener. The author rebuilds the path, updates the key, and repeats the scan test.
+**Non-compliant:** A title changes "proposed" to "approved." The release keeps the earlier passing scan record.
+
+**Cross-references:** Rules 8.1.3, 8.1.4, 8.6.1
 
 ## 8.2 Automated checks
 
@@ -162,7 +223,7 @@ A skipped network check leaves validation incomplete. Section 8.6 gives that out
 
 **Rationale:** Machine-checkable violations are the cheapest to find and the most embarrassing to ship. The lint gate is part of core, so short-lived documents receive it even when their minimum tier has no independent reviewers.
 
-**Compliant:** A core `investigation-log` links a clean `itws-lint` run pinned to ITWS 0.6.0-draft and profile `investigation-log`.
+**Compliant:** A core `investigation-log` links a clean `itws-lint` run pinned to ITWS 0.8.0-draft and profile `investigation-log`.
 **Non-compliant:** "The linter is noisy. Readers can ignore the linter." Errors remain for review or release.
 
 **Cross-references:** Rule 8.2.2; Rule 8.5.1.
@@ -205,8 +266,8 @@ A skipped network check leaves validation incomplete. Section 8.6 gives that out
 
 **Rationale:** Sections 0.4.4 and 0.8 guarantee checking against the cited version. Profile applicability decides which rules enter that check. A linter that always runs the latest lists or guesses a profile breaks both guarantees.
 
-**Compliant:** `itws-lint --spec 0.6.0-draft --profile design-rfc queue-design.md` loads the 0.6.0-draft lists and the `design-rfc` rule set.
-**Non-compliant:** A 0.6.0-draft `procedure` is checked against the latest lists and the `research-paper` profile inferred from its references section.
+**Compliant:** `itws-lint --spec 0.8.0-draft --profile design-rfc queue-design.md` loads the 0.8.0-draft lists and the `design-rfc` rule set.
+**Non-compliant:** A 0.8.0-draft `procedure` is checked against the latest lists and the `research-paper` profile inferred from its references section.
 
 **Cross-references:** §0.4.4; §0.8.
 
@@ -239,7 +300,7 @@ Publication release checks confirm:
 3. both reviewed-tier approvals are complete;
 4. citations, internal links, figures, tables, alt text, and referenced artifacts resolve in the release form;
 5. profile-required deliverables, including reproducibility material where applicable, are accessible or their access limits are stated; and
-6. the independent reader-test record identifies the participant criteria, task, outcome, and any revisions.
+6. the independent reader-test record includes the scan phase, full-read phase, participant criteria, outcomes, and any revisions.
 
 > **Drafting note (STY-52):** the profile-specific pass/fail tasks remain provisional until the protocol has been piloted and recorded for each profile that targets publication.
 
@@ -256,7 +317,7 @@ Publication release checks confirm:
 
 **Rationale:** Publication claims both independent comprehension and release readiness. The reader test catches a plain layer that changes the primary outcome. Release checks catch a correct draft with stale metadata, broken evidence, inaccessible artifacts, or missing approvals.
 
-**Compliant:** A `research-paper` release record includes reviewed-tier approvals and a new independent participant's successful result teach-back. The record also includes resolved citations and artifacts. The checklist was generated for ITWS 0.6.0-draft.
+**Compliant:** A `research-paper` release record includes reviewed-tier approvals and a new independent participant's successful result teach-back. The record also includes resolved citations and artifacts. The checklist was generated for ITWS 0.8.0-draft.
 **Non-compliant:** "The reader-proxy reviewer said it reads fine." The proxy is not an independent test participant. No release checks are recorded.
 
 **Cross-references:** §1.2; §8.4; Rule 8.3.2.
@@ -276,14 +337,14 @@ Publication release checks confirm:
 >
 > The participant **shall not** be a disqualified participant.
 
-**Rationale:** The test measures what the document teaches, not what the participant already knew or absorbed in drafting, review, or project discussion. Contaminated participants pass documents that fail real readers.
+**Rationale:** The test measures what the document teaches, not what the participant already knew or absorbed in drafting, review, or project discussion. Subject expertise above the baseline can silently fill the same gaps. Contaminated or overqualified participants pass documents that fail real readers.
 
 **Compliant:** A quality assurance specialist from an unrelated pod matches the `procedure` baseline. They have never seen the system change. They use the final procedure to walk through the task.
 **Non-compliant:** The reader-proxy reviewer, who has read three drafts, is the test participant.
 
 **Cross-references:** §0.3; Annex B; Rule 8.4.3.
 
-**Reader-test procedure:** read the document once, unassisted and at the participant's pace, then produce the reader-test outcome stated in the declared profile's overlay.
+**Publication test phases:** first complete the §8.1.1 scan-test procedure. Record the scan response and foil decisions before opening the full document. Then read the full document once, unassisted and at the participant's pace. Produce the reader-test outcome stated in the declared profile's overlay.
 
 **Passing response:**
 
@@ -295,13 +356,13 @@ Publication release checks confirm:
 **Constructs:** any
 **Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
 **Resources:** reads: conformance-record · writes: none
-**Relations:** requires 8.3.1
+**Relations:** requires 8.3.1; requires 8.1.4
 
-> The participant **shall** follow the reader-test procedure.
+> The participant **shall** complete the scan phase before reading the full document.
 >
-> The document **shall** pass only when the participant produces a passing response.
+> The document **shall** pass only when the participant produces a passing scan response and a passing full-read response.
 
-**Rationale:** A universal research-result test would not measure every profile's primary outcome. Such a test would miss procedure execution, decision recovery, and safe incident interpretation. The profile task ties the acceptance test to the document's job. The task retains two common failure directions: boundary creep (§7.4) and status or strength creep (§5.6).
+**Rationale:** The scan phase tests the shallow model before full text can repair it. A universal research-result test would not measure every profile's primary outcome. Such a test would miss procedure execution, decision recovery, and safe incident interpretation. The profile tasks tie both phases to the document's job. The tasks retain two common failure directions: boundary creep (§7.4) and status or strength creep (§5.6).
 
 **Compliant:** For a procedure, the participant waits until replica lag is below 2 seconds. The participant performs the verification query. When the query fails, the participant chooses rollback R1.
 **Non-compliant:** The participant can summarize why the maintenance matters but skips the precondition and invents a restart as rollback.
@@ -376,13 +437,14 @@ Reviewed and publication tiers assign §1.2's two layers to independent people. 
 - The complete evidence record, including lifecycle or authority status (§5.4).
 - Calibration of evidential strength and decision authority (§5.6).
 - Boundary coverage (Part 7).
+- Accuracy and completeness of the scan-test key and strengthened foils (§8.1.1).
 
 #### Rule 8.4.2 — Subject-matter-owner scope
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO 26514, renamed to §1.2
 **Constructs:** any
 **Navigation:** target: conformance-record · chunks: any · slots: any · layers: exact · context: document · rewrite: prohibited
 **Resources:** reads: conformance-record, exact-item-ledger · writes: none
-**Relations:** requires 8.4.1
+**Relations:** requires 8.4.1; requires 8.1.4
 
 > The subject-matter owner **shall** check every item in the owner review scope.
 
@@ -402,13 +464,15 @@ Reviewed and publication tiers assign §1.2's two layers to independent people. 
 **Constructs:** any
 **Navigation:** target: conformance-record · chunks: any · slots: any · layers: plain · context: document · rewrite: prohibited
 **Resources:** reads: conformance-record, term-ledger · writes: none
-**Relations:** requires 8.4.1
+**Relations:** requires 8.4.1; requires 8.1.4
 
+> Before the full plain-layer review, the reader proxy **shall** complete the scan-test procedure without viewing its key.
+>
 > The reader proxy **shall** check every proxy review area from the declared profile's assumed-reader baseline.
 >
 > The proxy **shall** flag every proxy blocker.
 
-**Rationale:** The proxy's value is disciplined ignorance: they read as the declared Annex B baseline, not as themselves. A proxy who fills gaps from project knowledge silently passes documents that fail the real reader.
+**Rationale:** The proxy's value is disciplined ignorance: they read as the declared Annex B baseline, not as themselves. Specialist knowledge cannot fill a scan-path gap. A proxy who fills gaps from project knowledge silently passes documents that fail the real reader.
 
 **Compliant:** The proxy flags "quiesce L7" in a procedure because neither term is assumed or admitted. The state transition is required to execute the critical path.
 **Non-compliant:** The proxy lets "fence the old primary" pass because the database team knows its meaning. The declared assumed reader does not know the phrase.
@@ -523,8 +587,8 @@ An artifact set **shall** satisfy every generation-contract condition:
 
 **Rationale:** A checklist, a rule index, and a navigation catalog are only trustworthy when a reader can regenerate them and compare bytes. Recorded source hashes turn a stale artifact into a detected error rather than a silent one. Determinism keeps a regeneration diff readable, so a reviewer sees the rule change instead of reordering noise.
 
-**Compliant:** `python3 tools/itws_compile.py --check` reports no difference, and `manifest.json` records ITWS 0.6.0-draft with a hash for every file under `spec/`.
-**Non-compliant:** A committed `rules.jsonl` names ITWS 0.5.1-draft while the front matter reads 0.6.0-draft, and no command reproduces the file.
+**Compliant:** `python3 tools/itws_compile.py --check` reports no difference, and `manifest.json` records ITWS 0.8.0-draft with a hash for every file under `spec/`.
+**Non-compliant:** A committed `rules.jsonl` names ITWS 0.5.1-draft while the front matter reads 0.8.0-draft, and no command reproduces the file.
 
 **Cross-references:** §0.4.4; §0.8; Rule 8.1.1; Rule 8.2.3.
 
@@ -622,3 +686,9 @@ An artificial-intelligence agent may read the generated artifacts, classify pass
 **Non-compliant:** The tool applies the later patch and silently discards the earlier one.
 
 **Cross-references:** §1.6.2; Rule 2.7.3; Rule 8.6.4.
+
+## 8.7 Machine-proposed comments carry a human disposition
+
+Section 8.7 governs one construct of the `maintenance-comment` profile: a governed comment whose recorded provenance is `ai-proposed`. Its rules apply to that profile only, and §1.5 places them in `spec/overlays/maintenance-comment/rules.md`.
+
+The gate is construct-specific evidence. Each machine-proposed comment carries one comment proposal record (§0.6) with its provenance, durable bases, pinned hashes, and recorded human disposition. The gate does not add reviewer roles and does not replace the two-role `reviewed` tier of §8.4. Annex C indexes every §8.7 rule with its profile applicability and its file.

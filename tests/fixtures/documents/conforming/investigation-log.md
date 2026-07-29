@@ -1,10 +1,12 @@
 # Investigation log: client failures on the export path
 
-ITWS version: 0.6.0-draft
+ITWS version: 0.8.0-draft
 Profile: investigation-log
 Conformance tier: core
 
 ## Log header
+
+The log header fixes the investigation's subject, scope, governing artifact, and admitted terms.
 
 ### Subject
 
@@ -27,6 +29,8 @@ A *service* is a running software unit that accepts requests through a defined i
 A *reusable database connection* is a database connection the service keeps open and hands to one request at a time.
 
 ## Entry 2026-07-27 E-1
+
+Entry E-1 tests whether a 10-second request timeout causes the observed client failures.
 
 ### Objective
 
@@ -52,9 +56,11 @@ Repeat the same workload with the connection wait time recorded for every reques
 
 ## Entry 2026-07-28 E-2
 
+Entry E-2 tests whether connection waits contributed to the failures observed in entry E-1.
+
 ### Objective
 
-Determine whether the four failing requests waited for a reusable database connection.
+Determine whether the four failures from entry E-1 waited for a reusable database connection.
 
 ### Configuration or context
 
