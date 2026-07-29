@@ -7,7 +7,7 @@ description: Rewrite a document so it conforms to the Invene Technical Writing S
 
 ## What this skill does
 
-It points you at one repository and one entry point. The repository holds the specification, a committed navigation catalog, and standard-library Python helpers. The entry point tells you the order to use them in.
+It points you at one repository and one entry point. The repository holds the specification, a committed navigation catalog, and standard-library Python helpers. The entry point tells you the order to use them in. The public repository is located at: https://github.com/invene/writing_spec
 
 ## Steps
 
