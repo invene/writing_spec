@@ -2,15 +2,17 @@
 
 Part 4 is shared core. Part 4 governs everything above the sentence in every ITWS profile. A rule applies to all profiles unless `**Profiles:**` metadata narrows it.
 
-Sections 4.1–4.5 govern chunks, ordering, profile jobs, skeletons, and headings. Sections 4.6–4.10 govern detail, navigation, density, path-agnostic prose, and formatting.
+Sections 4.1–4.5 govern chunks, ordering, profile jobs, skeletons, and headings. Sections 4.6–4.10 govern detail, navigation, density, path-agnostic prose, and formatting. Section 4.11 governs the work-item hierarchy and keeps its rules in the overlay directories (§1.5).
 
 ASD-STE100 stops at the sentence. This part draws on Information Mapping, Diátaxis, IMRaD, and plain-language ordering guidance.
 
-Annex E is authoritative for profile skeletons. IMRaD applies only to the `research-paper` profile.
+Annex E registers each profile skeleton, and the overlay `skeleton.md` file holds it. IMRaD applies only to the `research-paper` profile.
 
 ## 4.1 The chunk model: one purpose per chunk
 
-A chunk is a paragraph-level unit with exactly one purpose (§0.6). The taxonomy adapts Information Mapping to the eight ITWS profile jobs. Profiles need not use every type. However, every body paragraph must fit exactly one type below. A reviewer who cannot classify a paragraph has found mixed or missing purpose.
+A chunk is a paragraph-level unit with exactly one purpose (§0.6). The taxonomy adapts Information Mapping to the eleven ITWS profile jobs. Profiles need not use every type. However, every body paragraph must fit exactly one type below. A reviewer who cannot classify a paragraph has found mixed or missing purpose.
+
+A tool may assign an identifier to a source span while it processes a document. That identifier is a processing handle for one run. It is not a chunk boundary, it is not a chunk type, and an author never writes one into a governed document. Deciding which §4.1 type a passage carries is a reader's judgment, and §1.6.1 keeps it there.
 
 Each type states its job, a review test, and a representative example.
 
@@ -50,7 +52,7 @@ Example: "The new index halves median query latency. Across six production-shape
 
 A decision chunk records one selected course of action, its status, and the scope in which it governs.
 
-Test: after reading the paragraph, can an implementer state what was chosen without reconstructing it from alternatives?
+Test: after reading the paragraph, can the assumed reader state what was chosen without reconstructing it from alternatives?
 
 Example: "We chose three synchronous replicas for invoice writes. The decision applies to new regional deployments from release 2026.08 onward."
 
@@ -66,7 +68,7 @@ Example: "A write reaches all three replicas in parallel. The service returns su
 
 A procedure chunk gives ordered actions to perform or audit. A procedure chunk contains commands or a reproducible account of actions, not their interpretation.
 
-Test: could an engineer follow or repeat the actions in the stated order?
+Test: could the assumed reader follow or repeat the actions in the stated order?
 
 Example: "Stop the worker. Wait until the queue count reaches zero. Replace the image. Start the worker. Verify one successful health check."
 
@@ -104,6 +106,10 @@ Example: "The latency result covers read-only workloads below 20,000 requests pe
 
 #### Rule 4.1.1 — One purpose per chunk
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Information Mapping
+**Constructs:** any
+**Navigation:** target: chunk · chunks: any · slots: any · layers: both · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 4.2.2; pairs-with 7.3.1
 
 > Each chunk of a governed document **shall** serve exactly one purpose from the §4.1 taxonomy.
 
@@ -120,6 +126,10 @@ Main-point-first ordering applies at four levels: sentence, chunk, section, and 
 
 #### Rule 4.2.1 — Main point before qualification in a sentence
 **Class:** recommended · **Machine-checkable:** no · **Source:** PlainLanguage.gov
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 4.2.2
 
 > A sentence **should** state its main point in the main clause before subordinate qualifications.
 
@@ -132,6 +142,10 @@ Main-point-first ordering applies at four levels: sentence, chunk, section, and 
 
 #### Rule 4.2.2 — Chunk opens with its point
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** PlainLanguage.gov / pyramid principle
+**Constructs:** any
+**Navigation:** target: chunk · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.1.1
 
 > A chunk **shall** state its point in its first sentence. Remaining sentences **shall** support, elaborate, or bound that point.
 
@@ -144,6 +158,10 @@ Main-point-first ordering applies at four levels: sentence, chunk, section, and 
 
 #### Rule 4.2.3 — Section opens with its takeaway or purpose
 **Class:** mandatory · **Machine-checkable:** no · **Source:** pyramid principle
+**Constructs:** section
+**Navigation:** target: section · chunks: any · slots: any · layers: plain · context: section · rewrite: review
+**Resources:** reads: chunk-text, heading · writes: chunk-text
+**Relations:** requires 4.2.2; pairs-with 4.7.1
 
 > A section **shall** state its takeaway or operational purpose in its opening chunk before presenting supporting material.
 
@@ -158,11 +176,15 @@ Early Annex E slots include Summary, Goal, Decision, and each profile's equivale
 
 #### Rule 4.2.4 — Document states its main point before detail
 **Class:** mandatory · **Machine-checkable:** no · **Source:** PlainLanguage.gov / IMRaD (adapted)
-**Profiles:** design-rfc, decision-record, procedure, explanation, incident, technical-report, research-paper
+**Profiles:** design-rfc, decision-record, procedure, explanation, incident, technical-report, research-paper, epic, task
+**Constructs:** any
+**Navigation:** target: document · chunks: any · slots: Summary · layers: plain · context: document · rewrite: review
+**Resources:** reads: chunk-text, skeleton-order · writes: chunk-text
+**Relations:** requires 4.4.1; pairs-with 4.4.3
 
 > A governed document **shall** state its profile-specific main point in the earliest applicable Annex E slot. The point **shall** precede supporting detail.
 
-**Rationale:** This rule applies main-point-first ordering at document scale. Annex E gives each listed profile an appropriate early slot. Annex E does not force every profile to have an abstract. `investigation-log` is excluded because its outcome develops entry by entry. The outcome does not exist at the document's start. Where Rule 4.4.3 applies, the early point is the plain member of the plain/exact pair.
+**Rationale:** This rule applies main-point-first ordering at document scale. Annex E gives each listed profile an appropriate early slot. Annex E does not force every profile to have an abstract. `investigation-log` is excluded because its outcome develops entry by entry. The outcome does not exist at the document's start. `subtask` is excluded because it contributes to a parent outcome and introduces no independent main outcome. Where Rule 4.4.3 applies, the early point is the plain member of the plain/exact pair.
 
 **Compliant:** A `design-rfc` summary opens: "The proposed design keeps invoice writes available when one region fails."
 **Non-compliant:** A `design-rfc` opens with replica message formats and does not state the proposed availability outcome until its final section.
@@ -177,42 +199,16 @@ After: "The protocol keeps writes available when one replica fails. Each write g
 
 ## 4.3 Profiles: one job per document
 
-ITWS 0.2 defines eight canonical profiles. A profile is a document job in the Diátaxis sense. The profile determines the document's purpose, applicable Annex E skeleton, and narrowed rules. Content with another job belongs in another document. Local, skippable content may use a bounded block.
+ITWS 0.6.0-draft defines eleven canonical profiles. A profile is a document job in the Diátaxis sense. The profile determines the document's purpose, applicable Annex E skeleton, and narrowed rules. Content with another job belongs in another document. Local, skippable content may use a bounded block.
 
-#### `design-rfc`
-
-Job: specify a technical design before implementation or rollout. Reviewers evaluate its requirements, interfaces, invariants, alternatives, risks, and acceptance conditions. A `design-rfc` seeks an informed decision. A `design-rfc` does not present an already settled decision as open.
-
-#### `decision-record`
-
-Job: preserve one settled technical decision, its context and options, its status, and its consequences. A `decision-record` tells future readers what governs and why. A `decision-record` is not a design survey or implementation procedure.
-
-#### `procedure`
-
-Job: enable a defined reader to complete or verify a bounded operational or development task safely and repeatably. A `procedure` supplies prerequisites, ordered actions, verification, rollback, and escalation. Explanation appears only where an action depends on it.
-
-#### `explanation`
-
-Job: build an accurate mental model of a concept, system, or mechanism. An `explanation` answers how or why. An `explanation` does not direct a task, approve a design, or present a working investigation chronology.
-
-#### `incident`
-
-Job: establish what happened, who or what was affected, how responders restored service, what evidence supports causes or contributing factors, and which follow-ups result. An `incident` separates timeline observations from causal interpretation.
-
-#### `technical-report`
-
-Job: answer a bounded technical question or document a system, method, evaluation, or result at sustained detail. A `technical-report` carries evidence, interpretation, limits, and enough information to reproduce the method or verify the system.
-
-#### `research-paper`
-
-Job: report a research question, method, evidence, result, and bounded interpretation to scholarly publication standard. This profile alone uses the IMRaD-derived skeleton in Annex E.
-
-#### `investigation-log`
-
-Job: maintain an append-only working record during an active investigation. Each dated entry records its question, configuration or context, observations, and next step. Each entry also records an interpretation or states that no interpretation exists. An entry does not present provisional findings as settled.
+Each profile states its job in the `README.md` of its overlay directory. Section 0.2 lists the canonical IDs and their purposes. Section 1.5 defines the overlay layout and the load set. The overlay registry is `spec/overlays/README.md`.
 
 #### Rule 4.3.1 — Declare the profile
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Diátaxis (adapted)
+**Constructs:** declaration
+**Navigation:** target: declaration · chunks: any · slots: any · layers: exact · context: document · rewrite: prohibited
+**Resources:** reads: declaration-block · writes: none
+**Relations:** constrains 4.4.1
 
 > A governed document **shall** declare exactly one canonical §0.2 profile ID in its front matter.
 
@@ -220,7 +216,7 @@ Job: maintain an append-only working record during an active investigation. Each
 
 **Compliant:**
 ```text
-ITWS version: 0.2.1-draft
+ITWS version: 0.6.0-draft
 Profile: decision-record
 Conformance tier: core
 ```
@@ -232,6 +228,10 @@ Subordinate content remains within a profile when Annex E requires it or the dec
 
 #### Rule 4.3.2 — Stay in the profile job
 **Class:** mandatory · **Machine-checkable:** no · **Source:** Diátaxis
+**Constructs:** any
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, skeleton-order · writes: chunk-text
+**Relations:** requires 4.3.1
 
 > A governed document **shall not** independently perform another profile's primary job. Required subordinate content **shall** remain within the declared profile.
 
@@ -244,6 +244,10 @@ Subordinate content remains within a profile when Annex E requires it or the dec
 
 #### Rule 4.3.3 — Annex E required sections are present
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** ISO/IEC/IEEE 26514 (adapted)
+**Constructs:** section
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: candidate
+**Resources:** reads: heading, skeleton-order · writes: heading, skeleton-order
+**Relations:** requires 4.4.1
 
 > A governed document **shall** include each required Annex E section and structural slot for its profile. The document **shall** preserve Annex E's order.
 
@@ -256,22 +260,18 @@ Subordinate content remains within a profile when Annex E requires it or the dec
 
 ## 4.4 Applying profile skeletons
 
-Annex E defines each profile's required sections and slots, their order, and permitted merges or renames. Part 4 explains how to apply those skeletons. Part 4 does not create a universal outline. IMRaD and the research sequence of abstract, method, results, and discussion belong only to `research-paper`.
+Annex E states the shared slot policy and registers each profile's skeleton. A skeleton defines its required sections and slots, their order, and its permitted merges or renames. Part 4 explains how to apply those skeletons. Part 4 does not create a universal outline. IMRaD and the research sequence of abstract, method, results, and discussion belong only to `research-paper`.
 
-The shared application pattern is dependency order:
-
-- `design-rfc` seeds the problem, constraints, and specialized vocabulary before exact design and risk detail.
-- `decision-record` seeds decision context and terms before the exact decision and consequences.
-- `procedure` seeds prerequisites, safety conditions, permissions, and terms before the first dependent step.
-- `explanation` builds from the assumed-reader baseline before introducing the mechanism it explains.
-- `incident` supplies necessary system context and vocabulary before dependent timeline or causal analysis.
-- `technical-report` and `research-paper` seed prerequisites before methods, evidence, and claims that use them.
-- `investigation-log` maintains log-level definitions and admits entry-local terms before the observation or hypothesis that needs them.
+The shared application pattern is dependency order. Every profile seeds its prerequisites before the detail that depends on them. Each `skeleton.md` in the overlay directory states that profile's dependency order.
 
 Annex E also controls empty slots: a required job with no content remains present as `None` or `Not applicable` with a reason. Optional bounded blocks and appendices may be omitted. A bounded block may seed terms used only inside that block because the block remains locally complete and skippable.
 
 #### Rule 4.4.1 — Use the declared profile skeleton
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Diátaxis / IMRaD (adapted)
+**Constructs:** section
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: candidate
+**Resources:** reads: heading, skeleton-order · writes: heading, skeleton-order
+**Relations:** requires 4.3.1; constrains 4.3.3
 
 > A governed document **shall** apply the Annex E skeleton associated with its declared profile.
 
@@ -286,6 +286,10 @@ Prerequisites for Rule 4.4.2 are facts, constraints, priors, non-assumed terms, 
 
 #### Rule 4.4.2 — Seed prerequisites before load-bearing detail
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** domain-term
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger, skeleton-order · writes: chunk-text
+**Relations:** requires 2.3.1
 
 > A document **shall** introduce each prerequisite before the first dependent load-bearing detail.
 
@@ -296,15 +300,19 @@ Prerequisites for Rule 4.4.2 are facts, constraints, priors, non-assumed terms, 
 
 **Cross-references:** §2.3, §4.9.2, §5.2 (symbols), §4.8.1 (admission density), Annex E
 
-Covered main outcomes are proposals, decisions, operational outcomes, and evidential claims.
+Covered main outcomes are proposals, decisions, operational outcomes, strategic outcomes, tactical outcomes, and evidential claims.
 
 #### Rule 4.4.3 — State the main outcome plainly, then exactly
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
-**Profiles:** design-rfc, decision-record, procedure, incident, technical-report, research-paper
+**Profiles:** design-rfc, decision-record, procedure, incident, technical-report, research-paper, epic, task
+**Constructs:** claim
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, exact-item-ledger · writes: chunk-text
+**Relations:** requires 5.1.2; pairs-with 4.2.4
 
 > A covered document **shall** state its main outcome early in assumed-reader vocabulary. The document **shall** restate that outcome precisely after admitting all dependencies. The document **shall** link both statements under §5.1.
 
-**Rationale:** This rule resolves main-point-first ordering against define-before-use (§1.4). The early statement gives the reader the destination without ladder debt. The later statement supplies exact scope, thresholds, identifiers, and uncertainty. The link proves that both statements express one outcome at two resolutions. `explanation` is excluded because its primary outcome is a mental model built through the document. `investigation-log` is excluded because it has no settled outcome during entry creation.
+**Rationale:** This rule resolves main-point-first ordering against define-before-use (§1.4). The early statement gives the reader the destination without ladder debt. The later statement supplies exact scope, thresholds, identifiers, and uncertainty. The link proves that both statements express one outcome at two resolutions. `explanation` is excluded because its primary outcome is a mental model built through the document. `investigation-log` is excluded because it has no settled outcome during entry creation. `subtask` is excluded because its parent condition already supplies the exact outcome it contributes to.
 
 **Compliant:** A `design-rfc` summary says, "Invoice writes continue when one region fails." After admitting *quorum* and *replica*, the document gives Outcome O-1. "Writes succeed while any one of three regional replicas is unavailable when two replicas durably acknowledge each write." Outcome O-1 links to the summary.
 **Non-compliant:** A `technical-report` says only "the new index is faster" in its summary and never restates that claim with workloads, comparison, measured values, and uncertainty.
@@ -317,6 +325,10 @@ A heading is the shortest form of its section's takeaway or operational purpose.
 
 #### Rule 4.5.1 — Headings are informative
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** PlainLanguage.gov / Google Developer Style Guide
+**Constructs:** heading
+**Navigation:** target: heading · chunks: any · slots: any · layers: plain · context: section · rewrite: candidate
+**Resources:** reads: heading, chunk-text · writes: heading
+**Relations:** pairs-with 4.10.1
 
 > Below required Annex E top-level sections, a heading **shall** state its section's point or operational purpose. The heading **shall not** merely name the topic.
 
@@ -335,18 +347,26 @@ A bounded block uses a quotation. Its first line has one bold bracketed label: `
 
 #### Rule 4.6.1 — Exact detail beyond the plain layer goes in a bounded block or appendix
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** bounded-block
+**Navigation:** target: chunk · chunks: any · slots: any · layers: exact · context: section · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 4.6.3; pairs-with 6.3.1
 
 > Technical detail unnecessary to the assumed reader's main line **shall** appear in a bounded block or appendix. Such detail **shall not** appear in main text.
 
 **Rationale:** This rule is the structural half of §1.2. The plain layer stays plain because the exact layer has a defined location. Section 5.1 prohibits deleting exactness to keep prose readable.
 
-**Compliant:** Main text: "The gateway accepts a write after enough replicas store it." Followed by: "> **[Detail — acknowledgement rule]** A write succeeds after 2 of 3 replicas persist record `r` at log position `n`. Appendix B specifies retries."
+**Compliant:** After admitting *gateway*, *write*, *replica*, *log position*, *retry*, and symbols `r` and `n`: Main text: "The gateway accepts a write after enough replicas store it." Followed by: "> **[Detail — acknowledgement rule]** A write succeeds after 2 of 3 replicas persist record `r` at log position `n`. Appendix B specifies retries."
 **Non-compliant:** The log positions, acknowledgement states, and retry timing occupy three sentences in the middle of the plain mechanism paragraph.
 
 **Cross-references:** §1.4 precedence item 1, §5.1, §6.3
 
 #### Rule 4.6.2 — Bounded blocks use the standard markup
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** bounded-block
+**Navigation:** target: bounded-block · chunks: any · slots: any · layers: both · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** validates 4.6.1
 
 > Every bounded block **shall** use standard markup with exactly one label: Detail, Intuition, or Speculation.
 
@@ -359,6 +379,10 @@ A bounded block uses a quotation. Its first line has one bold bracketed label: `
 
 #### Rule 4.6.3 — Main text passes the skip test
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** bounded-block
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.6.1
 
 > The main text **shall** remain coherent when every bounded block is removed. The main text **shall** have no dangling references or broken argument.
 
@@ -377,6 +401,10 @@ Sections locate themselves. References point by number. The document never depen
 
 #### Rule 4.7.1 — A section opens by locating itself
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** section
+**Navigation:** target: section · chunks: any · slots: any · layers: plain · context: section · rewrite: candidate
+**Resources:** reads: chunk-text, heading · writes: chunk-text
+**Relations:** pairs-with 4.2.3
 
 > Within its first chunk, a section **shall** state its function and connection to preceding content.
 
@@ -389,10 +417,14 @@ Sections locate themselves. References point by number. The document never depen
 
 #### Rule 4.7.2 — Forward pointers are few and explicit
 **Class:** recommended · **Machine-checkable:** partial · **Source:** original
+**Constructs:** cross-reference
+**Navigation:** target: section · chunks: any · slots: any · layers: plain · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, cross-reference-ledger · writes: chunk-text
+**Relations:** constrains 2.3.3
 
 > A section **should** contain at most two forward pointers. Each pointer **should** name a numbered section without depending on unread content.
 
-**Rationale:** A forward pointer is a promise. Prose that needs unread material is a forward *dependence*. Section 2.3 already prohibits such dependence for terms. Rule 4.7.2 discourages it for all other content. The provisional ITWS 0.2 cap prevents signposting from replacing sound ordering.
+**Rationale:** A forward pointer is a promise. Prose that needs unread material is a forward *dependence*. Section 2.3 already prohibits such dependence for terms. Rule 4.7.2 discourages it for all other content. The provisional cap prevents signposting from replacing sound ordering.
 
 **Compliant:** "§7.2 bounds this availability claim to single-region failures."
 **Non-compliant:** "As will become clear, this choice is the reason the later anomaly appears." (An unnumbered promise the reader cannot act on.)
@@ -401,6 +433,10 @@ Sections locate themselves. References point by number. The document never depen
 
 #### Rule 4.7.3 — Cross-references cite numbers, not positions
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google Developer Style Guide
+**Constructs:** cross-reference
+**Navigation:** target: sentence · chunks: any · slots: any · layers: both · context: document · rewrite: mechanical
+**Resources:** reads: chunk-text, cross-reference-ledger · writes: chunk-text, cross-reference-ledger
+**Relations:** requires 4.7.2
 
 > Cross-references **shall** cite a numbered section, figure, or table. They **shall not** use "above," "below," or "as previously discussed."
 
@@ -413,16 +449,20 @@ Sections locate themselves. References point by number. The document never depen
 
 ## 4.8 Length and density budgets
 
-The ladder makes rigor possible. Budgets make the ladder manageable. A document may satisfy §2.3 but still admit terms faster than the reader can absorb them. Both numeric values below are provisional ITWS 0.2 calibrations. Section 8.3 reader-test outcomes may change them under §0.8.
+The ladder makes rigor possible. Budgets make the ladder manageable. A document may satisfy §2.3 but still admit terms faster than the reader can absorb them. Both numeric values below are provisional draft calibrations. Section 8.3 reader-test outcomes may change them under §0.8.
 
 For Rule 4.8.1, a page is a consecutive, non-overlapping 500-word window. Any remainder forms the document's final page.
 
 #### Rule 4.8.1 — At most three term admissions per page
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** domain-term
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.3.1; pairs-with 4.4.2
 
 > A governed document **shall not** admit more than three new terms or symbols per defined page.
 
-**Rationale:** Admission is the costliest thing a document asks of the reader. Three per page is a provisional ITWS 0.2 value based on working-memory guidance. Section 8.3 calibration may change the value. The cap forces the writer to spread the ladder or reduce scope. Persistent overshoot signals missing structure, not a need for waiver.
+**Rationale:** Admission is the costliest thing a document asks of the reader. Three per page is a provisional draft value based on working-memory guidance. Section 8.3 calibration may change the value. The cap forces the writer to spread the ladder or reduce scope. Persistent overshoot signals missing structure, not a need for waiver.
 
 **Compliant:** A context section admits "replica," "quorum," and "failover" across its first page, then builds on them.
 **Non-compliant:** A first page admits "replica," "quorum," "lease," "epoch," "consensus," and "linearizability"—six rungs in 500 words.
@@ -431,10 +471,14 @@ For Rule 4.8.1, a page is a consecutive, non-overlapping 500-word window. Any re
 
 #### Rule 4.8.2 — Sections stay under the length ceiling
 **Class:** recommended · **Machine-checkable:** yes · **Source:** original
+**Constructs:** section
+**Navigation:** target: section · chunks: any · slots: any · layers: plain · context: section · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 4.8.3
 
 > A section **should not** exceed 1,500 words.
 
-**Rationale:** The provisional ITWS 0.2 section ceiling forces useful structure. An oversized section usually contains two sections or detail for a bounded block or appendix (§4.6.1). The ceiling is recommended because some evidence and incident-timeline sections are legitimately long.
+**Rationale:** The provisional draft section ceiling forces useful structure. An oversized section usually contains two sections or detail for a bounded block or appendix (§4.6.1). The ceiling is recommended because some evidence and incident-timeline sections are legitimately long.
 
 **Compliant:** A 2,100-word incident analysis split into three sections with informative headings.
 **Non-compliant:** A single 2,100-word "Analysis" section with no internal structure.
@@ -443,10 +487,14 @@ For Rule 4.8.1, a page is a consecutive, non-overlapping 500-word window. Any re
 
 #### Rule 4.8.3 — Subsections stay under the length ceiling
 **Class:** recommended · **Machine-checkable:** yes · **Source:** original
+**Constructs:** section
+**Navigation:** target: section · chunks: any · slots: any · layers: plain · context: section · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.8.2
 
 > A subsection **should not** exceed 600 words.
 
-**Rationale:** The subsection ceiling is independently checkable from the section ceiling. A subsection above the provisional ITWS 0.2 value usually contains two points or skippable detail that belongs in a bounded block.
+**Rationale:** The subsection ceiling is independently checkable from the section ceiling. A subsection above the provisional draft value usually contains two points or skippable detail that belongs in a bounded block.
 
 **Compliant:** A 1,400-word section divided into three 350–550-word subsections.
 **Non-compliant:** A 1,400-word section whose only subsection contains 1,200 words under one heading.
@@ -465,6 +513,10 @@ Rule 4.9.1 permits a history reference only as a §4.9.2 framed prior or an iden
 
 #### Rule 4.9.1 — No residual-history asides
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Google Developer Style Guide (timeless documentation, extended)
+**Constructs:** prohibited-phrase
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 4.9.2; pairs-with 2.6.6
 
 > Prose **shall not** refer to superseded approaches, prior drafts, or abandoned states outside the permitted contexts.
 
@@ -477,6 +529,10 @@ Rule 4.9.1 permits a history reference only as a §4.9.2 framed prior or an iden
 
 #### Rule 4.9.2 — Necessary path information is promoted to a framed prior
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** any
+**Navigation:** target: chunk · chunks: context · slots: any · layers: both · context: section · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.9.1
 
 > Necessary path information **shall** appear as a prior in the concept's framing chunk. The prior **shall** use path-agnostic terms.
 
@@ -491,6 +547,10 @@ A clause deletes cleanly when its removal leaves the sentence intact.
 
 #### Rule 4.9.3 — Every path reference passes delete-or-promote
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: both · context: section · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.9.1; requires 4.9.2
 
 > A clause about a superseded state or abandoned approach **shall** pass delete-or-promote. The clause **shall** delete cleanly or receive §4.9.2 promotion.
 
@@ -507,6 +567,10 @@ These rules convert formatting-level patterns from Wikipedia's "Signs of AI writ
 
 #### Rule 4.10.1 — Headings use sentence case
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing" / Google Developer Style Guide
+**Constructs:** heading
+**Navigation:** target: heading · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: heading · writes: heading
+**Relations:** validates 4.5.1
 
 > Headings **shall** use sentence case.
 
@@ -519,6 +583,10 @@ These rules convert formatting-level patterns from Wikipedia's "Signs of AI writ
 
 #### Rule 4.10.2 — Boldface is earned and rare
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.3.1
 
 > Body boldface **shall** appear only in term admissions (§2.3) and template-required labels. Body boldface **shall not** emphasize selected running words or phrases.
 
@@ -531,6 +599,10 @@ These rules convert formatting-level patterns from Wikipedia's "Signs of AI writ
 
 #### Rule 4.10.3 — No inline-header lists in place of prose
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** list
+**Navigation:** target: list · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.1.1
 
 > Prose content **shall** use prose form. A vertical "**Term**: description" list **shall not** substitute for prose.
 
@@ -543,6 +615,10 @@ These rules convert formatting-level patterns from Wikipedia's "Signs of AI writ
 
 #### Rule 4.10.4 — No tables for what a sentence says better
 **Class:** recommended · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** table
+**Navigation:** target: table · chunks: any · slots: any · layers: plain · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 5.5.1
 
 > A table **should not** replace a sentence that states two to four facts equally well. Tables **should** contain genuinely tabular data under §5.5.
 
@@ -553,8 +629,14 @@ These rules convert formatting-level patterns from Wikipedia's "Signs of AI writ
 
 **Cross-references:** §5.5, §5.2 (notation tables are tabular)
 
+**Phrase list 4.10.5 — emoji code points (pattern):** "[\U0001F300-\U0001FAFF]"; "[\U00002600-\U000027BF]"; "[\U0001F000-\U0001F0FF]"; "[\U0001FE0F-\U0001FE0F]".
+
 #### Rule 4.10.5 — No emoji
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** any
+**Navigation:** target: document · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** none
 
 > Governed documents **shall not** contain emoji.
 
@@ -569,6 +651,10 @@ Rule 4.10.6 covers boilerplate outline sections such as "Challenges / Future Pro
 
 #### Rule 4.10.6 — No canned section formulas
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** section
+**Navigation:** target: section · chunks: any · slots: any · layers: plain · context: section · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 6.5.4
 
 > A document **shall not** contain a section that could apply unchanged to another subject. The document **shall not** use a covered boilerplate outline.
 
@@ -578,3 +664,12 @@ Rule 4.10.6 covers boilerplate outline sections such as "Challenges / Future Pro
 **Non-compliant:** "Despite its promise, the architecture faces several challenges. Despite these challenges, its future remains bright."
 
 **Cross-references:** §1.1 P5, §7.1, §6.5
+
+## 4.11 Work items separate strategy, acceptance, and contribution
+
+Section 4.11 governs the work-item hierarchy. Its rules apply to `epic`, `task`, and `subtask` only. Section 1.5 places those rules in the overlay directories:
+
+- Rules shared by more than one work-item profile are in `spec/overlays/shared/work-item.md`.
+- Rules scoped to one profile are in that profile's `rules.md`.
+
+Annex C indexes every §4.11 rule with its profile applicability and its file.

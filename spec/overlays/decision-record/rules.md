@@ -1,0 +1,7 @@
+# `decision-record` scoped rules
+
+**ITWS version:** 0.6.0-draft
+
+This file lists no rule. ITWS 0.6.0-draft scopes no rule to `decision-record` alone.
+
+Every shared-core rule in Parts 2–8 applies unless its `Profiles` metadata excludes `decision-record`.

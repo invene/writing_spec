@@ -1,12 +1,12 @@
 # Annex A — Glossary (normative, living)
 
-**Status:** v0.2.1-draft. This living annex contains 24 admitted entries.
+**Status:** v0.6.0-draft. This living annex contains 24 admitted entries.
 
 Maintainers add, revise, and deprecate entries under §2.5. They version each change under §0.8.
 
 Maintainers never delete entries. They mark withdrawn entries as deprecated and retain them.
 
-ITWS has one shared core and eight profiles. Profile metadata records where maintainers expect a term to be useful.
+ITWS has one shared core and eleven profiles. Profile metadata records where maintainers expect a term to be useful.
 
 Profile metadata does not make the term assumed vocabulary. Each governed document still satisfies the entry's ladder prerequisites before using the term.
 
@@ -45,7 +45,7 @@ The research seed chain starts with one term that Annex B §B.1 treats as assume
 
 Governed documents need not define `function`.
 
-- **function** — assumed (Annex B §B.1: programming concepts).
+- **function** — assumed (Annex B §B.1: basic software concepts).
 
 ## A.3 Entries
 
@@ -297,7 +297,7 @@ Do not use for / say:  Do not use "service" as a synonym for any process, librar
                        State the unit's interface and responsibility.
 Ladder prerequisites:  assumed baseline (process, interface, client/server — Annex B §B.1)
 Profiles:               design-rfc, procedure, explanation, incident, technical-report,
-                       investigation-log
+                       investigation-log, epic, task, subtask
 Domain tag:             reliability/platform
 Version:               added in v0.2.0-draft
 ```
@@ -311,7 +311,8 @@ Approved example:      The service-level indicator is the fraction of requests c
 Do not use for / say:  Do not use the abbreviation "SLI" before admission. Do not call an
                        unmeasured intention an indicator.
 Ladder prerequisites:  service; assumed baseline (measurement, fraction, request)
-Profiles:               design-rfc, incident, technical-report, investigation-log
+Profiles:               design-rfc, incident, technical-report, investigation-log, epic,
+                       task, subtask
 Domain tag:             reliability/platform
 Version:               added in v0.2.0-draft
 ```
@@ -324,7 +325,8 @@ Approved example:      The service-level objective requires at least 99.9% of re
 Do not use for / say:  Do not use the abbreviation "SLO" before admission. Do not present the
                        target as an observed result.
 Ladder prerequisites:  service-level indicator; assumed baseline (range, period)
-Profiles:               design-rfc, decision-record, incident, technical-report
+Profiles:               design-rfc, decision-record, incident, technical-report, epic, task,
+                       subtask
 Domain tag:             reliability/platform
 Version:               added in v0.2.0-draft
 ```
@@ -337,7 +339,8 @@ Approved example:      Failed requests consumed one quarter of the monthly error
 Do not use for / say:  Do not use "budget" without naming the indicator, objective, and period.
                        An error budget is not a financial budget.
 Ladder prerequisites:  service-level indicator, service-level objective
-Profiles:               design-rfc, decision-record, incident, technical-report
+Profiles:               design-rfc, decision-record, incident, technical-report, epic, task,
+                       subtask
 Domain tag:             reliability/platform
 Version:               added in v0.2.0-draft
 ```
@@ -352,7 +355,7 @@ Do not use for / say:  Do not call something an asset without identifying who va
                        kind of harm protection addresses.
 Ladder prerequisites:  assumed baseline (data, software, access, change)
 Profiles:               design-rfc, decision-record, procedure, explanation, incident,
-                       technical-report, investigation-log
+                       technical-report, investigation-log, epic, task, subtask
 Domain tag:             security/governance
 Version:               added in v0.2.0-draft
 ```
@@ -367,7 +370,7 @@ Do not use for / say:  Do not use "threat" for a person or group without describ
                        harmful action and conditions.
 Ladder prerequisites:  asset; assumed baseline (event, condition)
 Profiles:               design-rfc, decision-record, procedure, explanation, incident,
-                       technical-report, investigation-log
+                       technical-report, investigation-log, epic, task, subtask
 Domain tag:             security/governance
 Version:               added in v0.2.0-draft
 ```
@@ -382,7 +385,7 @@ Do not use for / say:  Do not claim that a control eliminates risk unless the ev
                        elimination.
 Ladder prerequisites:  asset, threat; assumed baseline (measure, chance, effect)
 Profiles:               design-rfc, decision-record, procedure, explanation, incident,
-                       technical-report, investigation-log
+                       technical-report, investigation-log, epic, task, subtask
 Domain tag:             security/governance
 Version:               added in v0.2.0-draft
 ```
@@ -397,7 +400,7 @@ Do not use for / say:  Do not call risk "accepted" unless an identified decision
                        recorded that decision.
 Ladder prerequisites:  threat, control
 Profiles:               design-rfc, decision-record, incident, technical-report,
-                       investigation-log
+                       investigation-log, epic, task, subtask
 Domain tag:             security/governance
 Version:               added in v0.2.0-draft
 ```

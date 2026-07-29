@@ -1,6 +1,6 @@
 # Annex B — Assumed-reader baseline (normative)
 
-**Status:** v0.2.1-draft. Working software engineers who match the §0.3 base reader have not yet validated this annex.
+**Status:** v0.6.0-draft. Members across software engineering pod roles have not yet validated this annex.
 
 Until that review, treat borderline items as not assumed (§0.3.3).
 
@@ -10,9 +10,13 @@ The policy in §0.8 classifies baseline changes separately from prose changes. R
 
 Adding an item is a minor change.
 
-The baseline begins with the core of the Association for Computing Machinery's computer science curriculum.
+The baseline represents knowledge shared across a cross-functional software engineering pod.
 
-The baseline keeps knowledge that working software engineers retain. The baseline also adds professional-practice knowledge that the curriculum does not cover.
+It does not use a software engineer's education, coding fluency, or professional depth as its floor.
+
+A base reader gains familiarity through regular work near software design, delivery, testing, operation, or management.
+
+Role-specific expertise remains unavailable unless §B.1 lists it.
 
 The shared core uses one base reader for every profile. A profile overlay may add familiar document conventions.
 
@@ -42,67 +46,37 @@ The baseline does not admit a specialized sense merely because the term uses a f
 
 For example, *lease*, *control*, *model*, and *significance* still require admission as domain terms.
 
-Programming:
+Basic software concepts:
 
-- Variables, types, functions, parameters and arguments, return values, scope, control flow, iteration, recursion, exceptions, and interfaces
-- Classes and objects, immutability, side effects, pure functions, closures, serialization, parsing, regular expressions, and string manipulation
-- Randomness and seeding pseudorandom generators
+- Software, source code, configuration, applications, systems, components, and processes understood as running programs
+- Frontends and backends at the level of user-facing and server-side software
+- Inputs, outputs, state, errors, failures, and dependencies
+- Functions as named software units that accept inputs and produce outputs or effects
+- Parameters as named inputs to functions or APIs, and arguments as supplied values
+- Interfaces and application programming interfaces (APIs) as defined boundaries between software units
+- Clients and servers, requests and responses, and HTTP as a common request protocol
+- Files and databases, including tables, rows, and queries at a conceptual level
+- Latency as delay, throughput as work per unit of time, capacity, and availability
 
-Data structures:
+Software delivery and quality:
 
-- Arrays, lists, maps/dictionaries, sets, stacks, and queues
-- Trees, graphs, hash tables and hashing, and linked structures
-- Matrices as two-dimensional arrays of numbers
+- Requirements, acceptance criteria, features, bugs or defects, and regressions
+- Manual and automated tests, including unit, integration, end-to-end, and regression tests at a purpose level
+- Reproduction steps and debugging at the level of finding the cause of a failure
+- Logs, metrics, monitoring, and alerts
+- Development, test, staging, and production environments
+- Builds, deployments, releases, versions, and rollbacks
+- Version control, commits, branches, diffs, pull requests, and code review at a purpose level
+- Continuous integration at the level of automated checks on a proposed change
 
-The baseline assumes only matrix storage and indexing. §B.3 excludes the algebraic sense.
+Basic quantitative reasoning:
 
-Algorithms and complexity:
-
-- Searching and sorting, big-O notation and growth rates, and time/space trade-offs
-- Greedy versus exhaustive search, binary search, and divide and conquer
-- Dynamic programming at the level of "cache subproblem results" and graph traversal
-- The idea that some problems are intractable at scale
-
-Systems:
-
-- Processes, threads, concurrency, and race conditions
-- Memory hierarchy and caching
-- CPUs versus GPUs at the level of "GPUs run many simple operations in parallel"
-- Compilation and interpretation
-- Floating-point numbers and their finite precision
-- File systems and operating-system basics
-
-Networking and distributed systems:
-
-- Client/server, HTTP, and APIs
-- Latency versus throughput and bandwidth
-- Timeouts, retries, and load balancing
-- Horizontal versus vertical scaling
-- Eventual consistency at the level of "replicas can briefly disagree"
-
-Databases:
-
-- Tables, rows, schemas, queries, indexes, transactions, joins at the working SQL level, and key-value stores
-
-Software practice:
-
-- Version control (commits, branches, and diffs), code review, and testing (unit, integration, and regression)
-- Continuous integration, benchmarks and profiling, logging and monitoring, and debugging
-- Configuration and environment variables, dependency management, releases and versioning, and technical debt
-- A/B testing at the level of "compare two variants on live traffic"
-
-Mathematics (first-year-undergraduate working level):
-
-- Algebraic manipulation
-- Functions and their graphs, linear equations and slopes, and polynomials
-- Exponentials and logarithms, including log scales and "logarithmic growth"
+- Arithmetic with whole numbers, decimals, negative numbers, and fractions
+- Counts, minimums, maximums, and ranges
 - Percentages, ratios, and rates
-- Averages (mean, median, and mode) and a distribution's spread at the level of "min/max/percentiles"
-- Basic probability, including independent events, coin flips and dice, and informal conditional probability ("the chance of X given Y")
-- Expected value at the level of "long-run average"
-- Basic set operations
-- Factorial and simple counting arguments
-- Basic two-dimensional geometry and coordinates
+- Mean or average and median
+- Chance in its ordinary, informal sense
+- Values presented in simple tables, line charts, and bar charts
 
 ## B.2 Assumed notation
 
@@ -112,20 +86,20 @@ Writers must define every symbol not on this list in prose at first use.
 
 Included:
 
-- Function application: `f(x)`, `g(x, y)`, and named functions used as values.
-- Variables and named constants; subscripts as indices (`xᵢ`, "the i-th example").
-- Arithmetic: `+ − × / ^`, parentheses, `=`, `≈`, and `≠`.
-- Inequalities and ranges: `< ≤ > ≥`, intervals like `[0, 1]`.
-- Absolute value `|x|`, percent `%`, and scientific notation (`3 × 10⁸`).
-- Summation `Σ` over an indexed set, read as a loop; product `Π` by analogy, if introduced with a reading.
-- Logarithms and exponentials: `log`, `ln`, `exp`, `2ⁿ`, and `10ᵏ`.
-- Set notation: `{…}`, `∈`, `∉`, `⊆`, `∪`, `∩`, and `∅`; set-builder notation read aloud at first use.
-- Factorial `n!`.
-- Big-O: `O(n log n)`.
+- Arithmetic: `+ − × /` and parentheses.
+- Equality and comparison: `=`, `≠`, `<`, `≤`, `>`, and `≥`.
+- Percent `%` and plain ratios such as `3:1`.
+- Plain numeric ranges such as `1–5`.
+
+Every letter or symbol that names a quantity requires a prose definition at first use.
 
 The following notation is not in the baseline. Writers define the notation at first use, even when the notation looks standard.
 
-- Binomial coefficients `C(n, k)` / `(n choose k)`. The baseline assumes the counting idea (§B.1), but not the notation.
+- Variables, named constants, function application, and subscripted indexing
+- Approximation `≈`, powers, absolute value, scientific notation, and interval notation such as `[0, 1]`
+- Summation `Σ`, product `Π`, logarithms, exponentials, factorial, and Big-O notation
+- Set notation, including membership, subsets, unions, intersections, and set-builder notation
+- Binomial coefficients `C(n, k)` / `(n choose k)`
 - Vector/matrix notation: bold symbols, `Ax`, transpose, norms `‖x‖`, and dot products.
 - Calculus notation: `d/dx`, `∂`, `∫`, `∇`, and limits.
 - Probability/statistics notation: `P(X | Y)` as formal notation, `E[·]`, `Var`, `σ`, and distribution names and symbols (`N(μ, σ²)`).
@@ -136,6 +110,36 @@ The following notation is not in the baseline. Writers define the notation at fi
 The writer shall not use these concepts without admitting them through the §2.3 ladder. Familiarity is not knowledge (§0.3.2).
 
 Recognition does not establish operational knowledge.
+
+Role and education:
+
+The baseline does not assume a computer science education or a software engineering job title.
+
+The baseline does not assume professional coding experience or the depth of a seasoned software engineer.
+
+The reader need not parse or write source code, shell commands, SQL, configuration syntax, or regular expressions.
+
+Programming implementation:
+
+Admit programming-language syntax and implementation concepts not listed in §B.1.
+
+Examples include types, scope, control flow, iteration, recursion, exceptions, classes, objects, and closures.
+
+Other examples include immutability, side effects, serialization, parsing, pseudorandom seeding, and string manipulation.
+
+Admit data structures and algorithms beyond ordinary lists and tables.
+
+Examples include maps, sets, stacks, queues, trees, graphs, hash tables, linked structures, sorting algorithms, and binary search.
+
+Complexity analysis, Big-O notation, divide and conquer, dynamic programming, and intractability remain unassumed.
+
+Systems and data infrastructure:
+
+Admit threads, concurrency, race conditions, memory hierarchy, caching, compilation, and floating-point behavior.
+
+Admit CPU/GPU execution models, file-system internals, timeouts, retries, load balancing, and scaling models.
+
+Eventual consistency, database schemas, indexes, transactions, joins, key-value stores, and SQL behavior remain unassumed.
 
 Domain and organization-specific concepts:
 
@@ -156,14 +160,23 @@ The following concepts remain unassumed:
 - Overfitting, regularization, hyperparameter, checkpoint, sampling (in the generation sense), reinforcement learning, reward, agent (in the machine-learning sense), alignment, and hallucination
 - Benchmark suites by name (MMLU, GSM8K, …) and dataset names as shorthand (ImageNet, C4, …)
 
-Statistics beyond basic probability:
+Statistics beyond basic quantitative reasoning:
 
 The following concepts remain unassumed:
 
-- Named distributions (normal, binomial, …), standard deviation and variance as formal quantities, hypothesis testing, p-values, and statistical significance
-- Confidence intervals, effect sizes, correlation coefficients, regression (statistical sense), sampling error, and statistical power
+- Mode, percentiles, named distributions, standard deviation, variance, standard error, hypothesis testing, p-values, and statistical significance
+- Confidence intervals, effect sizes, correlation, regression, sampling error, statistical power, expected value, and formal probability
 
-Admit every concept in this list under §5.7.
+Technical reports and research papers admit these concepts under §5.7.
+
+Other profiles admit them under §2.3.
+
+Mathematics beyond basic quantitative reasoning:
+
+The following concepts remain unassumed:
+
+- Algebraic manipulation, mathematical functions, function graphs, linear equations, slopes, and polynomials
+- Exponentials, logarithms, summation, products, factorials, combinatorics, formal set operations, and coordinate geometry
 
 Linear algebra as manipulation:
 
@@ -173,8 +186,6 @@ The following concepts remain unassumed:
 - Vectors as directions or points in high-dimensional space
 - Dot products as similarity
 - Eigenvalues and eigenvectors, matrix decompositions, and high-dimensional geometry
-
-The baseline assumes matrices as two-dimensional storage (§B.1).
 
 Calculus and optimization:
 
@@ -188,18 +199,27 @@ Examples that remain unassumed include venue prestige as evidence, "SOTA," "came
 
 ## B.4 Profile overlays: conventions only
 
-The following list is the complete profile registry for ITWS 0.2.1-draft. Each overlay adds only the listed navigation or document convention.
+Each overlay adds only navigation or document conventions. Each overlay states its own conventions in the `reader.md` file of its overlay directory. Section 1.5 defines that layout.
 
-- `design-rfc`. The reader recognizes a proposal organized around context, requirements, a proposed design, alternatives, risks, rollout, and unresolved questions.
-- `decision-record`. The reader recognizes a compact record of status, context, decision, and consequences. The reader expects an explicit recorded decision.
-- `procedure`. The reader recognizes prerequisites, ordered steps, verification, recovery, and escalation as instruction-document conventions.
-- `explanation`. The reader recognizes a concept-to-mechanism explanation supported by examples and bounded by limits.
-- `incident`. The reader recognizes impact and timeline as factual records. The reader treats causal analysis as a separate interpretation. The reader treats remediation and follow-up as separate jobs.
-- `technical-report`. The reader recognizes a report that separates system or method, evidence, interpretation, limitations, and reproducibility or verification.
-- `research-paper`. The reader recognizes navigation derived from introduction, methods, results, and discussion (IMRaD). The reader treats citations as source pointers and distinguishes results from discussion. This overlay expressly assumes no machine-learning knowledge. Every machine-learning term, method, benchmark, dataset, metric, convention, or symbol absent from §B.1 and §B.2 requires admission.
-- `investigation-log`. The reader recognizes dated, append-only entries that separate objective, configuration or context, observations, interpretation, and next step.
+The following table is the complete profile registry for ITWS 0.6.0-draft. Each row is normative through the file it names.
+
+| Overlay | Profile | File |
+|---|---|---|
+| §B.4.1 | `design-rfc` | [../overlays/design-rfc/reader.md](../overlays/design-rfc/reader.md) |
+| §B.4.2 | `decision-record` | [../overlays/decision-record/reader.md](../overlays/decision-record/reader.md) |
+| §B.4.3 | `procedure` | [../overlays/procedure/reader.md](../overlays/procedure/reader.md) |
+| §B.4.4 | `explanation` | [../overlays/explanation/reader.md](../overlays/explanation/reader.md) |
+| §B.4.5 | `incident` | [../overlays/incident/reader.md](../overlays/incident/reader.md) |
+| §B.4.6 | `technical-report` | [../overlays/technical-report/reader.md](../overlays/technical-report/reader.md) |
+| §B.4.7 | `research-paper` | [../overlays/research-paper/reader.md](../overlays/research-paper/reader.md) |
+| §B.4.8 | `investigation-log` | [../overlays/investigation-log/reader.md](../overlays/investigation-log/reader.md) |
+| §B.4.9 | `epic` | [../overlays/epic/reader.md](../overlays/epic/reader.md) |
+| §B.4.10 | `task` | [../overlays/task/reader.md](../overlays/task/reader.md) |
+| §B.4.11 | `subtask` | [../overlays/subtask/reader.md](../overlays/subtask/reader.md) |
 
 These conventions let the writer use the corresponding section functions without teaching the genre. The conventions do not permit unexplained domain terms within those sections.
+
+The `research-paper` overlay expressly assumes no machine-learning knowledge. Its file states that boundary and what remains ladder-required.
 
 A profile-specific audience declaration may narrow the actual audience. The declaration does not change ITWS conformance unless Annex B changes.
 

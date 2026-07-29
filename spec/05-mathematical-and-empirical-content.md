@@ -4,7 +4,7 @@ Part 5 governs the exact layer of every governed document. That layer includes c
 
 By §1.4, these rules override Parts 2–4 and 6 wherever they collide. A plain rendering traces to an exact statement (§5.1). Symbols use the same ladder as terms (§5.2). Equations receive plain readings (§5.3). Material exact items carry a complete evidence record (§5.4). Evidential strength and decision authority use calibrated language (§5.6).
 
-Profile-specific exactness fields extend that shared record. They do not replace the shared record.
+Profile-specific exactness fields extend that shared record. They do not replace the shared record. Sections 5.7–5.9 are profile-scoped and keep their rules in the overlay directories (§1.5).
 
 ## 5.1 The exactness principle
 
@@ -12,6 +12,10 @@ Plain prose may simplify an explanation. Plain prose may never blur an exact sta
 
 #### Rule 5.1.1 — Simplification preserves exact meaning
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** claim
+**Navigation:** target: chunk · chunks: any · slots: any · layers: both · context: neighboring · rewrite: prohibited
+**Resources:** reads: chunk-text, exact-item-ledger · writes: none
+**Relations:** constrains 5.1.2
 
 > A plain-language rendering **shall not** change the scope, status, strength, conditions, or required behavior of the exact statement it renders.
 
@@ -26,6 +30,10 @@ Plain prose may simplify an explanation. Plain prose may never blur an exact sta
 
 #### Rule 5.1.2 — Simplified statements trace to exact statements
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** cross-reference, claim
+**Navigation:** target: chunk · chunks: any · slots: any · layers: both · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, exact-item-ledger · writes: chunk-text, cross-reference-ledger
+**Relations:** requires 5.1.1
 
 > Every simplified rendering of a simplified material item **shall** explicitly reference the exact statement it renders.
 
@@ -42,14 +50,15 @@ Notation is vocabulary. The §2.3 term ladder applies equally to symbols and ter
 
 Annex B §B.2 is the sole normative **baseline notation set**. The baseline contains:
 
-- Function application, variables, named constants, and subscripted indexing.
-- Arithmetic, equality and approximation, inequalities, ranges, absolute value, percentages, and scientific notation.
-- Summation over an explicit index, and product notation when accompanied by the reading Annex B requires.
-- Logarithms, exponentials, factorial, and Big-O notation.
-- Basic set notation, including membership, subset, union, intersection, the empty set, and set-builder notation with the reading Annex B requires.
+- Arithmetic operators and parentheses.
+- Equality and comparison operators.
+- Percent notation, plain ratios, and plain numeric ranges.
 
 The following notation is not baseline and therefore requires ladder admission:
 
+- Variables, named constants, function application, and subscripted indexing.
+- Approximation, powers, absolute value, scientific notation, and interval notation.
+- Summation, product, logarithmic, exponential, factorial, Big-O, and set notation.
 - Matrix and vector notation and operations.
 - Norms, gradients (∇), and derivatives.
 - Expectation and probability operators (𝔼, Pr).
@@ -60,6 +69,10 @@ The following notation is not baseline and therefore requires ladder admission:
 
 #### Rule 5.2.1 — Define every non-baseline symbol at first use
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original (mechanism from §2.3)
+**Constructs:** symbol
+**Navigation:** target: symbol · chunks: any · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, symbol-ledger · writes: chunk-text, symbol-ledger
+**Relations:** requires 2.3.1; constrains 5.2.2
 
 > A symbol outside the baseline notation set **shall** be defined in prose at or before first use.
 >
@@ -67,19 +80,23 @@ The following notation is not baseline and therefore requires ladder admission:
 
 **Rationale:** A reader cannot expand an unknown symbol. Unlike an unknown word, the symbol cannot even be sounded out. The term ladder also applies to notation. Serves P4. A linter can flag symbols that appear before a defining sentence. A human judges definition quality.
 
-**Compliant:** "Write θ for the model's parameters: the list of numbers that training adjusts. The loss L(θ) is a function. The function scores how badly the model with parameters θ performs on the training examples."
+**Compliant:** After admitting *model* and *training*: "Write θ for the model's stored numbers. Write L for the scoring function. L(θ) means the score for the model configured by θ."
 **Non-compliant:** "We minimize L(θ) by stochastic gradient descent." Neither L nor θ has been defined.
 
 **Cross-references:** §2.3, Rule 5.2.2, Annex B §B.2
 
 #### Rule 5.2.2 — One symbol, one meaning
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** ASD-STE100 (adapted)
+**Constructs:** symbol
+**Navigation:** target: symbol · chunks: any · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, symbol-ledger · writes: symbol-ledger
+**Relations:** requires 5.2.1; pairs-with 2.1.1
 
 > A symbol **shall** have exactly one meaning within a document.
 >
 > A meaning **shall** be written with exactly one symbol.
 
-**Rationale:** Symbol reuse forces the reader to track scope like a compiler tracks shadowed variables. The assumed reader may resolve the symbol incorrectly when it matters. Serves P2. Tooling can check the document's symbol table.
+**Rationale:** Symbol reuse forces the reader to remember which local meaning applies. The assumed reader may choose the wrong meaning when it matters. Serves P2. Tooling can check the document's symbol table.
 
 **Compliant:** α is the learning rate everywhere in the document. The significance level is written out or receives a different symbol at admission.
 **Non-compliant:** α is the learning rate in §3 and the significance level in §5.
@@ -90,12 +107,16 @@ The following notation is not baseline and therefore requires ladder admission:
 
 #### Rule 5.2.3 — Notation table above six symbols
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** symbol, table
+**Navigation:** target: table · chunks: any · slots: any · layers: exact · context: document · rewrite: candidate
+**Resources:** reads: symbol-ledger · writes: chunk-text, symbol-ledger
+**Relations:** requires 5.2.1
 
 > A document defining more than six non-baseline symbols **shall** include a notation table.
 >
 > The table **shall** contain every required notation-table field.
 
-**Rationale:** In-prose definitions scale to a handful of symbols. Beyond that number, the reader needs an index to recover a definition without rereading. The threshold of six is provisional for v0.2. Serves P4.
+**Rationale:** In-prose definitions scale to a handful of symbols. Beyond that number, the reader needs an index to recover a definition without rereading. The threshold of six remains provisional. Serves P4.
 
 **Compliant:** A capacity report defining λ, μ, Q, W, C, U, and R includes a notation table before the first analysis section.
 **Non-compliant:** The same report defines all seven symbols across nine pages of prose with no table.
@@ -110,14 +131,20 @@ An equation the reader cannot read aloud is an image, not a statement. Every dis
 
 #### Rule 5.3.1 — Every displayed equation gets a plain-language reading
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** equation
+**Navigation:** target: equation · chunks: any · slots: any · layers: both · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 5.2.1
 
 > Every displayed equation **shall** have an adjacent plain-language reading.
 >
 > The reading **shall** include all required equation-reading content.
 
-**Rationale:** The assumed reader parses code fluently but may not know mathematical convention. The reading documents the equation. The reading also explains why the equation appears there. A reader may skip an unmotivated equation. Section 4.6 permits that skip only for bounded blocks, not load-bearing equations. Serves P3 and P4. A linter can flag displayed equations without adjacent readings. A human judges adequacy.
+**Rationale:** The assumed reader follows basic software concepts but may parse neither code nor mathematical notation fluently. The reading documents the equation. The reading also explains why the equation appears there. A reader may skip an unmotivated equation. Section 4.6 permits that skip only for bounded blocks, not load-bearing equations. Serves P3 and P4. A linter can flag displayed equations without adjacent readings. A human judges adequacy.
 
 **Compliant:**
+
+Before the display, the document defines every symbol. N is the number of examples. The symbol i identifies one example. The expression x_i is that example's input. The expression y_i is its correct answer. The expression f(x_i) is the model's prediction. L is the average error. Σ means add the following expression for every i from 1 through N. The superscript 2 means multiply the difference by itself.
 
     L = (1/N) Σ_{i=1..N} (y_i − f(x_i))²
 
@@ -133,6 +160,10 @@ An equation the reader cannot read aloud is an image, not a statement. Every dis
 
 #### Rule 5.3.2 — Keep inline math atomic
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** equation
+**Navigation:** target: equation · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 5.3.1; pairs-with 3.1.3
 
 > Inline mathematics **shall** use only atomic inline forms.
 >
@@ -172,6 +203,9 @@ The record gains these profile-specific fields:
 - `technical-report` — the relevant system configuration, dependency versions, method, and evidence for each reported operational outcome.
 - `research-paper` — the statistical and reproducibility detail required by §§5.7–5.8.
 - `investigation-log` — the time and configuration of each observation and its evidence source. The profile field also covers the status of each hypothesis.
+- `epic` — the strategic outcome, problem evidence, success measures, technical-invariant IDs, child-task boundaries, cross-task risks, and DoD verification.
+- `task` — both classifications, parent and invariant links, journey or technical boundary, path records, completion-condition IDs, and integrated-acceptance evidence. A defect correction also carries its accepted behavior contract and deviation evidence.
+- `subtask` — the parent task, named parent condition, inherited invariants, bounded contribution, delegated path detail, and verification evidence.
 
 The citation-integrity rules in this section apply in every profile. Fabricated-but-plausible references are a realistic failure mode in any machine-generated draft.
 
@@ -179,6 +213,10 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 #### Rule 5.4.1 — Material statements carry a complete evidence record
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; APA JARS / NeurIPS checklist (research adaptation)
+**Constructs:** claim, measurement
+**Navigation:** target: chunk · chunks: claim, evidence · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, evidence-ledger · writes: chunk-text, evidence-ledger
+**Relations:** constrains 5.4.2; pairs-with 5.6.2
 
 > Every material exact item listed in §5.4 **shall** carry the complete evidence record.
 >
@@ -186,7 +224,7 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 **Rationale:** An incomplete exact item cannot be checked, reproduced, implemented, or compared. Context, alternatives, evidence, strength, uncertainty, and status make the item complete. Profile fields make each profile's exact items complete. Serves P6.
 
-**Compliant:** "For API v3, we replayed 12,000 requests/s. Verification confirms the proposed bounded queue keeps p99 latency below the existing 450 ms objective. The current implementation reached 710 ms. The proposed build reached 398–421 ms across five runs. Section 3 defines interface changes and the no-loss invariant. Section 6 links the harness and traces. The measured range reports run-to-run uncertainty. The design is proposed, not approved."
+**Compliant:** After admitting *p99* under §2.3: "For API v3, we replayed 12,000 requests/s. Verification confirms the proposed bounded queue keeps p99 latency below the existing 450 ms objective. The current implementation reached 710 ms. The proposed build reached 398–421 ms across five runs. Section 3 defines interface changes and the no-loss invariant. Section 6 links the harness and traces. The measured range reports run-to-run uncertainty. The design is proposed, not approved."
 **Non-compliant:** "The new queue fixes latency." The statement has no version, load context, baseline, evidence, invariant, evidential strength, uncertainty, or proposal status.
 
 **Cross-references:** Rule 5.4.2, Rule 5.6.2, §§5.7–5.8
@@ -195,6 +233,10 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 #### Rule 5.4.2 — No naked percentages
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; APA JARS (effect size + uncertainty, restated)
+**Constructs:** quantity
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text, evidence-ledger · writes: chunk-text
+**Relations:** requires 5.4.1
 
 > A percentage or improvement figure **shall not** appear without the required change context.
 
@@ -213,6 +255,10 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 #### Rule 5.4.3 — Every citation resolves
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing" (citations)
+**Constructs:** citation
+**Navigation:** target: citation · chunks: any · slots: any · layers: exact · context: document · rewrite: prohibited
+**Resources:** reads: citation-ledger · writes: none
+**Relations:** constrains 5.4.4
 
 > Every citation **shall** pass every applicable citation-resolution check.
 
@@ -225,6 +271,10 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 #### Rule 5.4.4 — Cited sources support the claim
 **Class:** mandatory · **Machine-checkable:** no · **Source:** Wikipedia "Signs of AI writing" (citations)
+**Constructs:** citation, claim
+**Navigation:** target: citation · chunks: any · slots: any · layers: exact · context: collection · rewrite: prohibited
+**Resources:** reads: citation-ledger, claim-ledger · writes: none
+**Relations:** requires 5.4.3
 
 > The cited page or section **shall** state or directly support the claim it is cited for.
 
@@ -237,6 +287,10 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 #### Rule 5.4.5 — Source counts are accurate
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing" (source-count inflation)
+**Constructs:** citation
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text, citation-ledger · writes: chunk-text
+**Relations:** requires 5.4.3; pairs-with 2.6.8
 
 > Plural attributions ("several studies," "multiple reports") **shall** be backed by at least that many distinct cited sources.
 
@@ -255,12 +309,16 @@ A useful figure or table communicates its exact takeaway and bounds without surr
 
 #### Rule 5.5.1 — Label axes, units, and series completely
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** APA / IEEE figure conventions
+**Constructs:** figure
+**Navigation:** target: figure · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: figure-ledger · writes: figure-ledger
+**Relations:** constrains 5.5.2
 
 > Every quantitative figure **shall** include every quantitative figure label.
 
 **Rationale:** An unlabeled axis makes the figure unfalsifiable. A hidden logarithmic scale makes the figure misleading. Serves P6.
 
-**Compliant:** X axis "request rate (requests/s)," Y axis "p99 latency (ms)," legend naming the current and proposed queue, caption noting the log-scaled X axis.
+**Compliant:** After admitting *p99* and *logarithmic scale*: X axis "request rate (requests/s)," Y axis "p99 latency (ms)," legend naming the current and proposed queue, caption noting the logarithmic X axis.
 **Non-compliant:** A curve labeled "performance" over an unlabeled X axis.
 
 **Cross-references:** Rule 5.5.2, §6.4
@@ -269,6 +327,10 @@ A useful figure or table communicates its exact takeaway and bounds without surr
 
 #### Rule 5.5.2 — The caption states the takeaway
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514; Nature-style figure guidance
+**Constructs:** figure, table
+**Navigation:** target: figure · chunks: any · slots: any · layers: both · context: local · rewrite: candidate
+**Resources:** reads: chunk-text, figure-ledger · writes: chunk-text, figure-ledger
+**Relations:** requires 5.5.1
 
 > A figure or table caption **shall** state the caption-supported item the artifact supports.
 >
@@ -276,7 +338,7 @@ A useful figure or table communicates its exact takeaway and bounds without surr
 
 **Rationale:** Readers, especially skimming readers, read captions before body text. "Latency by load" only describes the artifact. "The proposed queue meets the latency invariant through 12,000 requests/s" informs the reader. Rule 5.5.2 applies §4.5's informative-heading rule to captions. Serves P5.
 
-**Compliant:** "Figure 3: The proposed queue meets the 450 ms p99 invariant through 12,000 requests/s. Each point is the median of five replays. Bars show minimum and maximum."
+**Compliant:** After admitting *p99* under §2.3: "Figure 3: The proposed queue meets the 450 ms p99 invariant through 12,000 requests/s. Each point is the median of five replays. Bars show minimum and maximum."
 **Non-compliant:** "Figure 3: Queue latency."
 
 **Cross-references:** §4.5, Rule 5.5.3
@@ -285,6 +347,10 @@ A useful figure or table communicates its exact takeaway and bounds without surr
 
 #### Rule 5.5.3 — Figures stand alone for the assumed reader
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** figure, admitted-term
+**Navigation:** target: figure · chunks: any · slots: any · layers: plain · context: document · rewrite: review
+**Resources:** reads: figure-ledger, term-ledger · writes: figure-ledger
+**Relations:** requires 2.3.1
 
 > Every term and symbol in a figure text location **shall** be assumed (§0.3) or previously admitted.
 >
@@ -320,6 +386,10 @@ Lifecycle values describe an artifact or workflow state. Annex E or the document
 
 #### Rule 5.6.1 — Strength and authority language comes from the table only
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** IPCC calibrated language (mechanism)
+**Constructs:** claim
+**Navigation:** target: sentence · chunks: claim, interpretation · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
+**Relations:** constrains 5.6.2; pairs-with 3.9.2
 
 > A governed document **shall** use only §5.6 table phrases to signal evidential strength or decision authority.
 >
@@ -338,6 +408,10 @@ Lifecycle values describe an artifact or workflow state. Annex E or the document
 
 #### Rule 5.6.2 — Strength matches the evidential standard
 **Class:** mandatory · **Machine-checkable:** no · **Source:** IPCC calibrated language (mechanism)
+**Constructs:** claim
+**Navigation:** target: sentence · chunks: claim, interpretation · slots: any · layers: exact · context: document · rewrite: prohibited
+**Resources:** reads: chunk-text, claim-ledger, evidence-ledger · writes: none
+**Relations:** requires 5.6.1
 
 > Each calibrated statement **shall** have strength matching the calibration basis.
 
@@ -348,97 +422,25 @@ Lifecycle values describe an artifact or workflow state. Annex E or the document
 
 **Cross-references:** Rule 5.6.1, Rule 7.4.1, §8.4
 
-## 5.7 Statistical evidence for research profiles
+## 5.7 Statistical evidence for report profiles
 
-For technical reports and research papers, the assumed reader has only the profile's baseline probability knowledge unless the document admits more. Statistical concepts therefore split into a bare set and a ladder-required set. Rule 5.7.1 governs admission of the ladder-required set.
+Section 5.7 governs statistical admission and reporting. Its rules apply to `technical-report` and `research-paper` only. Section 1.5 places them in `spec/overlays/shared/report.md`, together with the bare and ladder-required concept sets.
 
-**Bare** (usable without definition): count, minimum, maximum, range, mean/average, median, percentage, ratio, percentile (engineers use p50/p99 daily).
-
-**Ladder-required** (admit per §2.3 before use):
-
-- Standard deviation, variance, and standard error.
-- Confidence interval, p-value, and statistical significance.
-- Any named distribution, including "normal" and "power law."
-- Correlation, regression, and effect size.
-- Every hypothesis-testing concept.
-
-**Admission-controlled statistical uses:** ladder-required concepts and "significant" in its statistical sense.
-
-#### Rule 5.7.1 — Admit ladder-required statistical concepts before use
-**Class:** mandatory · **Machine-checkable:** partial · **Source:** original (mechanism from §2.3)
-**Profiles:** technical-report, research-paper
-
-> An admission-controlled statistical use **shall not** appear before §2.3 admission.
->
-> Admission of "significant" **shall** include its underlying test.
-
-**Rationale:** "Significant" is the sharpest trap in the set. The assumed reader hears "large." The writer means "unlikely under a null hypothesis the reader has never met." Serves P2 and P4.
-
-**Compliant:** "The gap (4.2 points) is larger than the seed-to-seed spread of either model (at most 0.8 points across 5 runs)."
-**Non-compliant:** "The improvement is statistically significant (p < 0.05)" in a document that never admits p-values.
-
-**Cross-references:** §2.3, §0.3.2, Rule 5.7.2
-
-**Headline formulation:** a statement of the result using only bare statistical concepts.
-
-#### Rule 5.7.2 — Headline statistical results use bare concepts
-**Class:** mandatory · **Machine-checkable:** no · **Source:** original
-**Profiles:** technical-report, research-paper
-
-> Every headline statistical result **shall** include the headline formulation.
->
-> Ladder-required formulations **may** accompany that formulation but **shall not** replace it.
-
-**Rationale:** The two-layer model also applies to statistics. The exact formulation remains available to the expert. The assumed reader receives the finding in familiar vocabulary. Serves P3 and P4.
-
-**Compliant:** "Across 5 runs, the fine-tuned model beat the baseline every time, by 3.9 to 4.6 points (mean 4.2). A paired t-test, defined below, gives p = 0.003."
-**Non-compliant:** "The fine-tuned model outperformed the baseline (paired t-test, p = 0.003)" as the only statement of the result.
-
-**Cross-references:** Rule 5.4.1, §1.2
+Other profiles admit statistical concepts under §2.3.
 
 ## 5.8 Reproducibility and verification statements
 
-Technical reports and research papers carry a plain-language statement that tells the assumed reader how another person can check the reported work. The profile and subject determine which form applies:
+Section 5.8 governs the plain-language checkability statement. Its rules apply to `technical-report` and `research-paper` only. Section 1.5 places them in `spec/overlays/shared/report.md`, together with the statement forms and their required elements.
 
-- A `research-paper` uses a **reproducibility statement**. The statement identifies what another person needs to repeat the work. The reproducibility statement covers data or materials, code or procedure, compute or other resources, and key settings. The statement also identifies any unavailable input or component.
-- A `technical-report` uses **reproducibility** when another reader can repeat the reported method. The report uses **verification** when it assesses a system or artifact. The report uses both when both promises matter. A verification statement identifies the artifact and version, inputs and environment, checks or procedure, and pass criteria. The statement also identifies unavailable input or access needed to run those checks.
+## 5.9 Definitions of done compose without losing acceptance
 
-The statement summarizes the check in the main document. A technical appendix may carry command-level, configuration-level, or instrument-level detail, but does not replace the statement.
+Section 5.9 governs definition-of-done composition. Its rules apply to `epic`, `task`, and `subtask` only. Section 1.5 places those rules in the overlay directories:
 
-**Applicable statement elements:** every element §5.8 lists for the profile, subject, and selected statement form.
+- Rules shared by more than one work-item profile are in `spec/overlays/shared/work-item.md`.
+- Rules scoped to one profile are in that profile's `rules.md`.
 
-#### Rule 5.8.1 — Reports include the applicable checkability statement
-**Class:** mandatory · **Machine-checkable:** yes · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS checklist / ML Reproducibility Checklist (research adaptation)
-**Profiles:** technical-report, research-paper
-
-> A technical report or research paper **shall** include its applicable checkability statement.
->
-> The statement **shall** contain every applicable statement element.
-
-**Rationale:** A claim that cannot be repeated or independently checked remains dependent on the authors' environment and access. The profile-specific form makes checkability explicit without forcing an experiment-oriented statement onto a system report. Serves P6.
-
-**Compliant:** A system report's "Verification" section names the tested build, replay input, environment, commands, pass thresholds, and access gap. A research paper's "Reproducing this work" section covers data, code or procedure, resources, key settings, and gaps.
-**Non-compliant:** A system report says only "tests passed," or a research paper scatters settings across footnotes without stating data availability or required resources.
-
-**Cross-references:** Rule 5.4.1, §4.4, §8.2
-
-**Required statement content:** every element required by §5.8.
-
-#### Rule 5.8.2 — The statement reads in assumed-reader vocabulary
-**Class:** mandatory · **Machine-checkable:** partial · **Source:** original
-**Profiles:** technical-report, research-paper
-
-> The §5.8 statement **shall** use only assumed or previously admitted terms.
->
-> The statement **shall not** delegate required statement content entirely to a technical appendix or external artifact.
-
-**Rationale:** The assumed reader uses the statement to assess independent checking. A pointer where an answer should appear defeats the section. An appendix or linked harness extends the statement. The appendix or harness does not replace the statement. Serves P3 and P4.
-
-**Compliant:** "Reproducing this work: We trained on the public C4 text dataset, about 750 GB, available from its maintainers. Training code and configurations are in our internal repository `forge/plateau-study`. The reported runs used 64 H100 GPUs for roughly 9 days total across all experiments. The most important settings are the 0.001 learning rate and the data order. Appendix B gives the learning-rate schedule. We fix data order with the seeds in Table 5. The evaluation questions are private. A reproducer would need to substitute a comparable question set. Appendix C describes how we built our question set."
-**Non-compliant:** "See Appendix B for hyperparameters and infrastructure details."
-
-**Cross-references:** Rule 5.8.1, §2.3, §4.6
+Annex C indexes every §5.7, §5.8, and §5.9 rule with its profile applicability and its file.
 
 ---
 
-Annex F records traceability for every rule above. Machine-checkable and partial rules feed the §8.2 lint set.
+Annex F records traceability for every Part 5 rule, including the rules that §§5.7–5.9 place in overlay files. Machine-checkable and partial rules feed the §8.2 lint set.

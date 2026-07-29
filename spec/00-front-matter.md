@@ -1,7 +1,8 @@
 # Invene Technical Writing Specification (ITWS) — Front matter
 
-**Version:** 0.2.1-draft · **Status:** self-conformance rewrite draft  
-**Governs:** the eight technical-document profiles in §0.2
+**Version:** 0.6.0-draft · **Status:** agent-navigation draft
+
+**Governs:** the eleven technical-document profiles in §0.2
 
 ---
 
@@ -9,7 +10,7 @@
 
 This specification defines controlled English for technical documents. ITWS keeps content exact and usable by working technical readers who may not know the subject.
 
-ITWS has one shared core and eight profiles. The core supplies the language, structure, exactness, explanation, and compliance rules that technical genres share. A profile supplies only the purpose, skeleton, and exceptions needed by one genre. This architecture avoids eight divergent style guides. The architecture also gives each genre distinct evidence and release obligations.
+ITWS has one shared core and eleven profiles. The core supplies the language, structure, exactness, explanation, and compliance rules that technical genres share. A profile supplies only the purpose, skeleton, and exceptions needed by one genre. This architecture avoids eleven divergent style guides. The architecture also gives each genre distinct evidence and release obligations.
 
 The specification adapts existing work. Its rule architecture comes from ASD-STE100 (Simplified Technical English). The architecture uses permanent numbered rules, one normative statement per rule, contrasting examples, explicit applicability, and controlled vocabulary. Existing standards and guides supply relevant content. Every rule names its source. Annex F preserves source-framework traceability.
 
@@ -18,7 +19,7 @@ The principal source frameworks are:
 - ASD-STE100 — rule architecture, sentence rules, controlled vocabulary, and dictionary-entry format.
 - PlainLanguage.gov federal plain-language guidelines — audience focus, voice, headings, and main-point-first ordering.
 - Google Developer Style Guide and Microsoft Writing Style Guide — word use, punctuation, acronyms, naming, and developer-document conventions.
-- Diátaxis — separation by reader need and discipline against mixing procedural and explanatory modes. ITWS generalizes that discipline across all eight profiles rather than adopting Diátaxis's four types as the profile registry.
+- Diátaxis — separation by reader need and discipline against mixing procedural and explanatory modes. ITWS generalizes that discipline across all eleven profiles rather than adopting Diátaxis's four types as the profile registry.
 - Information Mapping and DITA topic typing — chunk purpose, modular structure, and reusable information units.
 - ISO/IEC/IEEE 26514 — software-documentation planning, audience analysis, content design, review, evaluation, and lifecycle controls.
 - IEC/IEEE 82079-1 — principles for information for use, task-oriented procedures, warning placement, usability, and quality evaluation.
@@ -46,8 +47,13 @@ ITWS governs prose documents that design, direct, explain, assess, or record tec
 | `technical-report` | Technical report | Present a technical analysis, system, method, or result in sustained detail. |
 | `research-paper` | Research paper | Report a research question, method, evidence, result, and limitations to publication standard. |
 | `investigation-log` | Investigation log | Preserve dated questions, actions, observations, hypotheses, and next steps while an investigation proceeds. |
+| `epic` | Epic | Define one strategic product outcome, its scope, success measures, technical invariants, cross-task risks, and child-task boundaries. |
+| `task` | Task | Specify one independently acceptable tactical outcome through a user journey or an explicit engineering-only contract. |
+| `subtask` | Subtask | Verify one named completion condition under exactly one parent `task`, without creating an independent outcome. |
 
-The registry contains the only ITWS 0.2 profiles. A document **shall** use one canonical ID and **shall not** combine profile IDs. A collection may contain several governed documents, but each document declares its own profile. Companion documents are preferable to a hybrid whose purpose and acceptance conditions cannot be determined.
+The registry contains the only ITWS 0.6.0-draft profiles. A document **shall** use one canonical ID and **shall not** combine profile IDs. A collection may contain several governed documents, but each document declares its own profile. Companion documents are preferable to a hybrid whose purpose and acceptance conditions cannot be determined.
+
+An issue-tracker item is governed only when it declares `epic`, `task`, or `subtask`. The item **shall** also contain every required Annex E slot. Issue-tracker comments, status events, and unstructured tickets remain outside ITWS conformance.
 
 The following are outside ITWS conformance:
 
@@ -55,7 +61,7 @@ The following are outside ITWS conformance:
 - Standalone application programming interface (API) or command reference material. Interface definitions may appear inside an applicable governed profile.
 - Slide decks, posters, and talk scripts.
 - Marketing and general-audience communication.
-- Chat messages, issue-tracker tickets, and review comments.
+- Chat messages, issue-tracker comments and status events, unstructured tickets, and review comments.
 
 An out-of-scope document may reuse ITWS practices, but no ITWS conformance claim attaches.
 
@@ -66,11 +72,15 @@ Every vocabulary, notation, and explanation rule resolves against this section a
 1. the **base reader**, shared by all profiles; and
 2. the selected profile's **genre-knowledge overlay**.
 
-The base reader is a **working software engineer**:
+The base reader is a **working member of a software engineering pod**.
 
-- They have roughly the knowledge of an Association for Computing Machinery (ACM) curriculum in computer science.
-- They also have a few years of professional software work.
-- They read and write code in their work. Common programming and software-practice concepts need no definition.
+A software engineering pod is cross-functional. Its members may include software engineers, product designers, engineering managers, quality assurance (QA) specialists, product managers, and operations partners.
+
+- They collaborate regularly on software design, delivery, testing, operation, or management.
+- They can follow basic engineering discussions and artifacts common to software work.
+- They know the concepts enumerated in Annex B, usually through practical exposure and proximity.
+- They are not assumed to have a computer science education or write or review code.
+- They are not assumed to match a seasoned software engineer's depth.
 - They are not assumed to know the document's product, system, operational environment, scientific field, or other subject domain.
 
 ### 0.3.1 What may be assumed
@@ -78,9 +88,9 @@ The base reader is a **working software engineer**:
 The writer may use the following without definition, subject to Annex B's full enumeration:
 
 - **Ordinary English:** contemporary general-purpose English used in its ordinary, nontechnical sense.
-- **Programming concepts:** functions, parameters, arguments, return values, common data structures, recursion, iteration, state, caching, hashing, indexing, compilation, APIs, databases, queues, concurrency, and version control.
-- **Software practice:** testing, benchmarks, regressions, profiling, logging and monitoring, debugging, latency/throughput trade-offs, configuration, dependency management, releases, and versioning.
-- **General mathematics to first-year-undergraduate level:** algebraic manipulation, functions and graphs, logarithms and exponentials, summation notation, basic probability, percentages, averages, linear equations, and basic set notation.
+- **Basic software concepts:** functions, inputs, outputs, state, interfaces, APIs, clients and servers, requests and responses, files, databases, latency, and throughput.
+- **Software delivery and quality:** requirements, acceptance criteria, bugs, tests, debugging, logs, monitoring, environments, deployments, releases, rollbacks, and version control.
+- **Basic quantitative reasoning:** arithmetic, counts, ranges, percentages, ratios, rates, mean or average, median, and chance in its ordinary sense.
 - **Baseline notation** enumerated in §5.2 and Annex B.
 - **Genre knowledge** explicitly granted by the selected profile overlay in Annex B.
 
@@ -90,7 +100,7 @@ Profile overlays grant only genre knowledge: the document conventions and readin
 
 A domain term absent from the base-reader baseline **shall** enter through the term ladder (§2.3). This requirement applies even when specialists or frequent profile readers know the term. Familiarity is not operational knowledge.
 
-The `research-paper` overlay expressly assumes **no machine-learning background**. The overlay does not assume machine-learning concepts, advanced statistics, linear algebra as manipulation, calculus, optimization, research-community shorthand, venue conventions, or dataset and benchmark names. Terms such as *model*, *training*, *loss*, *gradient*, *embedding*, *transformer*, *attention*, *fine-tuning*, and *inference* therefore require admission unless Annex B's versioned base list says otherwise.
+The `research-paper` overlay expressly assumes **no machine-learning background**. The overlay does not assume formal statistics, algebra beyond arithmetic, linear algebra, calculus, optimization, research-community shorthand, venue conventions, or benchmark names. Terms such as *model*, *training*, *loss*, *gradient*, *embedding*, *transformer*, *attention*, *fine-tuning*, and *inference* require admission.
 
 The same rule applies outside research. A procedure does not inherit a service's internal vocabulary. An incident report does not inherit the incident team's system knowledge. A design RFC does not inherit the proposing team's architecture shorthand.
 
@@ -114,7 +124,7 @@ Every rule carries exactly one class:
 
 ### 0.4.3 Conformance statement
 
-**Rule applicability.** A rule applies to all eight profiles by default. If a rule carries a `**Profiles:**` metadata line, it applies only to the canonical IDs on that line. Construct conditions still apply: for example, a universal equation rule is relevant only when a document contains an equation. §1.3 defines the metadata syntax.
+**Rule applicability.** A rule applies to all eleven profiles by default. If a rule carries a `**Profiles:**` metadata line, it applies only to the canonical IDs on that line. Construct conditions still apply: for example, a universal equation rule is relevant only when a document contains an equation. §1.3 defines the metadata syntax. §1.5 states which file holds each rule.
 
 **Conformance tiers.** ITWS has three cumulative tiers:
 
@@ -134,13 +144,16 @@ The profile sets the minimum tier:
 | `technical-report` | `reviewed` |
 | `research-paper` | `publication` |
 | `investigation-log` | `core` |
+| `epic` | `reviewed` |
+| `task` | `core` |
+| `subtask` | `core` |
 
 A document **may** declare a tier above its profile minimum. The document **shall not** declare a lower tier. A higher tier adds assurance evidence. The higher tier does not remove or substitute any applicable content rule.
 
 **Required declaration.** A conforming document **shall** declare the exact ITWS version, one canonical profile ID, and one permitted conformance tier:
 
 ```text
-ITWS version: 0.2.1-draft
+ITWS version: 0.6.0-draft
 Profile: design-rfc
 Conformance tier: reviewed
 ```
@@ -151,7 +164,7 @@ A partial audit may identify the parts or rules it checked, but it **shall not**
 
 ### 0.4.4 Version citation
 
-A document is checked against its declared specification version, not the latest version. Tooling, applicability data, checklists, and reviewers **shall** use the declared version's materials. Those materials include its core, profile registry, Annexes A and B, rule metadata, and phrase lists. §0.8 guarantees that earlier versions remain checkable.
+A document is checked against its declared specification version, not the latest version. Tooling, applicability data, checklists, and reviewers **shall** use the declared version's materials. Those materials include its core, profile registry, profile overlays, Annexes A and B, rule metadata, and phrase lists. §0.8 guarantees that earlier versions remain checkable.
 
 ## 0.5 Normative references
 
@@ -169,12 +182,31 @@ The standards and guides listed in §0.1 are informative sources. Annex F identi
 The following meta-vocabulary is available throughout ITWS without further definition.
 
 - **governed document** — a document in §0.2's scope that declares one ITWS profile.
+- **work item** — a governed `epic`, `task`, or `subtask` document that directs and verifies one unit of planned work.
+- **product requirements document** — a document that states a product problem, outcome, scope, measures, and constraints.
+- **strategic outcome** — an outcome that requires several independently acceptable tactical outcomes.
+- **tactical outcome** — an outcome accepted at one product or technical boundary.
+- **technical boundary** — an interface, invariant, operational state, or artifact that engineering can verify.
+- **technical invariant** — a stable property that every applicable child work item must preserve.
+- **user journey** — one actor's path from a stated starting condition to an observable outcome.
+- **happy path** — a user-journey path that reaches the intended outcome under expected conditions.
+- **sad path** — a path that names a blocking condition, expected response, safe state, and recovery.
+- **accepted behavior contract** — an approved requirement, invariant, journey, or documented behavior that defines expected behavior.
+- **feature work** — work that adds or changes accepted behavior without correcting a documented deviation.
+- **defect correction** — work that restores behavior required by an accepted behavior contract.
+- **maintenance or enabler work** — work that preserves behavior or prepares a later independently acceptable outcome.
+- **engineering-only task** — a `task` with no independently acceptable user outcome and acceptance at a named technical boundary.
+- **definition of done (DoD)** — one work item's authoritative closure contract.
+- **completion condition** — one observable and independently testable part of a DoD.
+- **integrated acceptance** — verification of behavior that appears only when all completion conditions work together.
+- **technical hint** — non-normative information about relevant components, tests, evidence, or likely implementation locations.
 - **shared core** — rules and mechanisms common to all profiles unless explicit applicability metadata says otherwise.
 - **profile** — one canonical genre contract from §0.2, including its purpose, skeleton, minimum tier, and profile-scoped rules.
 - **profile overlay** — the selected profile's additions to the shared core, including the genre-knowledge overlay in Annex B.
 - **conformance tier** — the cumulative assurance level (`core`, `reviewed`, or `publication`) declared by a governed document.
 - **applicable rule** — a rule whose profile metadata and construct conditions include the document or passage under review.
-- **base reader** — the working-software-engineer baseline defined in §0.3 and enumerated in Annex B.
+- **software engineering pod** — a cross-functional group that designs, delivers, tests, operates, manages, or supports software.
+- **base reader** — the software engineering pod baseline defined in §0.3 and enumerated in Annex B.
 - **assumed reader** — the base reader plus the genre-knowledge overlay for the document's declared profile.
 - **genre knowledge** — knowledge of how to read and use a document genre, not knowledge of its subject domain.
 - **domain term** — a technical word or phrase from a product, system, operational environment, profession, or field. The term is absent from the base-reader baseline.
@@ -182,7 +214,9 @@ The following meta-vocabulary is available throughout ITWS without further defin
 - **reader proxy** — an independent reviewer who checks the plain layer from the base reader's knowledge state plus the selected profile overlay.
 - **reader test** — a direct test with a fresh representative reader, distinct from the reader-proxy review.
 - **release checks** — final checks that conformance evidence, waivers, references, linked artifacts, and the released rendering are complete and resolve.
-- **rule** — a permanent-ID normative unit in Parts 2–8, written in the §1.3 template.
+- **rule** — a permanent-ID normative unit of Parts 2–8, written in the §1.3 template. A scoped rule keeps its section number and sits in the overlay file that §1.5 assigns.
+- **profile family** — a group of profiles that share genre rules through one shared overlay module (§1.5).
+- **load set** — the shared core, the shared annexes, one profile directory, and that directory's shared modules (§1.5.3).
 - **admitted term** — a term defined in the current document under §2.3. When Annex A has an entry, the document uses its meaning and satisfies its prerequisites.
 - **term ladder** — the §2.3 discipline of defining a term before first use with only assumed or previously admitted terms.
 - **chunk** — a paragraph-level unit with exactly one purpose from the §4.1 taxonomy.
@@ -192,14 +226,17 @@ The following meta-vocabulary is available throughout ITWS without further defin
 - **caveat** — a statement limiting the scope, conditions, or strength of technical content (§7.2).
 - **machine-checkable** — a rule property indicating that §8.2 tooling can detect a violation without human judgment.
 - **waiver** — a recorded, approved deviation from a mandatory rule (§8.5).
+- **navigation metadata** — the §1.6 fields that describe a rule so a reader or tool can find it. Only the construct condition carries normative force.
+- **profile envelope** — every active rule whose applicability admits a declared profile. The envelope is the widest correct rule set for a document.
+- **generated artifact** — a machine-produced file derived from this specification, pinned to one version and to source hashes (§8.6).
 
-Part 1 defines the exact and plain layers.
+Part 1 defines the exact and plain layers. Section 1.6 defines the navigation metadata. Section 8.6 defines the generated artifacts.
 
 ## 0.7 How to use this specification
 
-**Self-application boundary.** This specification is outside §0.2 profile conformance. Its authored prose follows shared-core rules where meaningful. Quoted counterexamples, metadata, templates, tables, source names, and generated artifacts are fixtures.
+**Self-application boundary.** This specification is outside §0.2 profile conformance. Its authored prose follows shared-core rules where meaningful. Quoted counterexamples, metadata, templates, tables, source names, and generated artifacts are fixtures. The §1.6 navigation metadata lines, the §8.2.1 phrase-list paragraphs, and the skeleton and section-map blocks are metadata in that sense: they are machine-readable records, not governed prose.
 
-**Writers.** Select the profile before drafting and select a tier no lower than that profile's minimum. Put the three required declarations in the document. Draft from the profile skeleton in Part 4 and Annex E. Resolve vocabulary against the base reader and selected overlay, not against the expected specialist audience. Before claiming `core`, run the pinned linter and complete the profile-aware self-check.
+**Writers.** Select the profile before drafting and select a tier no lower than that profile's minimum. Load the §1.5.3 load set for that profile and ignore every other overlay. Put the three required declarations in the document. Draft from the profile skeleton in that overlay directory. Resolve vocabulary against the base reader and selected overlay, not against the expected specialist audience. Before claiming `core`, run the pinned linter and complete the profile-aware self-check.
 
 **Reviewers.** For `reviewed` and `publication`, the subject-matter owner checks the exact layer and the reader proxy checks the plain layer. Each finding cites a rule ID. A finding with no rule ID is an opinion or a candidate rule, not a conformance failure. The reader proxy is not the publication reader-test participant.
 
@@ -221,7 +258,7 @@ ITWS uses Semantic Versioning. Until 1.0, a minor version may contain breaking d
 
 **Deprecation over deletion.** A withdrawn rule, glossary entry, baseline item, profile ID, or tier mechanism remains in its historical release. Where the current text must mention a withdrawal, it marks the item *deprecated*, gives the deprecation version, and points to its replacement. A deprecated ID is never reassigned.
 
-**Checkability guarantee.** A document citing version X **shall** remain checkable against X. Tagged releases retain the core, profile registry, Annexes A and B, Annex C applicability data, Annex F traceability, checklists, phrase lists, and compatible tooling. Rule applicability is historical data, not a property inferred from the latest text.
+**Checkability guarantee.** A document citing version X **shall** remain checkable against X. Tagged releases retain the core, profile registry, profile overlays, Annexes A and B, Annex C applicability data, Annex F traceability, checklists, phrase lists, and compatible tooling. Rule applicability is historical data, not a property inferred from the latest text.
 
 **Naming history.** Version 0.1 used the name *Research Writing Specification (RWS)*. That name and its four-type conformance model remain valid for documents that cite 0.1. ITWS does not retroactively rename or reinterpret the release.
 

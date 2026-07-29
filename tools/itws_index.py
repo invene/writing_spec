@@ -1,60 +1,42 @@
 #!/usr/bin/env python3
-"""Generate Annex C from ITWS rule metadata."""
+"""Generate Annex C from ITWS rule metadata.
+
+The generator consumes the normalized model in :mod:`itws.parser`. The
+command-line interface is unchanged from 0.5.1-draft; `--check` is additive.
+"""
 
 from __future__ import annotations
 
 import argparse
 import datetime as dt
 import re
-from dataclasses import dataclass
+import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-PROFILE_IDS = (
-    "design-rfc",
-    "decision-record",
-    "procedure",
-    "explanation",
-    "incident",
-    "technical-report",
-    "research-paper",
-    "investigation-log",
+from itws.model import Rule
+from itws.parser import (
+    OVERLAY_DIRNAME,
+    PROFILE_RULES_FILENAME,
+    SHARED_DIRNAME,
+    SpecError,
+    parse_rules,
+    parse_specification,
+    read_version,
+    rule_files,
 )
+from itws.vocab import PROFILE_FAMILIES, PROFILE_IDS
 
-RULE_RE = re.compile(
-    r"^#### Rule (?P<number>\d+\.\d+\.\d+) — (?P<name>.+)$"
-)
-METADATA_RE = re.compile(
-    r"^\*\*Class:\*\* (?P<class>mandatory|recommended|permitted)"
-    r" · \*\*Machine-checkable:\*\* (?P<machine>yes|partial|no)"
-    r" · \*\*Source:\*\* (?P<source>.+)$"
-)
-PROFILES_RE = re.compile(r"^\*\*Profiles:\*\* (?P<profiles>.+)$")
-STATUS_RE = re.compile(
-    r"^\*\*Status:\*\* (?P<status>active|deprecated)(?P<detail>.*)$"
-)
-DEPRECATED_DETAIL_RE = re.compile(
-    r"^ since (?P<version>\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?); "
-    r"replacement (?P<replacement>\d+\.\d+\.\d+|none)$"
-)
-VERSION_RE = re.compile(r"^\*\*Version:\*\* (?P<version>[^ ·]+)")
-
-
-@dataclass(frozen=True)
-class Rule:
-    number: str
-    name: str
-    rule_class: str
-    machine_checkable: str
-    source: str
-    profiles: tuple[str, ...]
-    status: str
-    replacement: str | None
-
-    @property
-    def sort_key(self) -> tuple[int, int, int]:
-        major, section, rule = self.number.split(".")
-        return int(major), int(section), int(rule)
+__all__ = [
+    "OVERLAY_DIRNAME",
+    "PROFILE_FAMILIES",
+    "PROFILE_IDS",
+    "PROFILE_RULES_FILENAME",
+    "SHARED_DIRNAME",
+    "parse_rules",
+    "rule_files",
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -81,118 +63,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="append newly assigned IDs to the permanent registry",
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="compare the committed annex with a fresh build; write nothing",
+    )
     return parser.parse_args()
-
-
-def read_version(spec_dir: Path) -> str:
-    front_matter = spec_dir / "00-front-matter.md"
-    for line in front_matter.read_text(encoding="utf-8").splitlines():
-        match = VERSION_RE.match(line)
-        if match:
-            return match.group("version")
-    raise ValueError(f"missing version metadata in {front_matter}")
-
-
-def parse_rules(spec_dir: Path) -> list[Rule]:
-    rules: list[Rule] = []
-    seen: set[str] = set()
-
-    for path in sorted(spec_dir.glob("0[2-8]-*.md")):
-        lines = path.read_text(encoding="utf-8").splitlines()
-        for index, line in enumerate(lines):
-            header = RULE_RE.match(line)
-            if not header:
-                continue
-
-            if index + 1 >= len(lines):
-                raise ValueError(f"{path}:{index + 1}: rule has no metadata")
-            metadata = METADATA_RE.match(lines[index + 1])
-            if not metadata:
-                raise ValueError(
-                    f"{path}:{index + 2}: missing or malformed rule metadata"
-                )
-
-            profiles: tuple[str, ...] = ()
-            status = "active"
-            replacement: str | None = None
-            next_metadata_index = index + 2
-            if index + 2 < len(lines):
-                profile_match = PROFILES_RE.match(lines[index + 2])
-                if profile_match:
-                    profiles = tuple(
-                        item.strip()
-                        for item in profile_match.group("profiles").split(",")
-                    )
-                    validate_profiles(path, index + 3, profiles)
-                    next_metadata_index += 1
-
-            if next_metadata_index < len(lines):
-                status_line = lines[next_metadata_index]
-                status_match = STATUS_RE.match(status_line)
-                if status_match:
-                    status = status_match.group("status")
-                    detail = status_match.group("detail")
-                    if status == "active" and detail:
-                        raise ValueError(
-                            f"{path}:{next_metadata_index + 1}: "
-                            "active status cannot carry details"
-                        )
-                    if status == "deprecated":
-                        detail_match = DEPRECATED_DETAIL_RE.match(detail)
-                        if not detail_match:
-                            raise ValueError(
-                                f"{path}:{next_metadata_index + 1}: deprecated "
-                                "status must name version and replacement"
-                            )
-                        replacement_value = detail_match.group("replacement")
-                        if replacement_value != "none":
-                            replacement = replacement_value
-                elif status_line.startswith("**Status:**"):
-                    raise ValueError(
-                        f"{path}:{next_metadata_index + 1}: malformed status metadata"
-                    )
-
-            number = header.group("number")
-            if number in seen:
-                raise ValueError(f"{path}:{index + 1}: duplicate rule {number}")
-            seen.add(number)
-            rules.append(
-                Rule(
-                    number=number,
-                    name=header.group("name"),
-                    rule_class=metadata.group("class"),
-                    machine_checkable=metadata.group("machine"),
-                    source=metadata.group("source"),
-                    profiles=profiles,
-                    status=status,
-                    replacement=replacement,
-                )
-            )
-
-    if not rules:
-        raise ValueError(f"no rules found under {spec_dir}")
-    return sorted(rules, key=lambda rule: rule.sort_key)
-
-
-def validate_profiles(
-    path: Path, line_number: int, profiles: tuple[str, ...]
-) -> None:
-    if not profiles:
-        raise ValueError(f"{path}:{line_number}: empty Profiles metadata")
-    if len(set(profiles)) != len(profiles):
-        raise ValueError(f"{path}:{line_number}: duplicate profile ID")
-
-    unknown = [profile for profile in profiles if profile not in PROFILE_IDS]
-    if unknown:
-        raise ValueError(
-            f"{path}:{line_number}: unknown profile ID(s): {', '.join(unknown)}"
-        )
-
-    expected = tuple(profile for profile in PROFILE_IDS if profile in profiles)
-    if profiles != expected:
-        raise ValueError(
-            f"{path}:{line_number}: profile IDs are not in registry order"
-        )
 
 
 def escape_cell(value: str) -> str:
@@ -210,9 +86,7 @@ def read_registry(path: Path) -> set[str]:
         if not line or line.startswith("#"):
             continue
         if not re.fullmatch(r"\d+\.\d+\.\d+", line):
-            raise ValueError(
-                f"{path}:{line_number}: malformed permanent rule ID"
-            )
+            raise ValueError(f"{path}:{line_number}: malformed permanent rule ID")
         if line in ids:
             raise ValueError(f"{path}:{line_number}: duplicate permanent rule ID")
         ids.add(line)
@@ -241,6 +115,7 @@ def render(version: str, generated_date: str, rules: list[Rule]) -> str:
             if rule.profiles
             else "all profiles"
         )
+        navigation = rule.navigation
         rows.append(
             "| "
             + " | ".join(
@@ -251,7 +126,14 @@ def render(version: str, generated_date: str, rules: list[Rule]) -> str:
                     rule.machine_checkable,
                     applicability,
                     rule.status,
+                    navigation.target,
+                    escape_cell(", ".join(navigation.constructs)),
+                    navigation.layers,
+                    navigation.context_scope,
+                    navigation.rewrite_guidance,
+                    str(rule.precedence_layer),
                     escape_cell(rule.source),
+                    f"`{rule.span.path.removeprefix('spec/')}`",
                 )
             )
             + " |"
@@ -263,7 +145,7 @@ def render(version: str, generated_date: str, rules: list[Rule]) -> str:
 
 ## C.1 Generation contract
 
-For each rule in Parts 2–8, this annex records:
+For each rule of Parts 2–8, this annex records:
 
 | Field | Source |
 | --- | --- |
@@ -273,7 +155,18 @@ For each rule in Parts 2–8, this annex records:
 | Machine-checkable | `Machine-checkable` metadata |
 | Profiles | `Profiles` metadata; absence means all profiles |
 | Status | optional `Status` metadata; absence means active |
+| Target | §1.6 `Navigation` metadata |
+| Constructs | §1.6 `Constructs` metadata; the only navigation field with normative force |
+| Layers | §1.6 `Navigation` metadata |
+| Context | §1.6 `Navigation` metadata |
+| Rewrite | §1.6 `Navigation` metadata |
+| Precedence | derived from §1.4 through §1.6.3 |
 | Source framework | `Source` metadata; feeds Annex F |
+| File | the spec-relative file that holds the rule; §1.5.2 fixes it |
+
+A scoped rule keeps its section number and sits in an overlay file. The `File` column lets a reader or tool load one profile's rules without reading unrelated overlays.
+
+The full rule record, including chunk types, skeleton slots, resources, typed relations, examples, and source line ranges, is in `spec/generated/agent/rules.jsonl`. This annex is the human-readable view of the same model.
 
 The index is sorted numerically by rule number. It is the input to the §8.1 checklist generator, which filters rules by declared ITWS version and profile before grouping them into the four self-check passes. Tier obligations come from §0.4.3 and Part 8; they are not rule-profile metadata.
 
@@ -289,7 +182,13 @@ python3 tools/itws_index.py \\
 
 After approving a new permanent rule ID, add `--update-registry` once to append it to `spec/rule-ids.txt`.
 
-The generator validates rule IDs against `spec/rule-ids.txt` independently of the output path. It fails on a duplicate or removed rule number, an unregistered new ID without `--update-registry`, malformed metadata, an unknown profile ID, or a profile list outside canonical registry order. A deprecated rule remains in its source file with `**Status:** deprecated since <version>; replacement <rule ID | none>`; generation never drops its permanent ID.
+The generator reads the core parts and the overlay files in `spec/overlays/`. It validates rule IDs against `spec/rule-ids.txt` independently of the output path. It fails on a duplicate or removed rule number, an unregistered new ID without `--update-registry`, malformed metadata, an unknown profile ID, a profile list outside canonical registry order, an unknown §1.6 navigation value, an unresolved rule relation, or a rule outside the file that §1.5.2 requires. A deprecated rule remains in its source file with `**Status:** deprecated since <version>; replacement <rule ID | none>`; generation never drops its permanent ID.
+
+Regenerate the machine catalog in the same change:
+
+```text
+python3 tools/itws_compile.py --spec-dir spec
+```
 
 Generate a document's §8.1 checklist from this annex:
 
@@ -305,29 +204,23 @@ python3 tools/itws_checklist.py \\
 
 **Rule count:** {len(rules)}
 
-| Rule | Short name | Class | Machine-checkable | Profiles | Status | Source |
-| --- | --- | --- | --- | --- | --- | --- |
+| Rule | Short name | Class | Machine-checkable | Profiles | Status | Target | Constructs | Layers | Context | Rewrite | Precedence | Source | File |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 {chr(10).join(rows)}
 """
 
 
-def main() -> None:
+def main() -> int:
     args = parse_args()
-    version = read_version(args.spec_dir)
-    rules = parse_rules(args.spec_dir)
+    try:
+        version, _status = read_version(args.spec_dir)
+        spec = parse_specification(args.spec_dir)
+    except SpecError as error:
+        print(f"specification defect: {error}", file=sys.stderr)
+        return 2
+    rules = list(spec.rules)
+
     current_ids = {rule.number for rule in rules}
-    for rule in rules:
-        if rule.replacement is None:
-            continue
-        if rule.replacement == rule.number:
-            raise ValueError(
-                f"deprecated rule {rule.number} cannot replace itself"
-            )
-        if rule.replacement not in current_ids:
-            raise ValueError(
-                f"deprecated rule {rule.number} names missing replacement "
-                f"{rule.replacement}"
-            )
     registry_ids = read_registry(args.registry)
     if not registry_ids and not args.update_registry:
         raise ValueError(
@@ -336,22 +229,38 @@ def main() -> None:
     removed_ids = registry_ids - current_ids
     if removed_ids:
         raise ValueError(
-            "permanent rule ID(s) removed from source: "
-            + ", ".join(sorted(removed_ids))
+            "permanent rule ID(s) removed from source: " + ", ".join(sorted(removed_ids))
         )
     new_ids = current_ids - registry_ids
     if new_ids and not args.update_registry:
         raise ValueError(
             "new rule ID(s) are not in the permanent registry; rerun with "
-            "--update-registry after review: "
-            + ", ".join(sorted(new_ids))
+            "--update-registry after review: " + ", ".join(sorted(new_ids))
         )
-    if args.update_registry:
+    if args.update_registry and not args.check:
         write_registry(args.registry, registry_ids | current_ids)
+
     output = render(version, args.generated_date, rules)
+    if args.check:
+        if not args.out.exists():
+            print(f"missing generated annex: {args.out}", file=sys.stderr)
+            return 1
+        current = args.out.read_text(encoding="utf-8")
+        if _without_date(current) != _without_date(output):
+            print(f"stale generated annex: {args.out}", file=sys.stderr)
+            return 1
+        print(f"Annex C is current for {len(rules)} rules")
+        return 0
+
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(output, encoding="utf-8")
+    return 0
+
+
+def _without_date(text: str) -> str:
+    """Ignore the generation date when comparing two renderings."""
+    return re.sub(r"generated \d{4}-\d{2}-\d{2} from", "generated <date> from", text)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

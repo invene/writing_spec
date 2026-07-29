@@ -1,0 +1,162 @@
+{
+  "profile": "epic",
+  "annex_section": "E.9",
+  "dependency_order": "An `epic` seeds the product problem, users, scope, and terms before success measures, technical invariants, risks, and child-task boundaries (§4.4).",
+  "slots": [
+    {
+      "name": "Summary",
+      "required": true,
+      "order": 1,
+      "description": "The strategic change, affected users, current state, and approval or alignment requested.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Strategic outcome",
+      "required": true,
+      "order": 2,
+      "description": "One product-level outcome that requires several independently acceptable tactical outcomes.",
+      "renames": [
+        "Outcome"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Problem and evidence",
+      "required": true,
+      "order": 3,
+      "description": "The current problem, its observed effects, and the evidence supporting strategic work.",
+      "renames": [
+        "Problem"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Users and journeys",
+      "required": true,
+      "order": 4,
+      "description": "Affected actors and the user journeys included or excluded by the epic.",
+      "renames": [
+        "Users"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Scope and non-goals",
+      "required": true,
+      "order": 5,
+      "description": "Included product boundaries, excluded outcomes, applicable environments, and release boundaries.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Success measures",
+      "required": true,
+      "order": 6,
+      "description": "Observable product-level measures, comparison points, thresholds, and evaluation window.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Technical invariants",
+      "required": true,
+      "order": 7,
+      "description": "Stable identified properties that every applicable child task must preserve.",
+      "renames": [
+        "Invariants"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Task map",
+      "required": true,
+      "order": 8,
+      "description": "Child task outcomes, dependencies, sequencing constraints, and current ownership or status.",
+      "renames": [
+        "Child tasks"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Cross-task risks",
+      "required": true,
+      "order": 9,
+      "description": "Failure modes, unknowns, and mitigations that depend on more than one child task.",
+      "renames": [
+        "Risks"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Relations",
+      "required": true,
+      "order": 10,
+      "description": "Governing design, decision, research, or policy documents and any superseded epic.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Definition of done",
+      "required": true,
+      "order": 11,
+      "description": "One authoritative closure contract that verifies the strategic outcome and every technical invariant.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    }
+  ],
+  "required_slots": [
+    "Summary",
+    "Strategic outcome",
+    "Problem and evidence",
+    "Users and journeys",
+    "Scope and non-goals",
+    "Success measures",
+    "Technical invariants",
+    "Task map",
+    "Cross-task risks",
+    "Relations",
+    "Definition of done"
+  ],
+  "merges": [
+    {
+      "parts": [
+        "Summary",
+        "Strategic outcome"
+      ],
+      "combined": "Summary and outcome"
+    },
+    {
+      "parts": [
+        "Problem and evidence",
+        "Users and journeys"
+      ],
+      "combined": "Problem and users"
+    },
+    {
+      "parts": [
+        "Scope and non-goals",
+        "Success measures"
+      ],
+      "combined": "Scope and success"
+    }
+  ],
+  "mutation_policies": [],
+  "source_span": {
+    "path": "spec/overlays/epic/skeleton.md",
+    "start_line": 1,
+    "end_line": 44
+  },
+  "itws_version": "0.6.0-draft",
+  "schema_version": "1.0.0"
+}

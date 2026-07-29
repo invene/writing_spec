@@ -6,6 +6,7 @@ Part 7 governs boundaries that keep a technical statement safe to use. The highe
 - In a procedure, the boundary may concern a precondition or unsafe rollback.
 - In an incident, the boundary may separate evidence from causal interpretation.
 - In research, the boundary may limit a result's scope.
+- In a work item, the boundary may concern an inherited invariant, delegated failure, or incomplete integrated acceptance.
 
 Section 7.1 defines required disclosures. Section 7.2 defines caveat placement. Section 7.3 separates observations from load-bearing interpretations. Section 7.4 calibrates statements beyond established boundaries. Section 5.6 supplies the evidential-strength and decision-authority vocabulary.
 
@@ -33,6 +34,9 @@ Annex E supplies the boundary locations for each profile:
 - `technical-report` — **Limitations** carries every applicable dimension. **Reproducibility or verification** carries environment, version, dependency, data, resource, and unverified-access bounds on independent checking.
 - `research-paper` — **Limitations** carries every applicable dimension. **Reproducibility statement** carries data, dependency, resource, and unavailable-input bounds on repeating the work.
 - `investigation-log` — each entry's **Configuration or context** carries environment, version, dependency, and data bounds. **Observations** carries source, duration, and quality bounds. **Interpretation** carries uncertainty and unverified conditions.
+- `epic` — **Scope and non-goals** carries environment, version, dependency, security, privacy, and data boundaries. **Success measures** carries capacity, duration, and evidence boundaries. **Technical invariants** carries mandatory cross-task limits. **Cross-task risks** carries failure, recovery, and unverified conditions.
+- `task` — **Context and boundaries** carries environment, version, dependency, capacity, authority, security, privacy, and data limits. **Sad or technical failure paths** carries failure and recovery behavior. **Integrated acceptance** carries cross-condition and unverified conditions.
+- `subtask` — **Boundaries and invariants** carries local environment, version, dependency, security, privacy, data, and inherited limits. **Delegated path details** carries assigned failure and recovery behavior. **Verification evidence** carries unverified conditions and evidence limits.
 
 These profile-equivalent locations form the document's boundary material for Rules 7.1.1, 7.1.2, and 7.2.2. A document may add a separate Boundaries section as an aggregate. The aggregate does not permit omission or weakening of an Annex E slot.
 
@@ -40,6 +44,10 @@ These profile-equivalent locations form the document's boundary material for Rul
 
 #### Rule 7.1.1 — Boundary material is required
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS Paper Checklist (research adaptation)
+**Constructs:** limitation
+**Navigation:** target: document · chunks: limitation · slots: any · layers: exact · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, skeleton-order · writes: chunk-text
+**Relations:** requires 4.3.3
 
 > Every governed document **shall** contain clearly identified boundary material in every applicable boundary location.
 
@@ -52,6 +60,10 @@ These profile-equivalent locations form the document's boundary material for Rul
 
 #### Rule 7.1.2 — State the scope of validity
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS Paper Checklist / Model Cards (research adaptation)
+**Constructs:** limitation
+**Navigation:** target: chunk · chunks: limitation · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 7.1.1
 
 > The boundary material **shall** state each applicable §7.1 dimension within which the document's primary outcome is valid.
 
@@ -64,6 +76,10 @@ These profile-equivalent locations form the document's boundary material for Rul
 
 #### Rule 7.1.3 — Disclose known failure modes and adverse effects
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; Model Cards (research adaptation)
+**Constructs:** limitation, risk
+**Navigation:** target: chunk · chunks: limitation, risk · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 7.1.1
 
 > The boundary material **shall** describe known failure modes and their operational, security, privacy, data-integrity, or safety effects.
 
@@ -76,6 +92,10 @@ These profile-equivalent locations form the document's boundary material for Rul
 
 #### Rule 7.1.4 — Disclose what was not tested or verified
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514; NeurIPS Paper Checklist / Datasheets for Datasets (research adaptation)
+**Constructs:** limitation
+**Navigation:** target: chunk · chunks: limitation · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, evidence-ledger · writes: chunk-text
+**Relations:** requires 7.1.1
 
 > The boundary material **shall** identify the untested or unverified conditions that a reader would most plausibly assume the document covers.
 
@@ -92,6 +112,10 @@ These profile-equivalent locations form the document's boundary material for Rul
 
 #### Rule 7.1.5 — Disclose data limitations
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514; Datasheets for Datasets (research adaptation)
+**Constructs:** limitation, measurement
+**Navigation:** target: chunk · chunks: limitation · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, evidence-ledger · writes: chunk-text
+**Relations:** requires 7.1.1
 
 > Boundary material for central data reliance **shall** state every required data-boundary field.
 
@@ -104,6 +128,10 @@ These profile-equivalent locations form the document's boundary material for Rul
 
 #### Rule 7.1.6 — Plausible boundary gaps are explicit
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; NeurIPS Paper Checklist (research adaptation)
+**Constructs:** limitation
+**Navigation:** target: chunk · chunks: limitation · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 7.1.1; requires 7.1.2
 
 > The boundary material **shall** identify each plausibly relevant §7.1 dimension that is unknown, untested, unverified, or not applicable.
 
@@ -122,6 +150,10 @@ The STE and IEC 82079-1 warning-placement mechanism puts a warning at the hazard
 
 #### Rule 7.2.1 — Caveats attach to their claims
 **Class:** mandatory · **Machine-checkable:** no · **Source:** IEC 82079-1 / ASD-STE100 (warning placement)
+**Constructs:** caveat, claim
+**Navigation:** target: chunk · chunks: claim · slots: any · layers: exact · context: neighboring · rewrite: review
+**Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
+**Relations:** constrains 7.2.2
 
 > Every caveat **shall** share a chunk with the caveated material it qualifies.
 >
@@ -136,6 +168,10 @@ The STE and IEC 82079-1 warning-placement mechanism puts a warning at the hazard
 
 #### Rule 7.2.2 — Boundary material aggregates, it does not replace
 **Class:** mandatory · **Machine-checkable:** no · **Source:** IEC 82079-1
+**Constructs:** caveat
+**Navigation:** target: document · chunks: limitation · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 7.2.1
 
 > The profile's boundary material **shall** collect the document's caveats.
 >
@@ -150,13 +186,17 @@ The STE and IEC 82079-1 warning-placement mechanism puts a warning at the hazard
 
 ## 7.3 Interpretation discipline
 
-Incident reviews, investigation logs, technical reports, and research papers all turn observations into interpretations. The move is useful and dangerous. Section 4.1 supplies evidence and interpretation chunks. Section 6.3 supplies the block mechanism that bounds speculation. Section 5.6 supplies the permitted strength vocabulary. Other profiles may use the split. The split is mandatory only for the profiles listed on these rules.
+Incident reviews, investigation logs, technical reports, research papers, tasks, and subtasks can turn observations into interpretations. The move is useful and dangerous. Section 4.1 supplies evidence and interpretation chunks. Section 6.3 supplies the block mechanism that bounds speculation. Section 5.6 supplies the permitted strength vocabulary. Other profiles may use the split. The split is mandatory only for the profiles listed on these rules.
 
 **Interpretive additions:** causes, meanings, recommendations, and broader conclusions inferred from evidence.
 
 #### Rule 7.3.1 — Separate observation from interpretation
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; IMRaD / APA JARS (research adaptation)
-**Profiles:** incident, technical-report, research-paper, investigation-log
+**Profiles:** incident, technical-report, research-paper, investigation-log, task, subtask
+**Constructs:** observation
+**Navigation:** target: chunk · chunks: evidence, interpretation · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text, evidence-ledger · writes: chunk-text
+**Relations:** requires 4.1.1
 
 > A chunk recording an observation or measurement **shall not** include an interpretive addition.
 
@@ -173,7 +213,11 @@ Incident reviews, investigation logs, technical reports, and research papers all
 
 #### Rule 7.3.2 — Speculation only in marked blocks
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original (§6.3 mechanism)
-**Profiles:** incident, technical-report, research-paper, investigation-log
+**Profiles:** incident, technical-report, research-paper, investigation-log, task, subtask
+**Constructs:** speculation
+**Navigation:** target: bounded-block · chunks: any · slots: any · layers: exact · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.6.2
 
 > Every speculative statement **shall** appear only in the required speculation form.
 
@@ -192,7 +236,11 @@ Incident reviews, investigation logs, technical reports, and research papers all
 
 #### Rule 7.3.3 — Speculation uses the speculative tier
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** IPCC calibrated language (via §5.6)
-**Profiles:** incident, technical-report, research-paper, investigation-log
+**Profiles:** incident, technical-report, research-paper, investigation-log, task, subtask
+**Constructs:** speculation
+**Navigation:** target: bounded-block · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
+**Relations:** requires 7.3.2; requires 5.6.1
 
 > A speculation block **shall** use only speculative-tier phrases for strength.
 >
@@ -232,6 +280,10 @@ Section 7.4 adapts research scope-of-claims guidance and engineering compatibili
 
 #### Rule 7.4.1 — Extrapolations name the target setting
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514; NeurIPS Paper Checklist / APA JARS (research adaptation)
+**Constructs:** generalization
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
+**Relations:** requires 7.1.2
 
 > Every boundary-extension statement **shall** name its extrapolation target.
 
@@ -250,6 +302,10 @@ Section 7.4 adapts research scope-of-claims guidance and engineering compatibili
 
 #### Rule 7.4.2 — Beyond the boundary, drop evidential strength
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; NeurIPS Paper Checklist / CONSORT (research adaptation)
+**Constructs:** generalization, claim
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
+**Relations:** requires 7.4.1; requires 5.6.1
 
 > A statement about a setting not established by the document's evidence **shall** use an unestablished-setting form.
 >

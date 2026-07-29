@@ -1,6 +1,6 @@
 # Part 8 — Review, compliance, and tooling
 
-Part 8 defines practical checks for ITWS conformance. Section 8.1 defines the generated profile checklist. Section 8.2 defines automated checks and the author self-check. Section 8.3 defines publication reader testing and release checks. Section 8.4 defines reviewed-tier roles. Section 8.5 defines waivers.
+Part 8 defines practical checks for ITWS conformance. Section 8.1 defines the generated profile checklist. Section 8.2 defines automated checks and the author self-check. Section 8.3 defines publication reader testing and release checks. Section 8.4 defines reviewed-tier roles. Section 8.5 defines waivers. Section 8.6 defines the generated artifacts and the states a validation run may report.
 
 Parts 2–7 define a conforming document. Part 8 defines how anyone verifies conformance.
 
@@ -8,8 +8,8 @@ Every governed document declares one canonical profile ID and one conformance ti
 
 The minimum tier for each profile is:
 
-- **Core:** `decision-record`, `explanation`, `investigation-log`.
-- **Reviewed:** `design-rfc`, `procedure`, `incident`, `technical-report`.
+- **Core:** `decision-record`, `explanation`, `investigation-log`, `task`, `subtask`.
+- **Reviewed:** `design-rfc`, `procedure`, `incident`, `technical-report`, `epic`.
 - **Publication:** `research-paper`.
 
 A document may target a higher tier than its profile minimum. A document may not target a lower tier.
@@ -26,6 +26,10 @@ The conformance checklist is a build artifact. Annex C rule metadata generates t
 
 #### Rule 8.1.1 — Checklist is generated, not authored
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** STE checker workflows
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: conformance-record
+**Relations:** constrains 8.1.3
 
 > The conformance checklist **shall** be generated from every checklist-generation input.
 >
@@ -33,7 +37,7 @@ The conformance checklist is a build artifact. Annex C rule metadata generates t
 
 **Rationale:** A hand-maintained checklist diverges from the rules the first time a rule changes (P7). Generation makes the checklist correct by construction.
 
-**Compliant:** The checklist header records ITWS 0.2.1-draft, profile `procedure`, tier `reviewed`, and the Annex C revision from which it was generated.
+**Compliant:** The checklist header records ITWS 0.6.0-draft, profile `procedure`, tier `reviewed`, and the Annex C revision from which it was generated.
 **Non-compliant:** A reviewer copies the `research-paper` checklist, deletes statistics by hand, and calls the result a procedure checklist.
 
 **Cross-references:** Annex C; Rule 8.1.3.
@@ -47,6 +51,10 @@ The conformance checklist is a build artifact. Annex C rule metadata generates t
 
 #### Rule 8.1.2 — Four self-check passes
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.1.1
 
 > Before recording conformance at any tier, the author **shall** complete the generated checklist.
 >
@@ -66,6 +74,10 @@ The conformance checklist is a build artifact. Annex C rule metadata generates t
 
 #### Rule 8.1.3 — Regeneration on rule change
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: conformance-record
+**Relations:** requires 8.1.1
 
 > The checklist **shall** be regenerated after every checklist-regeneration trigger.
 
@@ -78,14 +90,19 @@ The conformance checklist is a build artifact. Annex C rule metadata generates t
 
 ## 8.2 Automated checks
 
-`itws-lint` is the conformance linter. The linter uses Vale. Packaged Vale rule sets cover most content that Parts 2–3 adapt from the Google and Microsoft style guides. Custom rules cover profile selection, original mechanisms, and phrase lists. The linter reports readability metrics, including Flesch-Kincaid. Readability metrics do not gate conformance.
+`itws-lint` is the conformance linter. The linter is a repository-local engine that uses only the Python standard library. Its checks are generated from this specification. A reader who can clone the repository and run Python can run the complete lint gate, with no installed binary, downloaded style package, or network access. The linter reports readability metrics, including Flesch-Kincaid. Readability metrics do not gate conformance.
+
+The word-use, punctuation, and usage adjudications that Parts 2–3 adapted from the Google Developer Style Guide and the Microsoft Writing Style Guide are stated in those parts. Annex F records the adaptation. The linter reads those adjudications from the phrase-list paragraphs below, not from an external package.
 
 ### 8.2.1 Check inventory (informative)
 
-Inherited packages:
+**Phrase-list paragraph form.** A phrase-list paragraph declares one machine-readable list and is the linter's only word- and phrase-level input. The paragraph has this form:
 
-- Vale `Google` package — punctuation, word list, and usage rules forked in Parts 2–3.
-- Vale `Microsoft` package — word-list adjudications and passive-voice heuristics.
+```text
+**Phrase list <rule ID> — <label> (<kind>[, case-sensitive]):** "<item>" (<note>); "<item>"; …
+```
+
+The kind is `word`, `phrase`, `opener`, or `pattern`. A `word` item matches on word boundaries. A `phrase` item matches a literal span. An `opener` item matches only at the start of a sentence. A `pattern` item is a regular expression. A parenthesized note states an exclusion that a reader applies; the generated finding repeats the note. A rule that names a covered item resolves it against the phrase-list paragraph carrying that rule's ID. The list is the versioned living artifact of §2.5 and §0.8; it has exactly one home in this specification.
 
 Custom rules for original mechanisms:
 
@@ -93,34 +110,39 @@ Custom rules for original mechanisms:
 - **Ladder ordering** — every term on the Annex B not-assumed list (or in Annex A) that appears before its definition chunk is flagged (§2.3).
 - **Undefined-term detection** — terms in neither Annex B's assumed lists nor the document's admitted set are flagged (§2.3, §0.3.3).
 - **One symbol, one meaning** — a symbol bound twice in one document is flagged (§5.2).
-- **Profile exactness fields** — candidates for missing interfaces/invariants, procedure controls, incident timeline evidence, and research reproducibility are flagged (§5.4).
+- **Profile exactness fields** — candidates for missing interfaces, invariants, procedure controls, incident evidence, research reproducibility, work-item paths, DoD conditions, and parent links are flagged (§5.4).
 
-Custom phrase-list rules (each list versioned per §0.8):
+Each phrase-list rule keeps its list beside its own rule, in the paragraph form above. The rules that carry a list are:
 
-- **Warpath markers** — "instead of the old approach," "unlike what we did before," "previously we," "as before" (§2.6 phrase list enforcing §4.9).
-- **Puffery / machine-generated vocabulary** — the §2.6 living list ("delve," "underscore," "tapestry," "testament," "pivotal," "showcase," "intricate," "landscape," "boasts," …).
-- **Editorializing asides** — "it's important to note," "it should be emphasized" (§2.6).
-- **Vague attribution** — "experts say," "studies show," "widely regarded as" (§2.6).
-- **Gap-speculation phrasing** — "while specific details are limited," "not widely documented" (§2.6).
-- **Negative parallelism** — "not just X, it's Y" and variants (§3.10).
-- **Copula avoidance** — "serves as," "stands as," "functions as," "boasts," "features" where "is"/"has" is meant; "refers to" openers (§3.10).
-- **Trailing significance participles** — "…highlighting the need for," "…underscoring the importance of," "…reflecting a broader trend" (§3.10).
-- **Hollow-summary openers** — section-final "In summary," "Overall," "In conclusion" (§6.5).
-- **Conversational artifacts** — "I hope this helps," "certainly," "let's explore," "Would you like" (§2.6).
-- **Formatting patterns** — title-case headings, inline-header vertical lists, emoji (§4.10, §4.5).
+| Rule | List |
+|---|---|
+| 2.1.3 | plain-verb replacements |
+| 2.6.3 | unearned superlatives |
+| 2.6.4 | the prohibited-word list |
+| 2.6.5 | agency verbs |
+| 2.6.6 | warpath markers |
+| 2.6.7 | editorializing asides |
+| 2.6.8 | vague-authority phrases |
+| 2.6.9 | gap-speculation phrases |
+| 2.6.10 | formulaic connectives |
+| 2.6.11 | conversational artifacts, unfilled placeholders, and tool-leakage patterns |
+| 3.6.2 | bare openers |
+| 3.9.1 | vague hedges |
+| 3.10.2 | contrast-reframe templates |
+| 3.10.4 | trailing significance participles |
+| 3.10.6 | inflated copula substitutes |
+| 4.10.5 | emoji ranges |
+| 6.5.4 | hollow-summary openers |
 
-Mechanical artifact regexes are near-definitive signals of unreviewed machine-generated text. All have error severity:
+The Rule 2.6.11 patterns are near-definitive signals of unreviewed machine-generated text. They cover tool leakage, referrer leakage, and unfilled template placeholders, and they carry the error severity of their mandatory rule.
 
-- Tool leakage: `oaicite`, `contentReference`, `turn0search\d*`, `[cite: N]`, `grok_card`, `grok_render_citation`, `[span_\d+](start_span)`, `attached_file`, lenticular-bracket citations (`【N†…】`).
-- Referrer leakage: `utm_source=chatgpt.com`, `utm_source=openai`, `utm_source=copilot.com`, `referrer=grok.com`.
-- Unfilled placeholders: `[Your Name]`, `INSERT_`, `XX-XX` dates, empty template fields.
-- Format bleed: code fences or `#` headings in non-Markdown output contexts.
-
-Citation-integrity checks (§5.4):
+Citation-integrity checks (§5.4) need network access. Section 8.2.3 separates them from offline checks:
 
 - Every DOI resolves, and resolves to the cited work.
 - No dead links without an archived copy (a dead link with no archive is treated as a fabrication signal, not ordinary link rot).
 - No placeholder access dates.
+
+A skipped network check leaves validation incomplete. Section 8.6 gives that outcome its own state; a skipped check never reports as a pass.
 
 ### 8.2.2 Linter behavior
 
@@ -130,13 +152,17 @@ Citation-integrity checks (§5.4):
 - An ITWS waiver (§8.5) for each remaining error.
 
 #### Rule 8.2.1 — Lint gate
-**Class:** mandatory · **Machine-checkable:** yes · **Source:** Vale / STE checker practice
+**Class:** mandatory · **Machine-checkable:** yes · **Source:** STE checker practice
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.2.3; pairs-with 8.5.1
 
 > Before recording conformance at any tier, a governed document **shall** satisfy one lint-gate outcome.
 
 **Rationale:** Machine-checkable violations are the cheapest to find and the most embarrassing to ship. The lint gate is part of core, so short-lived documents receive it even when their minimum tier has no independent reviewers.
 
-**Compliant:** A core `investigation-log` links a clean `itws-lint` run pinned to ITWS 0.2.1-draft and profile `investigation-log`.
+**Compliant:** A core `investigation-log` links a clean `itws-lint` run pinned to ITWS 0.6.0-draft and profile `investigation-log`.
 **Non-compliant:** "The linter is noisy. Readers can ignore the linter." Errors remain for review or release.
 
 **Cross-references:** Rule 8.2.2; Rule 8.5.1.
@@ -149,6 +175,10 @@ Citation-integrity checks (§5.4):
 
 #### Rule 8.2.2 — Severity maps to rule class
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** validates 8.2.1
 
 > Each automated check **shall** carry the severity assigned by the severity map.
 
@@ -166,13 +196,17 @@ Citation-integrity checks (§5.4):
 
 #### Rule 8.2.3 — Version-pinned checking
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** declaration
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: declaration-block, conformance-record · writes: none
+**Relations:** requires 4.3.1
 
 > Tooling **shall** use every version-pinned check input when checking a document.
 
 **Rationale:** Sections 0.4.4 and 0.8 guarantee checking against the cited version. Profile applicability decides which rules enter that check. A linter that always runs the latest lists or guesses a profile breaks both guarantees.
 
-**Compliant:** `itws-lint --spec 0.2.1-draft --profile design-rfc queue-design.md` loads the 0.2.1-draft lists and the `design-rfc` rule set.
-**Non-compliant:** A 0.2.1-draft `procedure` is checked against the latest lists and the `research-paper` profile inferred from its references section.
+**Compliant:** `itws-lint --spec 0.6.0-draft --profile design-rfc queue-design.md` loads the 0.6.0-draft lists and the `design-rfc` rule set.
+**Non-compliant:** A 0.6.0-draft `procedure` is checked against the latest lists and the `research-paper` profile inferred from its references section.
 
 **Cross-references:** §0.4.4; §0.8.
 
@@ -180,6 +214,10 @@ Citation-integrity checks (§5.4):
 
 #### Rule 8.2.4 — Machine checks do not close human gates
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** constrains 8.2.1
 
 > A clean automated run **shall not** complete a human gate.
 
@@ -192,16 +230,7 @@ Citation-integrity checks (§5.4):
 
 ## 8.3 Publication reader test and release checks
 
-The independent reader test is the assumed-reader half of §1.2's dual acceptance test. The test adapts plain-language teach-back testing and ISO/IEC/IEEE 26514 documentation-evaluation guidance. The publication tier requires the test. Other tiers do not require the test. A document may target publication above its profile's minimum. The test then measures that profile's primary outcome:
-
-- `design-rfc` — explain the proposed design, affected interfaces, invariants, material trade-offs, and approval status.
-- `decision-record` — state the decision, why it was chosen, the rejected alternatives, and its consequences.
-- `procedure` — perform or tabletop the critical path and identify its preconditions, verification, rollback, and point of no return.
-- `explanation` — explain the central concept or mechanism accurately in new words and apply it to one fresh example.
-- `incident` — reconstruct impact and timeline, distinguish confirmed evidence from interpretation, and state unresolved causes and follow-up actions.
-- `technical-report` — explain the main technical claim or operational outcome, its evidence, and its boundaries.
-- `research-paper` — explain the main research result with correct context, baseline, evidence, uncertainty, scope, and strength.
-- `investigation-log` — distinguish observations from hypotheses, state what remains unknown, and identify the next discriminating check.
+The independent reader test is the assumed-reader half of §1.2's dual acceptance test. The test adapts plain-language teach-back testing and ISO/IEC/IEEE 26514 documentation-evaluation guidance. The publication tier requires the test. Other tiers do not require the test. A document may target publication above its profile's minimum. The test then measures that profile's primary outcome. Each overlay `README.md` states the reader-test outcome for its profile (§1.5).
 
 Publication release checks confirm:
 
@@ -218,12 +247,16 @@ Publication release checks confirm:
 
 #### Rule 8.3.1 — Publication gate
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO 26514 / plain-language testing practice
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.3.3
 
 > Before recording its conformance statement, a publication-tier document **shall** pass every publication gate element.
 
 **Rationale:** Publication claims both independent comprehension and release readiness. The reader test catches a plain layer that changes the primary outcome. Release checks catch a correct draft with stale metadata, broken evidence, inaccessible artifacts, or missing approvals.
 
-**Compliant:** A `research-paper` release record includes reviewed-tier approvals and a new independent participant's successful result teach-back. The record also includes resolved citations and artifacts. The checklist was generated for ITWS 0.2.1-draft.
+**Compliant:** A `research-paper` release record includes reviewed-tier approvals and a new independent participant's successful result teach-back. The record also includes resolved citations and artifacts. The checklist was generated for ITWS 0.6.0-draft.
 **Non-compliant:** "The reader-proxy reviewer said it reads fine." The proxy is not an independent test participant. No release checks are recorded.
 
 **Cross-references:** §1.2; §8.4; Rule 8.3.2.
@@ -234,6 +267,10 @@ Publication release checks confirm:
 
 #### Rule 8.3.2 — Participant sampling
 **Class:** mandatory · **Machine-checkable:** no · **Source:** plain-language testing practice
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.3.1
 
 > The test participant **shall** match the participant baseline.
 >
@@ -241,12 +278,12 @@ Publication release checks confirm:
 
 **Rationale:** The test measures what the document teaches, not what the participant already knew or absorbed in drafting, review, or project discussion. Contaminated participants pass documents that fail real readers.
 
-**Compliant:** An engineer from an unrelated team who matches the `procedure` reader baseline and has never seen the system change table-tops the final procedure.
+**Compliant:** A quality assurance specialist from an unrelated pod matches the `procedure` baseline. They have never seen the system change. They use the final procedure to walk through the task.
 **Non-compliant:** The reader-proxy reviewer, who has read three drafts, is the test participant.
 
 **Cross-references:** §0.3; Annex B; Rule 8.4.3.
 
-**Reader-test procedure:** read the document once, unassisted and at the participant's pace, then complete the §8.3 profile-specific task.
+**Reader-test procedure:** read the document once, unassisted and at the participant's pace, then produce the reader-test outcome stated in the declared profile's overlay.
 
 **Passing response:**
 
@@ -255,6 +292,10 @@ Publication release checks confirm:
 
 #### Rule 8.3.3 — Protocol and pass criteria
 **Class:** mandatory · **Machine-checkable:** no · **Source:** teach-back method, adapted
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.3.1
 
 > The participant **shall** follow the reader-test procedure.
 >
@@ -269,6 +310,10 @@ Publication release checks confirm:
 
 #### Rule 8.3.4 — Reader-test failures are recorded
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: conformance-record
+**Relations:** requires 8.3.3
 
 > A failed reader-test record **shall** state what the participant misstated or could not do.
 
@@ -281,6 +326,10 @@ Publication release checks confirm:
 
 #### Rule 8.3.5 — Failed documents are revised and independently retested
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.3.4
 
 > A publication-tier document that fails a reader test **shall** be revised.
 >
@@ -295,7 +344,7 @@ Publication release checks confirm:
 
 ## 8.4 Reviewer roles
 
-Reviewed and publication tiers assign §1.2's two layers to independent people. Core documents do not require these reviewers unless they target reviewed or publication. The **subject-matter owner** is accountable for correctness in the relevant system or domain. The **reader proxy** reviews from the declared profile's assumed-reader baseline. Neither reviewer may be an author.
+Reviewed and publication tiers assign §1.2's two layers to independent people. Core documents do not require these reviewers unless they target reviewed or publication. The **subject-matter owner** is accountable for correctness in the relevant system or domain. The **reader proxy** reviews from the declared profile's assumed-reader baseline. The proxy may hold any pod role if they match that baseline. Neither reviewer may be an author.
 
 **Required review roles:**
 
@@ -304,6 +353,10 @@ Reviewed and publication tiers assign §1.2's two layers to independent people. 
 
 #### Rule 8.4.1 — Reviewed tiers use two independent roles
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO 26514 / IEC 82079-1 review process
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.1.2
 
 > Every reviewed-tier or publication-tier document **shall** receive reviews from both required roles.
 >
@@ -311,7 +364,7 @@ Reviewed and publication tiers assign §1.2's two layers to independent people. 
 
 **Rationale:** The two layers fail in opposite ways. The owner can fill gaps from domain knowledge, but the proxy cannot judge technical correctness. Splitting the roles runs both acceptance tests without imposing two reviewers on core-tier documents.
 
-**Compliant:** A service owner signs a reviewed `design-rfc` for interfaces, invariants, evidence, and boundaries. An engineer outside the change signs for the plain layer.
+**Compliant:** A service owner signs a reviewed `design-rfc` for interfaces, invariants, evidence, and boundaries. A product designer from another pod signs for the plain layer.
 **Non-compliant:** The RFC author reviews it "wearing both hats," or a core `decision-record` is rejected solely because it did not recruit two reviewers.
 
 **Cross-references:** §1.2; Rule 8.1.2 (pass assignment); Rule 8.3.2 (the proxy is not the test participant).
@@ -326,10 +379,14 @@ Reviewed and publication tiers assign §1.2's two layers to independent people. 
 
 #### Rule 8.4.2 — Subject-matter-owner scope
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO 26514, renamed to §1.2
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: exact · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record, exact-item-ledger · writes: none
+**Relations:** requires 8.4.1
 
 > The subject-matter owner **shall** check every item in the owner review scope.
 
-**Rationale:** These checks require knowing what the domain permits and what the evidence supports. The profile record gives each profile a concrete focus. A `design-rfc` focuses on interfaces and invariants. A `decision-record` focuses on alternatives and consequences. A `procedure` focuses on preconditions, verification, and rollback. An `incident` focuses on timeline and evidence. A `technical-report` and `research-paper` focus on statistical and reproducibility-or-verification rigor. An `investigation-log` focuses on observation and hypothesis separation.
+**Rationale:** These checks require knowing what the domain permits and what the evidence supports. Each overlay `README.md` gives its profile a concrete owner review focus, such as interfaces and invariants for a `design-rfc`, mechanism fidelity for an `explanation`, or integrated acceptance for a `task`. The focus narrows the owner's attention. The focus does not reduce the owner review scope above.
 
 **Compliant:** The owner flags a procedure whose rollback step is unsafe after the schema migration even though the draft calls rollback available throughout.
 **Non-compliant:** The owner copyedits sentence length and skips the interface invariant because "the proxy has the checklist."
@@ -342,6 +399,10 @@ Reviewed and publication tiers assign §1.2's two layers to independent people. 
 
 #### Rule 8.4.3 — Assumed-reader proxy scope
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO 26514, renamed to §1.2
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: plain · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record, term-ledger · writes: none
+**Relations:** requires 8.4.1
 
 > The reader proxy **shall** check every proxy review area from the declared profile's assumed-reader baseline.
 >
@@ -350,12 +411,16 @@ Reviewed and publication tiers assign §1.2's two layers to independent people. 
 **Rationale:** The proxy's value is disciplined ignorance: they read as the declared Annex B baseline, not as themselves. A proxy who fills gaps from project knowledge silently passes documents that fail the real reader.
 
 **Compliant:** The proxy flags "quiesce L7" in a procedure because neither term is assumed or admitted. The state transition is required to execute the critical path.
-**Non-compliant:** The proxy lets "fence the old primary" pass because the database team knows its meaning. The declared reader profile does not know the phrase.
+**Non-compliant:** The proxy lets "fence the old primary" pass because the database team knows its meaning. The declared assumed reader does not know the phrase.
 
 **Cross-references:** §0.3; Annex B; Rule 8.1.2.
 
 #### Rule 8.4.4 — Findings cite rules
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** cross-reference
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: conformance-record
+**Relations:** pairs-with 8.4.1
 
 > Every required review finding **shall** cite the rule number it enforces.
 >
@@ -379,6 +444,10 @@ The standard engineering deviation pattern applies. Mandatory rules bend only vi
 
 #### Rule 8.5.1 — Deviation requires a recorded waiver
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** IEC 82079-1 / engineering-standard practice
+**Constructs:** waiver
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: waiver-record · writes: none
+**Relations:** constrains 8.5.2
 
 > A governed document violating a mandatory rule **shall** satisfy every waiver prerequisite.
 >
@@ -395,6 +464,10 @@ The standard engineering deviation pattern applies. Mandatory rules bend only vi
 
 #### Rule 8.5.2 — Waiver content
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** engineering-standard practice
+**Constructs:** waiver
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: mechanical
+**Resources:** reads: waiver-record · writes: waiver-record
+**Relations:** requires 8.5.1
 
 > An ITWS waiver **shall** complete every waiver template field.
 
@@ -420,3 +493,132 @@ Scope of validity:    <this document only | this section only | until version X 
 ```
 
 A waiver binds one document. A deviation needed by many documents is not a waiver. The deviation is a rule-change proposal (§0.8).
+
+## 8.6 Generated artifacts and validation states
+
+Sections 8.1 and 8.2 already require generated, version-pinned inputs. Section 8.6 states the contract those artifacts satisfy and the states a validation run may report. The contract exists so a reader or an artificial-intelligence agent can load one profile's rules, examples, glossary chain, and skeleton without reading every part first.
+
+### 8.6.1 The generation contract
+
+The Markdown files of `spec/` are authoritative. Every generated artifact derives from them. `spec/generated/agent/` holds the artifacts, and `manifest.json` holds their inventory.
+
+An artifact set **shall** satisfy every generation-contract condition:
+
+1. It records the ITWS version, the artifact schema version, and the generation command.
+2. It records a content hash for every governed source file and for every generated file.
+3. It is byte deterministic: two runs over one unchanged source tree produce identical bytes.
+4. It preserves the canonical order of profiles, skeleton slots, glossary prerequisites, and rule statements. It sorts only what carries no normative order.
+5. It contains every active and deprecated permanent rule exactly once.
+
+**Generation-contract conditions:** the five conditions above.
+
+#### Rule 8.6.1 — Generated artifacts satisfy the generation contract
+**Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: conformance-record
+**Relations:** requires 8.2.3; pairs-with 8.1.1
+
+> A published artifact set **shall** satisfy every generation-contract condition.
+
+**Rationale:** A checklist, a rule index, and a navigation catalog are only trustworthy when a reader can regenerate them and compare bytes. Recorded source hashes turn a stale artifact into a detected error rather than a silent one. Determinism keeps a regeneration diff readable, so a reviewer sees the rule change instead of reordering noise.
+
+**Compliant:** `python3 tools/itws_compile.py --check` reports no difference, and `manifest.json` records ITWS 0.6.0-draft with a hash for every file under `spec/`.
+**Non-compliant:** A committed `rules.jsonl` names ITWS 0.5.1-draft while the front matter reads 0.6.0-draft, and no command reproduces the file.
+
+**Cross-references:** §0.4.4; §0.8; Rule 8.1.1; Rule 8.2.3.
+
+**Stale-artifact conditions:**
+
+- A recorded source hash differs from the current source file.
+- A recorded ITWS version differs from the document's declared version.
+
+#### Rule 8.6.2 — Stale artifacts are rejected, not reused
+**Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.6.1
+
+> A tool **shall not** report a conformance result computed from an artifact set that meets a stale-artifact condition.
+
+**Rationale:** Section 0.4.4 checks a document against its declared version. An artifact generated from different source silently checks a different specification. Rejecting the run turns that mismatch into a visible failure, which is the outcome Rule 8.2.3 already requires of every version-pinned input.
+
+**Compliant:** The validator stops and reports which source file changed after generation.
+**Non-compliant:** The validator notices the changed hash, prints a warning, and still reports `pass`.
+
+**Cross-references:** Rule 8.2.3; Rule 8.6.1.
+
+### 8.6.2 Machine findings and human gates
+
+A validation run reports exactly one state:
+
+- **`pass`** — every machine-checkable applicable rule passed, and no required check was skipped.
+- **`fail`** — at least one error-severity finding remains without a waiver.
+- **`needs_review`** — no error-severity finding remains, and at least one `partial` or `no` rule still awaits a reader. Every human gate of the declared tier also reports here until it is recorded.
+- **`blocked`** — a required input is missing. Examples are absent source evidence, an unavailable network check, and an unresolved exact item.
+
+**Validation states:** the four states above.
+
+#### Rule 8.6.3 — Validation reports one of four states
+**Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: conformance-record
+**Relations:** requires 8.2.4; pairs-with 8.2.1
+
+> A validation run **shall** report exactly one validation state.
+>
+> A run with an unrecorded human gate or a skipped required check **shall not** report `pass`.
+
+**Rationale:** A two-state report forces every unfinished check into either a false pass or a false failure. Rule 8.2.4 already says a clean machine run does not close a human gate; separate states let a tool say so instead of implying the opposite. The `blocked` state also gives a pipeline somewhere to put a missing fact, so it reports the gap rather than inventing content.
+
+**Compliant:** A `decision-record` with a clean lint run and no recorded self-check reports `needs_review`, and the report names the missing gate.
+**Non-compliant:** The same document reports `pass` because the linter found nothing.
+
+**Cross-references:** §0.4.3; Rule 8.1.2; Rule 8.2.4; Rule 8.5.1.
+
+### 8.6.3 Agent-authored records
+
+An artificial-intelligence agent may read the generated artifacts, classify passages, and propose rewrites. Section 1.6.1 already reserves that judgment to a reader or agent. Section 8.6.3 states what such an agent owes when it records the judgment.
+
+**Agent-record fields:** the source spans the judgment covers, the rule or specification section that supports it, and one judgment state from `proposed`, `accepted_for_run`, `disputed`, or `unresolved`.
+
+#### Rule 8.6.4 — Agent-authored judgments cite their support
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** cross-reference
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: document · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: conformance-record
+**Relations:** pairs-with 8.4.4; requires 8.6.3
+
+> A recorded semantic judgment about a governed passage **shall** state every agent-record field.
+
+**Rationale:** Rule 8.4.4 already requires a review finding to cite its rule. A machine-authored classification needs the same discipline for the same reason: a judgment without a citation cannot be checked, argued with, or revised. The judgment state keeps an uncertain reading available instead of forcing a premature choice.
+
+**Compliant:** "Lines 41–48 are an evidence chunk (§4.1, Rule 7.3.1); state: proposed."
+**Non-compliant:** "Lines 41–48 are evidence." No rule, no span, and no state.
+
+**Cross-references:** §1.6.1; Rule 8.4.4; Rule 8.6.3.
+
+**Write-collision conditions:**
+
+- Two proposed rewrites change one source span.
+- Two proposed rewrites write one resource named in §1.6.2 without a declared order between them.
+
+#### Rule 8.6.5 — Colliding rewrites are reported, not merged
+**Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** any
+**Navigation:** target: conformance-record · chunks: any · slots: any · layers: both · context: collection · rewrite: prohibited
+**Resources:** reads: conformance-record · writes: none
+**Relations:** requires 8.6.4; constrains 8.6.3
+
+> A tool combining proposed rewrites **shall** report every write-collision condition it detects.
+>
+> The tool **shall not** choose between colliding rewrites.
+
+**Rationale:** Parallel repairs are safe only where they touch disjoint text and disjoint ledgers. Two rewrites that both rename one artifact, or both edit one paragraph, produce a document that no reviewer approved. A tool can detect the collision mechanically. Only a reader can decide which rewrite survives, because the decision depends on meaning.
+
+**Compliant:** The patch report lists both proposals, the shared span, and the shared `term-ledger` write, and it applies neither.
+**Non-compliant:** The tool applies the later patch and silently discards the earlier one.
+
+**Cross-references:** §1.6.2; Rule 2.7.3; Rule 8.6.4.

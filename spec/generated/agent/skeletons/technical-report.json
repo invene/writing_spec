@@ -1,0 +1,108 @@
+{
+  "profile": "technical-report",
+  "annex_section": "E.6",
+  "dependency_order": "A `technical-report` seeds prerequisites before methods, evidence, and claims that use them (§4.4).",
+  "slots": [
+    {
+      "name": "Summary",
+      "required": true,
+      "order": 1,
+      "description": "Main result or deliverable, scope, audience, and headline evidence in assumed-reader vocabulary.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Context",
+      "required": true,
+      "order": 2,
+      "description": "Question, need, prior state, and constraints.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "System or method",
+      "required": true,
+      "order": 3,
+      "description": "What was built, examined, or done; interfaces, configuration, and mechanism at the detail needed for audit.",
+      "renames": [
+        "System",
+        "Method",
+        "Approach"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Evidence",
+      "required": true,
+      "order": 4,
+      "description": "Measurements, observations, comparisons, or worked cases with the reporting elements required by Part 5.",
+      "renames": [
+        "Results"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Interpretation",
+      "required": true,
+      "order": 5,
+      "description": "What the evidence supports, separated from observation and calibrated per §5.6.",
+      "renames": [
+        "Discussion"
+      ],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Limitations",
+      "required": true,
+      "order": 6,
+      "description": "Scope, failure modes, missing evidence, and what was not tested.",
+      "renames": [],
+      "parent": "",
+      "repeats": false
+    },
+    {
+      "name": "Reproducibility or verification",
+      "required": true,
+      "order": 7,
+      "description": "Use reproducibility when another reader can repeat the method. Use verification when claims are checked against a system or artifact. State the steps, inputs, and pass criteria. A report may include both.",
+      "renames": [
+        "Reproducibility",
+        "Verification",
+        "Reproducibility and verification"
+      ],
+      "parent": "",
+      "repeats": false
+    }
+  ],
+  "required_slots": [
+    "Summary",
+    "Context",
+    "System or method",
+    "Evidence",
+    "Interpretation",
+    "Limitations",
+    "Reproducibility or verification"
+  ],
+  "merges": [
+    {
+      "parts": [
+        "Evidence",
+        "Interpretation"
+      ],
+      "combined": "Results and interpretation"
+    }
+  ],
+  "mutation_policies": [],
+  "source_span": {
+    "path": "spec/overlays/technical-report/skeleton.md",
+    "start_line": 1,
+    "end_line": 37
+  },
+  "itws_version": "0.6.0-draft",
+  "schema_version": "1.0.0"
+}

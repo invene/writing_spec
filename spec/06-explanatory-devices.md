@@ -10,18 +10,26 @@ An analogy maps a new concept onto something the profile's assumed reader alread
 
 #### Rule 6.1.1 — Anchor analogies in assumed-reader vocabulary
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** analogy
+**Navigation:** target: chunk · chunks: mechanism · slots: any · layers: plain · context: local · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.2.1
 
 > Every analogy **shall** map its explained concept onto a permitted analogy anchor.
 
-**Rationale:** An analogy explains only if its anchor is already understood (P4). Profile awareness matters: an API contract may be baseline vocabulary for one reader profile and ladder-required for another.
+**Rationale:** An analogy explains only if its anchor is already understood (P4). The shared baseline and selected genre overlay define available anchors. Neither supplies domain knowledge; other anchors require admission.
 
-**Compliant:** In an explanation for software engineers: "A schema invariant is like a type invariant. Unlike a type invariant, the schema invariant spans persisted versions and concurrent writers."
-**Non-compliant:** In a procedure for the same reader: "The rollback boundary is like an aircraft's V1 speed." The anchor is outside the declared baseline. The document has not admitted the anchor.
+**Compliant:** For a software engineering pod: "A request queue is like a waiting line. Both hold items until processing. Unlike a physical line, software can process several queued items at once."
+**Non-compliant:** For the same pod audience: "The rollback boundary is like an aircraft's V1 speed." The anchor is outside the declared baseline. The document has not admitted the anchor.
 
 **Cross-references:** §0.3, Annex B, Rule 2.3.1.
 
 #### Rule 6.1.2 — State the breaking point
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** analogy
+**Navigation:** target: chunk · chunks: mechanism · slots: any · layers: plain · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 6.1.1
 
 > Every analogy **shall** state where it breaks: the first property of the anchor that does not transfer to the concept.
 
@@ -36,6 +44,10 @@ An analogy maps a new concept onto something the profile's assumed reader alread
 
 #### Rule 6.1.3 — At most one analogy per concept
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** analogy
+**Navigation:** target: chunk · chunks: mechanism · slots: any · layers: plain · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 6.1.1
 
 > Every analogy use **shall** meet both analogy consistency conditions.
 
@@ -56,6 +68,10 @@ A worked example runs a mechanism, decision test, or procedure path on concrete 
 
 #### Rule 6.2.1 — Central mechanisms get a worked example
 **Class:** mandatory · **Machine-checkable:** no · **Source:** Carroll minimalism
+**Constructs:** worked-example
+**Navigation:** target: chunk · chunks: mechanism · slots: any · layers: plain · context: section · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 5.3.1
 
 > Every central mechanism **shall** have one worked example.
 >
@@ -63,13 +79,17 @@ A worked example runs a mechanism, decision test, or procedure path on concrete 
 
 **Rationale:** The assumed-reader test (§1.2) fails most often at mechanisms the writer understood too well to walk through. A worked example is the only device the reader can check themselves against (P4). A peripheral mechanism **may** rely on definition alone.
 
-**Compliant:** In a procedure: "Before the change, node A is primary and node B is caught up at log position 840. Promote B, verify that a test write reaches position 841 on B, then demote A. If the test write does not appear within 30 seconds, stop and run rollback step R1."
-**Non-compliant:** "Promote the replica, verify success, and roll back if needed." The procedure asserts its central state transition without tracing the transition.
+**Compliant:** In a procedure: "Before the change, production runs version 1. Deploy version 2 to the test environment. Submit order 123. Verify order 123 appears in the order list within 30 seconds. After verification passes, deploy version 2 to production. Otherwise, stop and run rollback step R1."
+**Non-compliant:** "Deploy version 2, verify success, and roll back if needed." The procedure asserts its central state transition without tracing the transition.
 
 **Cross-references:** Rule 6.2.2, §5.3 (equations get plain readings), §4.1 (a worked example is a mechanism chunk).
 
 #### Rule 6.2.2 — Examples carry no incidental complexity
 **Class:** mandatory · **Machine-checkable:** no · **Source:** Carroll minimalism / Google style guide
+**Constructs:** worked-example
+**Navigation:** target: chunk · chunks: mechanism · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 6.2.1
 
 > A worked example **shall not** contain detail that the point being shown does not need.
 
@@ -84,6 +104,10 @@ A worked example runs a mechanism, decision test, or procedure path on concrete 
 
 #### Rule 6.2.3 — Examples use realistic values
 **Class:** recommended · **Machine-checkable:** no · **Source:** Google style guide
+**Constructs:** worked-example
+**Navigation:** target: chunk · chunks: mechanism · slots: any · layers: plain · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 6.2.1
 
 > Worked-example values **should** meet the realistic-value definition.
 
@@ -102,6 +126,10 @@ An intuition block is a bounded, labeled span of informal explanation. The block
 
 #### Rule 6.3.1 — Intuition is bounded and labeled
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** ASD-STE100 (note blocks)
+**Constructs:** bounded-block
+**Navigation:** target: bounded-block · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 4.6.2
 
 > Informal explanation **shall** appear only in the intuition-block form.
 
@@ -118,6 +146,10 @@ An intuition block is a bounded, labeled span of informal explanation. The block
 
 #### Rule 6.3.2 — Exact content does not live only in intuition blocks
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC Directives Part 2
+**Constructs:** bounded-block, requirement
+**Navigation:** target: bounded-block · chunks: any · slots: any · layers: exact · context: document · rewrite: prohibited
+**Resources:** reads: chunk-text, exact-item-ledger · writes: none
+**Relations:** requires 6.3.1
 
 > An intuition block **shall not** be the only location of an exact-content type.
 
@@ -133,6 +165,10 @@ An intuition block is a bounded, labeled span of informal explanation. The block
 
 #### Rule 6.3.3 — Main text survives block removal
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** bounded-block
+**Navigation:** target: document · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 6.3.1; pairs-with 4.6.3
 
 > The main text **shall** remain coherent and complete when every intuition block is removed.
 
@@ -151,6 +187,10 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 
 #### Rule 6.4.1 — Diagram structures that prose cannot carry
 **Class:** recommended · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514 / IEC 82079-1
+**Constructs:** diagram
+**Navigation:** target: figure · chunks: any · slots: any · layers: plain · context: section · rewrite: review
+**Resources:** reads: chunk-text, figure-ledger · writes: figure-ledger
+**Relations:** pairs-with 6.4.2
 
 > A diagram-trigger structure **should** be shown as a diagram.
 >
@@ -165,6 +205,10 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 
 #### Rule 6.4.2 — Every diagram is referenced from the text
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** ISO/IEC/IEEE 26514
+**Constructs:** diagram, cross-reference
+**Navigation:** target: figure · chunks: any · slots: any · layers: plain · context: document · rewrite: mechanical
+**Resources:** reads: chunk-text, figure-ledger, cross-reference-ledger · writes: chunk-text
+**Relations:** requires 6.4.1
 
 > Every diagram **shall** be referenced from the main text by its number, at the point where the reader needs it.
 
@@ -179,6 +223,10 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 
 #### Rule 6.4.3 — Diagram labels use admitted terms only
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** diagram, admitted-term
+**Navigation:** target: figure · chunks: any · slots: any · layers: plain · context: document · rewrite: review
+**Resources:** reads: figure-ledger, term-ledger · writes: figure-ledger
+**Relations:** requires 2.3.1
 
 > Diagram text **shall** use only assumed vocabulary (Annex B) and previously admitted terms.
 >
@@ -193,6 +241,10 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 
 #### Rule 6.4.4 — Diagrams carry alt text
 **Class:** recommended · **Machine-checkable:** yes · **Source:** Google style guide
+**Constructs:** diagram
+**Navigation:** target: figure · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: figure-ledger · writes: figure-ledger
+**Relations:** requires 6.4.3
 
 > Every diagram **should** carry alt text that states what the diagram shows, using the same admitted terms as its labels.
 
@@ -211,6 +263,10 @@ Prohibited restatement repeats recently read content without adding information.
 
 #### Rule 6.5.1 — Repeat verbatim or not at all
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100
+**Constructs:** admitted-term, claim
+**Navigation:** target: sentence · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger, claim-ledger · writes: chunk-text
+**Relations:** requires 2.1.2
 
 > Repeated definitions, claims, and admitted terms **shall** use wording identical to the original in every load-bearing element.
 
@@ -227,6 +283,10 @@ Prohibited restatement repeats recently read content without adding information.
 
 #### Rule 6.5.2 — Recall distant definitions at reuse
 **Class:** recommended · **Machine-checkable:** yes · **Source:** original (instructional-design spaced recall)
+**Constructs:** admitted-term
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 6.5.1
 
 > A use meeting the distant-reuse trigger **should** include distant-reuse support.
 
@@ -241,6 +301,10 @@ Prohibited restatement repeats recently read content without adding information.
 
 #### Rule 6.5.3 — Recap the ladder at part boundaries
 **Class:** permitted · **Machine-checkable:** yes · **Source:** original
+**Constructs:** section
+**Navigation:** target: section · chunks: any · slots: any · layers: plain · context: section · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 6.5.2
 
 > A major section **may** open with a boundary recap.
 
@@ -252,8 +316,16 @@ Prohibited restatement repeats recently read content without adding information.
 
 **Cross-references:** Rule 6.5.1, Rule 6.5.2.
 
+**Phrase list 6.5.4 — hollow-summary openers (opener):** "in summary"; "in conclusion"; "overall"; "taken together"; "to summarize"; "all in all".
+
+A covered opener is a candidate, not a finding. The linter flags the closing paragraph. A reader confirms that the paragraph adds no consequence, bound, or forward pointer.
+
 #### Rule 6.5.4 — No hollow summaries
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** prohibited-phrase
+**Navigation:** target: chunk · chunks: any · slots: any · layers: plain · context: section · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 4.2.3
 
 > A section **shall not** end with a paragraph that restates content without adding information.
 >

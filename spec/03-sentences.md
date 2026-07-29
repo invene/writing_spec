@@ -10,10 +10,14 @@ Part 5 exactness wins any collision with a sentence rule (§1.4). Split or layer
 
 ## 3.1 Sentence length
 
-Two caps apply, following STE's two-tier structure. A *load-bearing sentence* admits a term or states a claim, requirement, decision, instruction, warning, or operational outcome. A *descriptive sentence* is any other sentence. Load-bearing sentences get the tighter cap because readers and implementers must retain or act on them exactly.
+Two caps apply, following STE's two-tier structure. A *load-bearing sentence* admits a term or states a claim, requirement, decision, instruction, warning, or operational outcome. A *descriptive sentence* is any other sentence. Load-bearing sentences get the tighter cap because readers must retain or act on them exactly.
 
 #### Rule 3.1.1 — Descriptive sentence cap
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** ASD-STE100 (adapted)
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 3.1.3; constrains 3.1.4
 
 > A descriptive sentence **shall not** exceed 25 words, counted per Rule 3.1.3.
 
@@ -26,6 +30,10 @@ Two caps apply, following STE's two-tier structure. A *load-bearing sentence* ad
 
 #### Rule 3.1.2 — Load-bearing sentence cap
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100 (adapted)
+**Constructs:** claim
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 3.1.3; constrains 3.1.4
 
 > A load-bearing sentence **shall not** exceed 20 words, counted per Rule 3.1.3.
 
@@ -38,6 +46,10 @@ Two caps apply, following STE's two-tier structure. A *load-bearing sentence* ad
 
 #### Rule 3.1.3 — Inline-math word counting
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** equation
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: none
+**Relations:** validates 3.1.1; validates 3.1.2
 
 > Under Rules 3.1.1 and 3.1.2, one mathematical symbol **shall** count as one word. An inline expression containing any operator **shall** count as three words.
 
@@ -50,6 +62,10 @@ Two caps apply, following STE's two-tier structure. A *load-bearing sentence* ad
 
 #### Rule 3.1.4 — Split, never blur
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** claim
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text, exact-item-ledger · writes: chunk-text
+**Relations:** constrains 3.1.1; constrains 3.1.2; requires 5.1.1
 
 > When an exact statement exceeds a cap, the writer **shall** split it or move only non-action-critical detail. Moved detail **shall** use display math or a bounded block. The writer **shall not** remove precision to meet a cap.
 
@@ -64,6 +80,10 @@ Two caps apply, following STE's two-tier structure. A *load-bearing sentence* ad
 
 #### Rule 3.2.1 — One idea per sentence
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ASD-STE100
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 4.1.1
 
 > A sentence **shall** express exactly one idea.
 
@@ -76,10 +96,14 @@ Two caps apply, following STE's two-tier structure. A *load-bearing sentence* ad
 
 #### Rule 3.2.2 — One reviewable assertion per sentence
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original (extends ASD-STE100)
+**Constructs:** claim
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
+**Relations:** requires 3.2.1
 
 > A sentence **shall not** state more than one independently reviewable claim, requirement, decision, instruction, risk, or outcome.
 
-**Rationale:** These assertions are the units that reviewers verify, implementers trace, and readers cite. Two assertions in one sentence can share scope, evidence, or force accidentally, so at least one becomes harder to review correctly. Serves P6 and P7.
+**Rationale:** These assertions are the units that reviewers verify, teams trace, and readers cite. Two assertions in one sentence can share scope, evidence, or force accidentally, so at least one becomes harder to review correctly. Serves P6 and P7.
 
 **Compliant:** "The API shall accept the old token format for 30 days. The API shall log each old-format request."
 **Non-compliant:** "The API shall accept the old token format for 30 days and log each request so migration progress remains visible."
@@ -96,6 +120,10 @@ Rule 3.3.1 permits passive voice only under these exceptions:
 
 #### Rule 3.3.1 — Active voice by default
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100 + PlainLanguage.gov + Microsoft
+**Constructs:** verb
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 3.3.2
 
 > A sentence **shall** use active voice unless an exception listed immediately above applies.
 
@@ -108,6 +136,10 @@ Rule 3.3.1 permits passive voice only under these exceptions:
 
 #### Rule 3.3.2 — "We" names the reporting actors
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** pronoun
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 3.3.1
 
 > "We" **shall** name only the document's authors or named reporting team as actors or claimants. "We" **shall not** include the reader.
 
@@ -135,6 +167,10 @@ Tense and mood follow one table. A governed document distinguishes stable facts,
 
 #### Rule 3.4.1 — Tense follows the table
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ASD-STE100 + Google (adapted)
+**Constructs:** verb
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 3.4.2
 
 > A sentence **shall** use the tense assigned by the §3.4 table for its context.
 
@@ -149,6 +185,10 @@ Allowed contexts for "would," "could," and "might" are marked risks, hypothetica
 
 #### Rule 3.4.2 — No ambiguous conditionals
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** verb, hedge
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 3.4.1; pairs-with 5.6.1
 
 > The covered forms **shall** appear only in the allowed contexts. They **shall not** report an observation, requirement, decision, or committed plan.
 
@@ -162,11 +202,15 @@ Allowed contexts for "would," "could," and "might" are marked risks, hypothetica
 ## 3.5 Noun clusters
 
 #### Rule 3.5.1 — Three-noun cap
-**Class:** mandatory · **Machine-checkable:** yes · **Source:** ASD-STE100
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100
+**Constructs:** noun-cluster
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 3.5.2
 
 > A noun cluster **shall not** contain more than three nouns. Longer stacks **shall** use prepositions or clauses.
 
-**Rationale:** English noun stacks parse right-to-left without marked structure. Each added noun multiplies the possible groupings. Domain specialists apply parsing habits that the assumed reader may not share. Serves P1.
+**Rationale:** English noun stacks parse right-to-left without marked structure. Each added noun multiplies the possible groupings. Domain specialists apply parsing habits that the assumed reader may not share. Serves P1. Counting nouns needs a part-of-speech reading that §8.2 tooling cannot produce, so the linter reports a candidate and a reader confirms it.
 
 **Compliant:** "the timeout for requests from the account service"
 **Non-compliant:** "the account service request timeout setting"
@@ -174,11 +218,15 @@ Allowed contexts for "would," "could," and "might" are marked risks, hypothetica
 **Cross-references:** Rule 3.5.2, §2.3.
 
 #### Rule 3.5.2 — Admitted terms count as one noun
-**Class:** permitted · **Machine-checkable:** yes · **Source:** original
+**Class:** permitted · **Machine-checkable:** partial · **Source:** original
+**Constructs:** noun-cluster, admitted-term
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: document · rewrite: mechanical
+**Resources:** reads: chunk-text, term-ledger · writes: none
+**Relations:** requires 3.5.1
 
 > An admitted multiword term **may** count as one noun under Rule 3.5.1.
 
-**Rationale:** Once "attention head" is admitted, the term is one concept to the reader. The cap should measure concepts, not whitespace. The single-noun count keeps the cap from punishing the ladder it depends on. Serves P4.
+**Rationale:** Once "attention head" is admitted, the term is one concept to the reader. The cap should measure concepts, not whitespace. The single-noun count keeps the cap from punishing the ladder it depends on. Serves P4. The count inherits Rule 3.5.1's part-of-speech limit, so it is `partial` for the same reason.
 
 **Compliant:** "the deployment ring health threshold" where "deployment ring" is admitted (three countable nouns: deployment-ring, health, threshold).
 **Non-compliant:** Counting "deployment ring" as one noun before the term has been admitted.
@@ -189,6 +237,10 @@ Allowed contexts for "would," "could," and "might" are marked risks, hypothetica
 
 #### Rule 3.6.1 — Unambiguous antecedents
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ASD-STE100 + PlainLanguage.gov
+**Constructs:** pronoun
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: neighboring · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 3.6.2
 
 > Every pronoun **shall** have exactly one grammatically plausible antecedent, located in the same sentence or the sentence before.
 
@@ -199,10 +251,16 @@ Allowed contexts for "would," "could," and "might" are marked risks, hypothetica
 
 **Cross-references:** Rule 3.6.2, §6.5.
 
-Covered bare openers are "this," "that," "these," "those," and "it" when they refer to preceding content.
+**Phrase list 3.6.2 — bare openers (opener):** "this"; "that"; "these"; "those"; "it".
+
+A covered opener is compliant when a noun follows it in the same noun phrase. "This queue" names its referent; bare "This" does not.
 
 #### Rule 3.6.2 — No bare "this," "that," or "it" openers
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google + Microsoft (adapted)
+**Constructs:** pronoun
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 3.6.1
 
 > A sentence **shall not** open with a covered bare opener. The opener **shall** name its referent through a following noun.
 
@@ -217,6 +275,10 @@ Covered bare openers are "this," "that," "these," "those," and "it" when they re
 
 #### Rule 3.7.1 — "Only" sits next to what it modifies
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Microsoft + Google
+**Constructs:** word
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 3.7.4
 
 > The word "only" **shall** immediately precede the word or phrase it modifies.
 
@@ -229,6 +291,10 @@ Covered bare openers are "this," "that," "these," "those," and "it" when they re
 
 #### Rule 3.7.2 — "Respectively" restricted
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google + Microsoft (adapted)
+**Constructs:** list
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 5.5.1
 
 > "Respectively" **shall not** pair lists longer than two items. Pairings of three or more items **shall** be direct or tabular.
 
@@ -241,6 +307,10 @@ Covered bare openers are "this," "that," "these," "those," and "it" when they re
 
 #### Rule 3.7.3 — One negation per clause
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100 + PlainLanguage.gov
+**Constructs:** word
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 3.9.1
 
 > A clause **shall not** contain more than one negation, including negative affixes ("un-," "non-") that interact with "not."
 
@@ -255,6 +325,10 @@ Covered quantifiers are "all," "some," "every," "no," and "most."
 
 #### Rule 3.7.4 — Explicit quantifier scope
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original (seeded by STE ambiguity rules)
+**Constructs:** generalization
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 7.4.1
 
 > A sentence with two covered quantifiers **shall** make their scope order unambiguous. The writer **shall** use per-item statements when needed.
 
@@ -280,6 +354,10 @@ Punctuation follows the Google Developer Style Guide except where a rule below t
 
 #### Rule 3.8.1 — No semicolon between independent clauses
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google (tightened)
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 3.2.1
 
 > A semicolon **shall not** join independent clauses. The writer **shall** use two sentences.
 
@@ -292,6 +370,10 @@ Punctuation follows the Google Developer Style Guide except where a rule below t
 
 #### Rule 3.8.2 — Serial comma
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google
+**Constructs:** list
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** none
 
 > A list of three or more items **shall** use a comma before the final conjunction.
 
@@ -304,6 +386,10 @@ Punctuation follows the Google Developer Style Guide except where a rule below t
 
 #### Rule 3.8.3 — Connectives keep their reserved meaning
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100 + Google (adapted)
+**Constructs:** connective
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 2.6.10
 
 > A connective **shall** express only its §3.8 relation. In particular, "since" and "while" **shall** express only time.
 
@@ -318,10 +404,14 @@ Punctuation follows the Google Developer Style Guide except where a rule below t
 
 Certainty language has one governing source: the calibrated vocabulary of §5.6. This section prohibits uncalibrated hedges. Section 3.9 defines no permitted alternatives.
 
-Covered vague hedges are "somewhat," "fairly," "relatively," "quite," "arguably," "rather," "largely," "generally" for assessments, and "to some extent."
+**Phrase list 3.9.1 — vague hedges (word):** "somewhat"; "fairly"; "relatively"; "quite"; "arguably"; "rather"; "largely"; "generally" (prohibited for an assessment, permitted for a stated scope); "to some extent".
 
 #### Rule 3.9.1 — No vague hedges
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original (list seeded from PlainLanguage.gov and Wikipedia "Signs of AI writing")
+**Constructs:** hedge
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 5.6.1
 
 > A covered hedge **shall not** modify a claim, risk, prediction, or reported outcome.
 
@@ -334,6 +424,10 @@ Covered vague hedges are "somewhat," "fairly," "relatively," "quite," "arguably,
 
 #### Rule 3.9.2 — Certainty language comes from §5.6 only
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original (mechanism forked from IPCC calibrated language)
+**Constructs:** hedge, claim
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
+**Relations:** requires 5.6.1
 
 > Every expression of confidence or claim strength **shall** use a §5.6 phrase. No other certainty phrasing is permitted.
 
@@ -350,6 +444,10 @@ The patterns below are prohibited on their merits. Each pattern adds filler, inf
 
 #### Rule 3.10.1 — No rule-of-three padding
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** list
+**Navigation:** target: list · chunks: any · slots: any · layers: plain · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.6.4
 
 > A list or series **shall not** be padded to three items for rhythm. Each item **shall** carry distinct information.
 
@@ -360,10 +458,16 @@ The patterns below are prohibited on their merits. Each pattern adds filler, inf
 
 **Cross-references:** §2.6 (puffery vocabulary).
 
-Rule 3.10.2 covers "it's not just X, it's Y" and "not X, but Y." Rule 3.10.2 also covers "X rather than Y" when Y adds no information.
+**Phrase list 3.10.2 — contrast-reframe templates (pattern):** "\bis(?:n't| not)? just\b"; "\bnot only\b[^.]{0,60}\bbut also\b"; "\bnot merely\b"; "\bmore than just\b".
+
+Rule 3.10.2 also covers "X rather than Y" when Y adds no information. A reader decides that case; the patterns above do not detect it.
 
 #### Rule 3.10.2 — No negative parallelism
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** prohibited-phrase
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.6.4
 
 > A document **shall not** use a covered contrast-reframe template. The writer **shall** state the positive content directly.
 
@@ -376,6 +480,10 @@ Rule 3.10.2 covers "it's not just X, it's Y" and "not X, but Y." Rule 3.10.2 als
 
 #### Rule 3.10.3 — No formulaic em dashes
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** any
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 3.8.3
 
 > An em dash **shall not** replace an equivalent comma, colon, or parenthesis. An em dash **shall** mark only a genuine interruption or reversal.
 
@@ -386,10 +494,14 @@ Rule 3.10.2 covers "it's not just X, it's Y" and "not X, but Y." Rule 3.10.2 als
 
 **Cross-references:** Rule 3.8.3.
 
-Covered trailing clauses include "...highlighting the need for," "...underscoring the importance of," "...reflecting a broader trend," and "...demonstrating the potential of."
+**Phrase list 3.10.4 — trailing significance participles (phrase):** "highlighting the need for"; "underscoring the importance of"; "underlining the importance of"; "reflecting a broader trend"; "demonstrating the potential of"; "showcasing the"; "marking a significant".
 
 #### Rule 3.10.4 — No trailing significance participles
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** prohibited-phrase
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.6.4
 
 > A sentence **shall not** append a covered present-participle clause that asserts significance.
 
@@ -402,6 +514,10 @@ Covered trailing clauses include "...highlighting the need for," "...underscorin
 
 #### Rule 3.10.5 — No false ranges
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** quantity
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 5.4.2
 
 > "Ranges from X to Y" **shall** describe only endpoints of a measured or defined range. The phrase **shall not** spread rhetorical examples.
 
@@ -412,10 +528,16 @@ Covered trailing clauses include "...highlighting the need for," "...underscorin
 
 **Cross-references:** §5.4.
 
-Plain alternatives include "is," "has," and other direct verbs. Covered inflated forms are "serves as," "stands as," "functions as," "boasts," "features," and "maintains."
+Plain alternatives are "is," "has," and other direct verbs.
+
+**Phrase list 3.10.6 — inflated copula substitutes (phrase):** "serves as" → "is"; "stands as" → "is"; "functions as" → "is"; "acts as" → "is"; "boasts" → "has"; "features" → "has"; "maintains" → "has"; "refers to" → "is" (prohibited only as a definition opener).
 
 #### Rule 3.10.6 — No copula avoidance
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing" + ASD-STE100 (simple verbs)
+**Constructs:** prohibited-phrase, verb
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.1.3
 
 > When a plain verb states the fact, a writer **shall not** substitute a covered inflated form. A definition **shall not** open with "refers to."
 

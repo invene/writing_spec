@@ -10,6 +10,10 @@ Sections 2.1–2.2 give the general word rules and permitted baseline. Sections 
 
 #### Rule 2.1.1 — One word, one meaning
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100
+**Constructs:** admitted-term
+**Navigation:** target: term · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text, term-ledger
+**Relations:** constrains 2.1.2; pairs-with 5.2.2
 
 > A word or term **shall** carry exactly one meaning throughout a document.
 
@@ -22,6 +26,10 @@ Sections 2.1–2.2 give the general word rules and permitted baseline. Sections 
 
 #### Rule 2.1.2 — No synonym variation
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ASD-STE100
+**Constructs:** admitted-term
+**Navigation:** target: term · chunks: any · slots: any · layers: both · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.1.1; pairs-with 6.5.1
 
 > Later references to a named concept **shall** use the established term. They **shall not** substitute synonyms for variety.
 
@@ -32,16 +40,14 @@ Sections 2.1–2.2 give the general word rules and permitted baseline. Sections 
 
 **Cross-references:** §2.1.1, §6.5 (deliberate redundancy uses verbatim wording)
 
-Rule 2.1.3 uses these plain-verb replacements:
-
-- *use*, not *utilize*.
-- *do*, not *perform*.
-- *show*, not *demonstrate*, when the verb means *exhibit*.
-- *wrote*, not *authored*.
-- *is* or *has*, not *serves as* or *boasts*.
+**Phrase list 2.1.3 — plain-verb replacements (word):** "utilize" → "use"; "perform" → "do"; "demonstrate" → "show" (only when the verb means "exhibit"); "authored" → "wrote"; "serves as" → "is"; "boasts" → "has".
 
 #### Rule 2.1.3 — Prefer the plain verb
 **Class:** recommended · **Machine-checkable:** yes · **Source:** Google/Microsoft word lists, ASD-STE100
+**Constructs:** verb
+**Navigation:** target: word · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 3.10.6
 
 > A document **should** use the plain-verb replacements listed immediately above.
 
@@ -54,6 +60,10 @@ Rule 2.1.3 uses these plain-verb replacements:
 
 #### Rule 2.1.4 — Expand every acronym at first use
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google/Microsoft style guides
+**Constructs:** acronym
+**Navigation:** target: term · chunks: any · slots: any · layers: both · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text, term-ledger
+**Relations:** requires 2.3.1; constrains 2.1.5
 
 > At first use, an acronym or initialism not assumed by Annex B **shall** include its expansion and parenthesized short form.
 
@@ -66,6 +76,10 @@ Rule 2.1.3 uses these plain-verb replacements:
 
 #### Rule 2.1.5 — One form per acronym after introduction
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google/Microsoft style guides
+**Constructs:** acronym
+**Navigation:** target: term · chunks: any · slots: any · layers: both · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.1.4
 
 > After introduction, a document **shall** use either the short form or the expanded form consistently, not both interchangeably.
 
@@ -80,6 +94,10 @@ Rule 2.1.3 uses these plain-verb replacements:
 
 #### Rule 2.2.1 — The permitted-vocabulary test
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original (baseline enumerated in Annex B)
+**Constructs:** domain-term
+**Navigation:** target: term · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: term-ledger
+**Relations:** requires 2.3.1; pairs-with 2.1.1
 
 > Every specialized term or sense **shall** be assumed under Annex B or admitted under §2.3 before first use.
 
@@ -96,6 +114,10 @@ The ladder is this specification's core original mechanism. A document builds vo
 
 #### Rule 2.3.1 — Define before first use
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** domain-term
+**Navigation:** target: term · chunks: definition · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text, term-ledger
+**Relations:** requires 2.2.1; constrains 2.3.2; pairs-with 4.4.2
 
 > A term outside Rule 2.2.1's permitted vocabulary **shall** be defined before first body use, including Annex A terms.
 
@@ -108,6 +130,10 @@ The ladder is this specification's core original mechanism. A document builds vo
 
 #### Rule 2.3.2 — Definitions stand only on lower rungs
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** definition
+**Navigation:** target: term · chunks: definition · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.3.1
 
 > A definition **shall** use only assumed vocabulary and terms already admitted in the document.
 
@@ -118,10 +144,14 @@ The ladder is this specification's core original mechanism. A document builds vo
 
 **Cross-references:** §2.3.1, §2.4.2
 
-Forbidden promises under Rule 2.3.3 include "see §5," "defined below," and "as we will describe."
+**Phrase list 2.3.3 — forward-reference promises (phrase):** "defined below"; "defined later"; "described below"; "as we will describe"; "as we will see"; "we define this later"; "more on this below"; "see below".
 
 #### Rule 2.3.3 — No forward references
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Constructs:** domain-term
+**Navigation:** target: term · chunks: any · slots: any · layers: both · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.3.1; constrains 4.7.2
 
 > A document **shall not** use a term through a promise to define it later.
 
@@ -134,6 +164,10 @@ Forbidden promises under Rule 2.3.3 include "see §5," "defined below," and "as 
 
 #### Rule 2.3.4 — Definitions are operational
 **Class:** mandatory · **Machine-checkable:** no · **Source:** original
+**Constructs:** definition
+**Navigation:** target: term · chunks: definition · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 2.4.1
 
 > A definition **shall** state what the thing is or does. The definition **shall** explain applicable inputs, outputs, or distinguishing properties. The definition **shall not** merely relate the term to other terms.
 
@@ -162,6 +196,10 @@ The first sentence uses three unadmitted terms: *Raft*, *leader election*, and *
 
 #### Rule 2.4.1 — Substitutability
 **Class:** mandatory · **Machine-checkable:** no · **Source:** ISO 704
+**Constructs:** definition
+**Navigation:** target: term · chunks: definition · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.3.4
 
 > A definition **shall** replace the term in every document sentence without changing that sentence's meaning.
 
@@ -174,6 +212,10 @@ The first sentence uses three unadmitted terms: *Raft*, *leader election*, and *
 
 #### Rule 2.4.2 — No circular definitions
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO 704
+**Constructs:** definition
+**Navigation:** target: term · chunks: definition · slots: any · layers: exact · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.3.2
 
 > A definition **shall not** use the defined term, its derivative, or any term that depends on it.
 
@@ -186,6 +228,10 @@ The first sentence uses three unadmitted terms: *Raft*, *leader election*, and *
 
 #### Rule 2.4.3 — Genus and differentia
 **Class:** recommended · **Machine-checkable:** no · **Source:** ISO 704
+**Constructs:** definition
+**Navigation:** target: term · chunks: definition · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.3.4
 
 > A definition **should** name the nearest familiar category the thing belongs to, then state what distinguishes it within that category.
 
@@ -198,6 +244,10 @@ The first sentence uses three unadmitted terms: *Raft*, *leader election*, and *
 
 #### Rule 2.4.4 — Definition length cap
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original (per ISO 704 single-phrase convention, relaxed)
+**Constructs:** definition
+**Navigation:** target: term · chunks: definition · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 2.4.5; pairs-with 4.8.1
 
 > A definition **shall not** exceed two sentences or 40 words. Further explanation **shall** appear as separate prose.
 
@@ -210,6 +260,10 @@ The first sentence uses three unadmitted terms: *Raft*, *leader election*, and *
 
 #### Rule 2.4.5 — No definition by synonym or citation alone
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO 704, original
+**Constructs:** definition
+**Navigation:** target: term · chunks: definition · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 2.3.2
 
 > A definition **shall not** consist only of a synonym, a translation into other jargon, or a citation.
 
@@ -231,6 +285,10 @@ Definitions live at two levels: per-document definitions written under §2.3–2
 
 #### Rule 2.5.1 — Documents do not contradict the glossary
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original
+**Constructs:** admitted-term
+**Navigation:** target: term · chunks: any · slots: any · layers: exact · context: collection · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.3.1
 
 > A governed document **shall not** contradict an Annex A term's meaning in its definition or use.
 
@@ -243,6 +301,10 @@ Definitions live at two levels: per-document definitions written under §2.3–2
 
 #### Rule 2.5.2 — Use canonical wording at definitional first use
 **Class:** recommended · **Machine-checkable:** partial · **Source:** original
+**Constructs:** admitted-term
+**Navigation:** target: term · chunks: definition · slots: any · layers: exact · context: collection · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.5.1
 
 > At definitional first use, a document **should** quote the term's Annex A wording verbatim.
 
@@ -255,6 +317,10 @@ Definitions live at two levels: per-document definitions written under §2.3–2
 
 #### Rule 2.5.3 — Recurring terms are proposed to the glossary
 **Class:** recommended · **Machine-checkable:** no · **Source:** original
+**Constructs:** admitted-term
+**Navigation:** target: term · chunks: any · slots: any · layers: plain · context: collection · rewrite: prohibited
+**Resources:** reads: term-ledger · writes: none
+**Relations:** pairs-with 2.5.1
 
 > The second writer to define a term **should** propose it for Annex A.
 
@@ -271,6 +337,10 @@ The rules in this section prohibit specific vocabulary-level patterns. Most show
 
 #### Rule 2.6.1 — No jargon as shorthand
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** PlainLanguage.gov
+**Constructs:** domain-term
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 2.2.1
 
 > A document **shall not** use field jargon as a compression device when permitted vocabulary can state the same thing.
 
@@ -283,6 +353,10 @@ The rules in this section prohibit specific vocabulary-level patterns. Most show
 
 #### Rule 2.6.2 — No opaque named artifacts
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Google style guide, original
+**Constructs:** name
+**Navigation:** target: term · chunks: any · slots: any · layers: plain · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** pairs-with 2.7.1
 
 > A named technology, model, method, tool, standard, or system **shall** receive a plain-language introduction before bare use.
 
@@ -293,10 +367,14 @@ The rules in this section prohibit specific vocabulary-level patterns. Most show
 
 **Cross-references:** §2.1.4, §2.7.1
 
-Rule 2.6.3 covers *state-of-the-art*, *novel*, *breakthrough*, *dramatic*, and *significant* outside its statistical sense.
+**Phrase list 2.6.3 — unearned superlatives (word):** "state-of-the-art"; "novel"; "breakthrough"; "dramatic"; "significant" (permitted in the statistical sense admitted under §5.7).
 
 #### Rule 2.6.3 — No unearned superlatives
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Google style guide, PlainLanguage.gov
+**Constructs:** prohibited-phrase, measurement
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** constrains 5.4.2; pairs-with 2.6.4
 
 > A covered term **shall not** appear unless the same sentence states the measurement that earns it.
 
@@ -307,10 +385,14 @@ Rule 2.6.3 covers *state-of-the-art*, *novel*, *breakthrough*, *dramatic*, and *
 
 **Cross-references:** §5.4, §5.6, §2.6.4
 
-Seed list (ITWS 0.2): *delve, underscore(s) (as rhetorical emphasis), tapestry, testament, pivotal, crucial, robust (outside its statistical sense), showcase, intricate, fostering, garner, meticulous, vibrant, landscape (abstract), interplay (abstract), boasts, align with, bolstered.*
+**Phrase list 2.6.4 — prohibited words (word):** "delve"; "underscore" (permitted for a physical mark, prohibited as rhetorical emphasis); "underscores" (same exception); "tapestry"; "testament"; "pivotal"; "crucial"; "robust" (permitted in the statistical sense admitted under §5.7); "showcase"; "intricate"; "fostering"; "garner"; "meticulous"; "vibrant"; "landscape" (permitted for physical terrain, prohibited as an abstract field); "interplay" (prohibited as an abstract relation); "boasts"; "align with"; "bolstered".
 
 #### Rule 2.6.4 — The prohibited-word list (living)
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** prohibited-phrase
+**Navigation:** target: word · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.6.3
 
 > Except in quotations or discussion, a governed document **shall not** use an item on the prohibited-word list.
 
@@ -321,10 +403,14 @@ Seed list (ITWS 0.2): *delve, underscore(s) (as rhetorical emphasis), tapestry, 
 
 **Cross-references:** §2.6.3, §3.10, §8.2 (the list ships as a linter asset)
 
-Covered agency verbs are "wants," "believes," "knows," "understands," "thinks," "decides," and "tries."
+**Phrase list 2.6.5 — agency verbs (word):** "wants"; "believes"; "knows"; "understands"; "thinks"; "decides"; "tries".
 
 #### Rule 2.6.5 — Agency language requires an operational definition
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original (extends Google's anthropomorphism guidance)
+**Constructs:** verb
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: document · rewrite: review
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text
+**Relations:** requires 2.3.4
 
 > Software, models, and other automated systems **shall not** receive a covered agency verb before its operational definition.
 
@@ -335,10 +421,14 @@ Covered agency verbs are "wants," "believes," "knows," "understands," "thinks," 
 
 **Cross-references:** §2.3.4, §7.3
 
-Covered markers include "instead of the old approach," "unlike what we did before," "previously we," "as before," and "our earlier attempt."
+**Phrase list 2.6.6 — warpath markers (phrase):** "instead of the old approach"; "unlike what we did before"; "unlike our earlier"; "previously we"; "as before"; "our earlier attempt"; "the old approach"; "we used to".
 
 #### Rule 2.6.6 — No warpath markers
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** original (phrase-level enforcement of §4.9)
+**Constructs:** prohibited-phrase
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** validates 4.9.1
 
 > A governed document **shall not** use a covered marker or equivalent.
 
@@ -349,10 +439,14 @@ Covered markers include "instead of the old approach," "unlike what we did befor
 
 **Cross-references:** §4.9, §8.2
 
-Covered importance-announcing asides are "it's important to note," "it should be emphasized," "notably," "interestingly," and "no discussion would be complete without."
+**Phrase list 2.6.7 — editorializing asides (phrase):** "it's important to note"; "it is important to note"; "it should be emphasized"; "it is worth noting"; "notably"; "interestingly"; "no discussion would be complete without".
 
 #### Rule 2.6.7 — No editorializing asides
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** prohibited-phrase
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 4.2.2
 
 > A document **shall not** use the covered importance-announcing asides.
 
@@ -363,10 +457,16 @@ Covered importance-announcing asides are "it's important to note," "it should be
 
 **Cross-references:** §4.2, §3.10
 
-Covered authority phrases include "experts say," "studies show," "widely regarded as," and equivalents. The rule also covers plural attributions backed by fewer sources, such as "several publications" with one citation.
+**Phrase list 2.6.8 — vague-authority phrases (phrase):** "experts say"; "studies show"; "research shows"; "widely regarded as"; "it is widely known"; "it is generally accepted"; "many believe".
+
+The rule also covers a plural attribution backed by fewer sources, such as "several publications" with one citation. Rule 5.4.5 counts the sources.
 
 #### Rule 2.6.8 — No vague attribution or source-count inflation
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** citation, claim
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text, citation-ledger · writes: chunk-text
+**Relations:** requires 5.4.3; pairs-with 5.4.5
 
 > Claims **shall** name and cite their sources. A document **shall not** use a covered authority phrase. A plural attribution **shall not** imply more sources than its citations provide.
 
@@ -377,10 +477,14 @@ Covered authority phrases include "experts say," "studies show," "widely regarde
 
 **Cross-references:** §5.4 (citation integrity), §2.6.4
 
-Covered gap phrases include "while specific details are limited, it is likely that" and "although not widely documented."
+**Phrase list 2.6.9 — gap-speculation phrases (phrase):** "while specific details are limited"; "although not widely documented"; "not widely documented"; "while exact figures are unavailable"; "though details remain scarce".
 
 #### Rule 2.6.9 — No gap-speculation phrasing
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** speculation
+**Navigation:** target: sentence · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 7.3.2
 
 > A document **shall not** replace absent evidence with speculation. The document **shall** report the absence.
 
@@ -391,10 +495,16 @@ Covered gap phrases include "while specific details are limited, it is likely th
 
 **Cross-references:** §7.3, §5.6
 
-Covered formulaic connectives are "moreover," "furthermore," and "additionally" when chained across consecutive sentences or paragraph openings.
+**Phrase list 2.6.10 — formulaic connectives (opener):** "moreover"; "furthermore"; "additionally"; "in addition".
+
+The rule prohibits stacking. A linter reports a covered opener only when it appears in consecutive sentences or consecutive paragraph openings.
 
 #### Rule 2.6.10 — Connectives earn their place
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** connective
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: neighboring · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** requires 3.8.3
 
 > A document **shall not** stack covered connectives as padding. Each connective **shall** mark a §3.8 relation.
 
@@ -405,10 +515,18 @@ Covered formulaic connectives are "moreover," "furthermore," and "additionally" 
 
 **Cross-references:** §3.8
 
-Covered chat phrases include "I hope this helps," "certainly," "let's explore," and "would you like." Covered placeholders include "[Your Name]," "INSERT_URL," and "2025-XX-XX."
+**Phrase list 2.6.11 — conversational artifacts (phrase):** "I hope this helps"; "certainly!"; "let's explore"; "let's dive in"; "would you like"; "as an AI".
+
+**Phrase list 2.6.11 — unfilled placeholders (pattern):** "\[Your Name\]"; "\[Insert [^\]]*\]"; "INSERT_[A-Z_]+"; "\b\d{4}-XX-XX\b"; "\bTBD\b"; "<[A-Z_]{3,}>".
+
+**Phrase list 2.6.11 — tool-leakage patterns (pattern):** "oaicite"; "contentReference"; "turn\d+search\d*"; "\[cite: ?\d+\]"; "grok_card"; "grok_render_citation"; "\[span_\d+\]\(start_span\)"; "attached_file"; "【\d+†[^】]*】"; "utm_source=chatgpt\.com"; "utm_source=openai"; "utm_source=copilot\.com"; "referrer=grok\.com".
 
 #### Rule 2.6.11 — No conversational or template artifacts
 **Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing"
+**Constructs:** tool-artifact
+**Navigation:** target: sentence · chunks: any · slots: any · layers: plain · context: local · rewrite: mechanical
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** none
 
 > A governed document **shall not** contain a covered chat phrase or unfilled placeholder.
 
@@ -425,6 +543,10 @@ Rule 2.7.1 covers organization-coined names for artifacts, components, services,
 
 #### Rule 2.7.1 — Names are admitted like terms
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** original (extends §2.3)
+**Constructs:** name
+**Navigation:** target: term · chunks: any · slots: any · layers: plain · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text, term-ledger
+**Relations:** requires 2.3.1
 
 > Before bare use, a covered name **shall** receive the plain-language introduction required by §2.3.
 
@@ -439,6 +561,10 @@ Rule 2.7.2 covers new artifacts, components, services, experiments, datasets, an
 
 #### Rule 2.7.2 — Descriptive names over allusive names
 **Class:** recommended · **Machine-checkable:** no · **Source:** Google naming conventions
+**Constructs:** name
+**Navigation:** target: term · chunks: any · slots: any · layers: plain · context: document · rewrite: review
+**Resources:** reads: chunk-text · writes: chunk-text
+**Relations:** pairs-with 2.7.1
 
 > A covered item **should** receive a descriptive name.
 
@@ -453,6 +579,10 @@ Rule 2.7.3 covers named artifacts, components, services, experiments, datasets, 
 
 #### Rule 2.7.3 — One name per artifact
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Google naming conventions, ASD-STE100
+**Constructs:** name
+**Navigation:** target: term · chunks: any · slots: any · layers: both · context: document · rewrite: candidate
+**Resources:** reads: chunk-text, term-ledger · writes: chunk-text, term-ledger
+**Relations:** pairs-with 2.1.2; pairs-with 5.2.2
 
 > A covered item **shall** have exactly one name throughout a document. The document **shall not** add nicknames, shortened names, or renamings mid-document.
 
@@ -467,6 +597,10 @@ Covered external artifacts include libraries, tools, services, standards, models
 
 #### Rule 2.7.4 — References to external artifacts are version-pinned
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Google style guide, ML Reproducibility Checklist
+**Constructs:** citation, name
+**Navigation:** target: citation · chunks: any · slots: any · layers: exact · context: local · rewrite: review
+**Resources:** reads: chunk-text, citation-ledger · writes: chunk-text
+**Relations:** pairs-with 5.4.1
 
 > A reference to a covered external artifact **shall** include an accepted pin.
 
@@ -479,4 +613,4 @@ Covered external artifacts include libraries, tools, services, standards, models
 
 ---
 
-> **Drafting note (ITWS 0.2):** The prohibited-word seed list in Rule 2.6.4 is a versioned linter asset. The inline list above is the ITWS 0.2 snapshot. Organization-specific naming conventions belong in a separately versioned policy layered on this shared core.
+> **Drafting note (ITWS 0.6.0-draft):** The prohibited-word seed list in Rule 2.6.4 is a versioned linter asset. The inline list above is the ITWS 0.6.0-draft snapshot. Organization-specific naming conventions belong in a separately versioned policy layered on this shared core.
