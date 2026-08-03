@@ -30,6 +30,12 @@ The first stable release. ITWS becomes a markdown-only specification read direct
 
 - **Two `data-table` rules with no precedent elsewhere.** §4.14.5 requires each registry `Columns` entry to declare its column's §7.3 role — observation, interpretation, or metadata — which makes the observation/interpretation split checkable from the Glossary sheet instead of by reading every row. §4.14.14 treats a row ID, a column header, and a value from a declared closed value set as metadata rather than governed prose, following the precedent core §0.5 sets for declaration fields.
 
+- **The `itws-rewrite` skill, rewritten.** `skills/itws-rewrite/SKILL.md` returns as the Claude skill that runs a consumer session: load the seven-file rule set, pick exactly one profile, respect the voice fence, classify each passage before editing, apply the rules by ID, and discharge the core §8 self-check obligations before returning.
+
+  The skill is **non-normative**. It restates the consumer session `AGENTS.md` already describes, in a form a skill runtime can load, and it adds no rule, no slot, and no reader assumption. A document is checked against `spec/`, never against the skill.
+
+  The 0.10.0-draft skill drove `itws_compile.py`, `itws_comment.py`, and the generated catalog through a fixed command sequence, so none of it survives the removals below and the file is replaced rather than edited. The replacement names the two profiles that substitute their own scan path for §4.12.1 — `maintenance-comment` (§4.13.9) and `data-table` (§4.14.18) — and drops every reference to a machine `pass` result.
+
 ### Removed — breaking
 
 - **The `itws` Python package.** Parser, model, compiler, catalog builder, linter, validator, and scaffolds.
@@ -38,7 +44,7 @@ The first stable release. ITWS becomes a markdown-only specification read direct
 - **The test suite** (`tests/`) and the copyable agent scripts (`examples/agent-scripts/`).
 - **The machine result.** There is no `pass` / `fail`. Rules 8.2.1, 8.2.2, 8.2.3, 8.2.5, 8.6.1, 8.6.2, and 8.6.6 are withdrawn; their IDs stay reserved and are never reassigned. Part 8 is now a self-check procedure.
 - **Per-rule tool metadata.** `Machine-checkable`, `Constructs`, `Navigation`, `Resources`, and `Relations` lines are gone from every rule, along with the §1.6 closed value sets and the generated precedence table. §1.4's precedence order remains and is authoritative.
-- **The non-normative `assurance/` companion** and the `skills/` directory.
+- **The non-normative `assurance/` companion.** The `skills/` directory was removed with it, then restored in this same release as a rewritten, tool-free skill; see Added above.
 
 Any conformance claim recorded against 0.10.0-draft or earlier does not carry over. Re-check the document against 1.0.0, or keep citing the version it was checked against.
 
@@ -71,7 +77,7 @@ Any conformance claim recorded against 0.10.0-draft or earlier does not carry ov
 - **The assumed-reader baseline**, complete. No item was added or removed, so no document's admission obligations change.
 - **Every phrase list**, string for string.
 - **All 24 glossary entries**, with their ladder prerequisites.
-- **The ITWS-original doctrines**: two-layer model, term ladder, open-but-gated vocabulary, scan path and shallow-model outcomes, evidence record, calibrated strength, caveat placement, path-agnostic prose, work-item hierarchy, definition-of-done composition, and the maintenance-comment surface.
+- **The ITWS-original doctrines**: two-layer model, term ladder, open-but-gated vocabulary, scan path and shallow-model outcomes, evidence record, calibrated strength, caveat placement, path-agnostic prose, work-item hierarchy, definition-of-done composition, and the maintenance-comment surface. The tabular-document surface joins them in this release.
 
 ### Why
 
