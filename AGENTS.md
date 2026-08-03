@@ -50,7 +50,7 @@ spec/glossary.md        canonical admitted terms
 spec/reader.md          what the assumed reader knows
 spec/profiles/<id>.md   one of: design-rfc decision-record procedure explanation
                         incident technical-report research-paper investigation-log
-                        epic task subtask maintenance-comment
+                        epic task subtask maintenance-comment data-table
 ```
 
 That set is the complete applicable rule set. There is nothing else to retrieve.
@@ -112,7 +112,7 @@ Never outsource to recall, regardless of how well-known it seems:
 - Numbers, caps, thresholds, slot names, and rule IDs.
 - Anything a model would recall *differently* depending on which edition it learned. If the answer turns on a source's own wording, the wording belongs in ITWS.
 
-**Budget arithmetic.** A line added to `spec/core.md`, `spec/phrases.md`, `spec/glossary.md`, or `spec/reader.md` costs every one of the twelve profiles. A line added to one profile file costs only that profile. Push profile-specific content down. This is why work-item vocabulary lives in `epic`/`task`/`subtask` and hosted-comment vocabulary lives in `maintenance-comment` rather than in core.
+**Budget arithmetic.** A line added to `spec/core.md`, `spec/phrases.md`, `spec/glossary.md`, or `spec/reader.md` costs every one of the thirteen profiles. A line added to one profile file costs only that profile. Push profile-specific content down. This is why work-item vocabulary lives in `epic`/`task`/`subtask` and hosted-comment vocabulary lives in `maintenance-comment` rather than in core.
 
 Measure after any substantive edit — there is no tool, so run this:
 
@@ -148,7 +148,7 @@ New rule → append within its section, next free number.
 
 | Content | File |
 |---|---|
-| applies to all twelve profiles | `spec/core.md` |
+| applies to all thirteen profiles | `spec/core.md` |
 | applies to some profiles | each of those `spec/profiles/<id>.md` |
 | literal prohibited or replacement strings | `spec/phrases.md` |
 | canonical term meanings | `spec/glossary.md` |
@@ -183,4 +183,5 @@ Semantic Versioning, per core §9. Major: adds or tightens a mandatory rule, wid
 | `spec/glossary.md` | canonical admitted terms |
 | `spec/reader.md` | the assumed-reader baseline |
 | `spec/profiles/` | one file per profile |
+| `skills/itws-rewrite/` | Claude skill that runs the consumer session above |
 | `CHANGELOG.md` | version history |

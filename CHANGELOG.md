@@ -18,6 +18,18 @@ The first stable release. ITWS becomes a markdown-only specification read direct
 
 - **`AGENTS.md` self-check step 5.** A rewriting agent must set the disclosure to at least `assisted`, must not leave a stale `none` or downgrade an existing value, and must not name a reviewer it cannot verify.
 
+- **The `tabular-document` surface and the `data-table` profile.** ITWS gains a third governed surface and a thirteenth profile, so that register-style workbooks are governed rather than excluded. The governed artifact is the table itself, not a documentation layer over a grid, so nothing anchors into an ungoverned substrate.
+
+  A `tabular-document` is a workbook of named sheets: one Title sheet, one Glossary sheet, and one or more data grids of homogeneous rows. Cells hold governed prose. Rendering is outside conformance, as Markdown rendering is, and the file format — `.xlsx`, a CSV set, or a hosted sheet — is a carrier rather than a conformance surface.
+
+  Affects: core §0.1 (registry row), §0.2 (surface), §0.3 (computational workbooks excluded), §0.5 (applicability count, declaration surface), §0.6 (vocabulary pointer), §4.2.4 (profile exclusion list), §4.12.1 (scan-path replacement note), and the new §4.14 pointer. New file `spec/profiles/data-table.md` carries rules §4.14.1 through §4.14.21. No reader-baseline item is added or removed, so no existing document's admission obligations change.
+
+- **Four named exceptions, scoped to `data-table` alone.** §4.14.6 displaces §2.3.1 and §2.3.3 — a table has no linear reading order, so define-before-first-use is unsatisfiable, and a Glossary registry entry replaces it. §4.14.9 displaces §4.8.1, because a per-page admission budget has no page to count; §4.14.10 substitutes a per-cell reader-effort bound. §4.14.18 displaces §4.12.1 with a scan surface — Title sheet, sheet names, header rows, and the registry `Columns` section — while §4.12.2 through §4.12.4 continue to govern it unchanged.
+
+  Each exception is mandatory and names the rule it displaces, per core §1.3 item 2. No other profile is affected.
+
+- **Two `data-table` rules with no precedent elsewhere.** §4.14.5 requires each registry `Columns` entry to declare its column's §7.3 role — observation, interpretation, or metadata — which makes the observation/interpretation split checkable from the Glossary sheet instead of by reading every row. §4.14.14 treats a row ID, a column header, and a value from a declared closed value set as metadata rather than governed prose, following the precedent core §0.5 sets for declaration fields.
+
 ### Removed — breaking
 
 - **The `itws` Python package.** Parser, model, compiler, catalog builder, linter, validator, and scaffolds.
@@ -55,7 +67,7 @@ Any conformance claim recorded against 0.10.0-draft or earlier does not carry ov
 
 - **Every permanent rule ID**, unchanged. §2.1.1 in 1.0.0 is the rule §2.1.1 was in 0.10.0-draft. Existing citations remain valid.
 - **Every rule class.** No rule was reclassified in either direction.
-- **All twelve profile IDs** and their jobs, shallow-model outcomes, skeleton slots, permitted renames, and permitted merges.
+- **All twelve profile IDs carried over from 0.10.0-draft**, with their jobs, shallow-model outcomes, skeleton slots, permitted renames, and permitted merges. `data-table` is new in this release, bringing the registry to thirteen.
 - **The assumed-reader baseline**, complete. No item was added or removed, so no document's admission obligations change.
 - **Every phrase list**, string for string.
 - **All 24 glossary entries**, with their ladder prerequisites.

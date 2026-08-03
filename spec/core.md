@@ -30,6 +30,7 @@ Governed unit = shared core + **exactly one** profile ID. ID is canonical; label
 | `task` | specify one independently acceptable tactical outcome |
 | `subtask` | verify one named completion condition under exactly one parent `task` |
 | `maintenance-comment` | govern comments one maintenance change adds, modifies, removes |
+| `data-table` | inventory homogeneous items as rows against a fixed column schema, for lookup, comparison, delivery tracking |
 
 One ID per unit. Never combine. Companion documents > hybrid. A collection may hold many units, each declaring its own profile.
 
@@ -37,12 +38,15 @@ One ID per unit. Never combine. Companion documents > hybrid. A collection may h
 
 - `markdown-document` — prose Markdown. First 11 profiles. "governed document" = this alone.
 - `hosted-comment-set` — comment change set inside a host source file, declared by a JSON carrier. Only `maintenance-comment`. Host file itself = outside conformance; governed comments carry no ITWS boilerplate.
+- `tabular-document` — workbook of named sheets: one Title sheet, one Glossary sheet, 1+ data grids of homogeneous rows. Only `data-table`. Cells hold governed prose. Rendering (fill, font, frozen panes, merged cells, column width) = outside conformance, as Markdown rendering is. File format (`.xlsx`, CSV set, hosted sheet) = carrier, ! conformance surface.
 
-**governed unit** = either surface. A rule naming the *governed unit* reaches both. A rule naming the *governed document* is bounded to Markdown. A rule naming a document element (heading, section, figure, equation) is inapplicable where that construct is absent.
+**governed unit** = any surface. A rule naming the *governed unit* reaches all three. A rule naming the *governed document* is bounded to Markdown. A rule naming a document element (heading, section, figure, equation) is inapplicable where that construct is absent.
 
 ### 0.3 Outside scope
 
 Source code (except a declared `maintenance-comment` set) · standalone API/command reference · slide decks, posters, talk scripts · marketing and general-audience writing · chat, issue-tracker comments, status events, unstructured tickets, review comments.
+
+**Computational workbook** — assumptions, formula graph, derived outputs — is outside scope. A `data-table` inventories rows; it does not govern a workbook that computes. A workbook mixing both is governed only over its `data-table` sheets, and the computational sheets carry no conformance claim.
 
 Issue-tracker item is governed only when it declares `epic` | `task` | `subtask` **and** carries every required slot.
 
@@ -62,7 +66,7 @@ Profile overlays grant **genre knowledge only** — how to read the document typ
 
 **Binary.** A governed unit conforms, or does not, for **one declared version + one declared profile**. It conforms when it satisfies every applicable mandatory (`M`) rule and every required profile slot. Reviews, approvals, reader tests, and accepted deviations do not change this result.
 
-**Applicability.** A core rule applies to all twelve profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
+**Applicability.** A core rule applies to all thirteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
 
 **Required declaration.** Every conforming unit declares three fields:
 
@@ -72,7 +76,7 @@ Profile: design-rfc
 AI disclosure: assisted — drafted the rollout section and rewrote the summary; reviewed by the platform pod
 ```
 
-Markdown document → front matter. Hosted comment set → declaration carrier.
+Markdown document → front matter. Hosted comment set → declaration carrier. Tabular document → Title sheet.
 
 A unit is checked against **its declared version**, not the newest one.
 
@@ -100,7 +104,7 @@ Available throughout ITWS without definition.
 
 **chunk** — paragraph-level unit with exactly one §4.1 purpose. **bounded block** — visually delimited labeled span whose detail main text does not depend on. **prior** — context deliberately introduced so later text may build on it. **claim** — proposition presented as true at a strength governed by §5.6. **caveat** — statement limiting scope, conditions, or strength. **admitted term** — term defined in the current document under §2.3. **term ladder** — §2.3 discipline: define before first use, using only assumed or already-admitted terms. **load set** — legend + ontology + core + phrases + glossary + reader + one profile.
 
-Work-item vocabulary (`epic`, `task`, `subtask`) and hosted-comment vocabulary (`maintenance-comment`) live in those profile files.
+Work-item vocabulary (`epic`, `task`, `subtask`), hosted-comment vocabulary (`maintenance-comment`), and tabular vocabulary (`data-table`) live in those profile files.
 
 ---
 
@@ -402,7 +406,7 @@ Deciding which type a passage carries is a **reader's judgment**. It is never de
 | 4.2.1 | R | sentence states its main point in the main clause, before subordinate qualification |
 | 4.2.2 | M | chunk states its point in its first sentence; remaining sentences support, elaborate, or bound it |
 | 4.2.3 | M | section states its takeaway or operational purpose in its opening chunk, before supporting material |
-| 4.2.4 | M | *(all profiles except `investigation-log`, `subtask`, `maintenance-comment`)* document states its profile-specific main point in the earliest applicable slot, before supporting detail |
+| 4.2.4 | M | *(all profiles except `investigation-log`, `subtask`, `maintenance-comment`, `data-table`)* document states its profile-specific main point in the earliest applicable slot, before supporting detail |
 
 Main point may be a requirement, proposal, decision, instruction goal, explanatory takeaway, incident outcome, or evidential claim. The reader should never hold unexplained machinery while waiting to learn why it matters.
 
@@ -505,7 +509,7 @@ Scan path = the governed unit's cheapest correct reading. Access and orientation
 
 | ID | C | Rule |
 |---|---|---|
-| 4.12.1 | M | Markdown scan path = document title, then in document order each main-text heading + the first sentence of that section's opening chunk; excludes bounded blocks and appendix content. *(`maintenance-comment` replaces this path — see its profile file.)* |
+| 4.12.1 | M | Markdown scan path = document title, then in document order each main-text heading + the first sentence of that section's opening chunk; excludes bounded blocks and appendix content. *(`maintenance-comment` and `data-table` each replace this path — see their profile files.)* |
 | 4.12.2 | M | scan path lets the assumed reader produce the declared profile's shallow-model outcome, preserving each applicable status, strength, and material boundary; the title ! frame a wider or stronger outcome |
 | 4.12.3 | M | a material assertion on the scan path carries every truth-preserving qualification **in its own sentence**, using affirmative content words wherever a bare negation or trailing hedge could leave a stronger reading |
 | 4.12.4 | M | each scan-path element states its subject without depending on adjacent prose or reading order; a dependency uses a local noun or an explicit numbered reference |
@@ -517,6 +521,10 @@ Heading identifies the topic. Opening sentence states the point about it.
 ### 4.13 Maintenance comments
 
 §4.13 rules apply to `maintenance-comment` only. They live in that profile file.
+
+### 4.14 Tabular documents
+
+§4.14 rules apply to `data-table` only. They live in that profile file.
 
 ---
 

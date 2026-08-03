@@ -4,7 +4,7 @@
 
 ITWS gives a working technical reader a **correct shallow model at low reading cost**, while the main text stays complete for the document's declared job and exact detail stays reachable. Conformance does not depend on who or what wrote the text.
 
-One shared core plus twelve document profiles. A governed document declares one profile and satisfies the core plus that profile.
+One shared core plus thirteen document profiles. A governed unit declares one profile and satisfies the core plus that profile.
 
 ## Breaking change in 1.0.0
 
@@ -26,13 +26,14 @@ spec/phrases.md         literal prohibited and replacement strings
 spec/glossary.md        canonical admitted terms
 spec/reader.md          what the assumed reader knows
 spec/profiles/*.md      one file per profile
+skills/itws-rewrite/    Claude skill for a consumer session
 AGENTS.md               working instructions for agent sessions
 CHANGELOG.md            version history
 ```
 
 ## Profiles
 
-`design-rfc` · `decision-record` · `procedure` · `explanation` · `incident` · `technical-report` · `research-paper` · `investigation-log` · `epic` · `task` · `subtask` · `maintenance-comment`
+`design-rfc` · `decision-record` · `procedure` · `explanation` · `incident` · `technical-report` · `research-paper` · `investigation-log` · `epic` · `task` · `subtask` · `maintenance-comment` · `data-table`
 
 ## Using it
 
@@ -60,4 +61,4 @@ The specification is written in compressed notation for agent reading. **Governe
 
 ITWS assembles existing standards — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, RFC 2119, IPCC calibrated uncertainty language, and others. [spec/ontology.md](spec/ontology.md) names each source, says whether you need to recall it, and states exactly where ITWS forks it.
 
-ITWS-original: the two-layer exact/plain model, the term ladder, the scan path, path-agnostic prose, the work-item hierarchy, and the maintenance-comment surface.
+ITWS-original: the two-layer exact/plain model, the term ladder, the scan path, path-agnostic prose, the work-item hierarchy, the maintenance-comment surface, and the tabular-document surface.

@@ -60,7 +60,7 @@ Do not resolve these from the source. Core is authoritative.
 | Area | Source | ITWS delta |
 |---|---|---|
 | Vocabulary | ASD-STE100 closed dictionary | **open but gated**: any term is usable once admitted through the term ladder (§2.3) |
-| Document types | Diátaxis four types | **twelve profiles** (§0.1); one-job discipline kept, registry replaced |
+| Document types | Diátaxis four types | **thirteen profiles** (§0.1); one-job discipline kept, registry replaced |
 | Prose layers | — | **two-layer model** (§1.2): plain wraps exact, never replaces it — ITWS-original |
 | Notation | — | term ladder extended to **symbols** (§5.2) — ITWS-original |
 | Context | Google timeless documentation | extended from time-relative to **decision-path-relative** prose (§4.9) — ITWS-original |
