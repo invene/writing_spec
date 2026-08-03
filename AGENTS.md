@@ -1,99 +1,186 @@
 # Agent instructions
 
-This repository serves two kinds of session. Decide which one you are in before you change anything. Getting this wrong is the most expensive mistake available here.
+**ITWS 1.0.0.** This repository is markdown only. There is no Python package, no linter, no validator, and no generated catalog. Everything is read, applied, and checked by you.
+
+Decide which session you are in before changing anything. Getting this wrong is the most expensive mistake available here.
 
 ## Which session am I in?
 
-**You are a consumer session** if you were asked to write, review, or rewrite a document *against* ITWS. This is the common case.
+**Consumer session** — you were asked to write, review, or rewrite a document *against* ITWS. This is the common case.
 
-- Do not modify anything under `spec/`, `itws/`, or `tools/`.
-- Do not add a changelog entry, and do not increment the version.
-- Read [spec/agent/README.md](spec/agent/README.md) and follow the sequence there.
+- Do not modify anything under `spec/`.
+- Do not touch `CHANGELOG.md` and do not change the version.
 
-**You are a maintainer session** if you were asked to change ITWS itself: a rule, an annex, a profile overlay, the tooling, or the tests.
+**Maintainer session** — you were asked to change ITWS itself: a rule, the reader baseline, the glossary, a phrase list, a profile.
 
 - Every edit to this specification follows the rules in the specification.
-- Every edit includes a changelog entry in [spec/annexes/annex-g-changelog.md](spec/annexes/annex-g-changelog.md).
-- Every edit includes a version increment under §0.8.
-- You may create tools to help modify the specification.
+- Every edit adds a `CHANGELOG.md` entry naming every affected rule ID, profile, and reader assumption.
+- Every edit bumps the version in `spec/*.md`, `spec/profiles/*.md`, `README.md`, and `CHANGELOG.md`.
 
 If the request is ambiguous, ask. A consumer session that edits `spec/` corrupts the specification for every other reader.
 
+---
+
+## The voice fence (both session types)
+
+The specification is written in compressed notation. **Nothing you produce is.**
+
+| Surface | Voice |
+|---|---|
+| `spec/` files | compressed: dropped articles, fragments, tables, symbols |
+| documents you write or rewrite | normal professional English, full sentences, ITWS rules applied |
+| findings, commit messages, replies to the user | normal professional English |
+
+Reading compressed input biases output. Check your draft against this before returning it. A rewritten document that reads like `spec/core.md` has failed §3 and §4.
+
+---
+
 ## Consumer session
 
-Everything you need is in [spec/agent/README.md](spec/agent/README.md). In short:
+### 1. Load
+
+In order. Load **exactly one** profile.
 
 ```text
-python3 tools/itws_compile.py --check
-python3 tools/itws_retrieve.py get-profile <profile>
-python3 tools/itws_document.py index --input <document>.md --out structure.json
-# read, classify, and navigate; write your own scripts as needed
-python3 tools/itws_patch.py check --base <document>.md --proposed <rewritten>.md
-python3 tools/itws_validate.py --input <rewritten>.md
+spec/legend.md          notation + voice fence
+spec/ontology.md        external standards; recall optional, never block on a fetch
+spec/core.md            the shared normative core
+spec/phrases.md         literal prohibited and replacement strings
+spec/glossary.md        canonical admitted terms
+spec/reader.md          what the assumed reader knows
+spec/profiles/<id>.md   one of: design-rfc decision-record procedure explanation
+                        incident technical-report research-paper investigation-log
+                        epic task subtask maintenance-comment
 ```
 
-Three obligations carry across every step. Cite a rule for every finding and material semantic judgment. Report a missing fact instead of generating one. Continue around unresolved spans and return the best safe draft plus a missing-fact list.
+That set is the complete applicable rule set. There is nothing else to retrieve.
+
+If the document declares a profile, load that one. If it does not, classify it from the core §0.1 job table and say which profile you chose and why.
+
+### 2. Read and classify
+
+Read the document. For each passage, identify its §4.1 chunk purpose and its layer (exact or plain). That judgment is yours — no tool makes it.
+
+Note the declared ITWS version. A document is checked against **its** declared version, not this one.
+
+### 3. Apply
+
+Work rule by rule, by ID. Where two applicable rules collide, use the core §1.3 precedence order — never resolve a collision ad hoc.
+
+Exact content (claims, requirements, interfaces, invariants, procedure steps, measurements) is never edited to satisfy a style rule. Repair the surrounding text and report the local limitation.
+
+### 4. Self-check
+
+There is no `pass` result to report. Before returning:
+
+1. **Cite the rule.** Every finding and material semantic judgment names an ID: "ITWS §4.12.3". A finding without an ID is not a finding.
+2. **Report, never invent.** A missing fact is reported as missing. Never generate a value, citation, timestamp, owner, or measurement to fill a slot. This outranks completing the draft.
+3. **Continue around blocks.** An unresolved span does not stop work on independent spans. Return the best safe draft plus an explicit missing-fact list.
+4. **Walk the scan path.** Read title + headings + opening sentences alone (core §4.12). Confirm the profile's shallow-model outcome survives with its status, strength, and material boundaries intact.
+5. **Set the AI disclosure.** You are generative AI tooling. If you contributed any content, the `AI disclosure` field is at least `assisted` (core §0.5, §4.3.4). Never leave a stale `none` on a document you edited, and never downgrade an existing value.
+
+   State what you did — which sections you drafted or rewrote. For review, write `not yet reviewed` unless the user has told you a review happened. Naming a reviewer you cannot verify violates obligation 2 above; if the document needs one, put it on the missing-fact list.
+
+6. **State coverage.** Say which rules you checked and which you did not.
+
+### 5. Return
+
+The rewritten document, the missing-fact list, and the findings with rule IDs. Say plainly what you could not resolve.
+
+---
 
 ## Maintainer session
 
-### Before you edit
+### The design constraint: recall over restatement
 
-Run the full check so you know the tree was clean when you started:
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs about 22,000 tokens, and the working band is **15,000–25,000**. This is a hard constraint on every edit, not a preference. A specification nobody can afford to load is not enforced.
 
-```text
-python3 tools/itws_check_all.py
+The constraint is met by **relying on model recall**, not by writing tersely. ITWS is assembled from standards a competent model already knows — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, IPCC calibrated uncertainty. `spec/ontology.md` names each one and marks it `required` or `optional`. Core does not re-teach any of them. **Core states only where ITWS differs.**
+
+Apply this test before adding anything:
+
+> Would a competent model already know this from a source named in `spec/ontology.md`?
+>
+> - **Yes, and ITWS follows the source** → do not write it. Add an ontology row if the source is not already listed.
+> - **Yes, but ITWS forks it** → write the delta only, and add a row to the ontology delta table.
+> - **No** → write it in full. It is ITWS-original and nothing else carries it.
+
+Never outsource to recall, regardless of how well-known it seems:
+
+- ITWS-original doctrines — the two-layer model, the term ladder, the scan path, path-agnostic prose, the evidence record, calibrated strength, caveat placement, the work-item hierarchy, the maintenance-comment surface.
+- The exact strings in `spec/phrases.md` and the strength phrases in core §5.6. A recalled approximation of a closed list is a wrong list.
+- Numbers, caps, thresholds, slot names, and rule IDs.
+- Anything a model would recall *differently* depending on which edition it learned. If the answer turns on a source's own wording, the wording belongs in ITWS.
+
+**Budget arithmetic.** A line added to `spec/core.md`, `spec/phrases.md`, `spec/glossary.md`, or `spec/reader.md` costs every one of the twelve profiles. A line added to one profile file costs only that profile. Push profile-specific content down. This is why work-item vocabulary lives in `epic`/`task`/`subtask` and hosted-comment vocabulary lives in `maintenance-comment` rather than in core.
+
+Measure after any substantive edit — there is no tool, so run this:
+
+```bash
+python3 -c "
+import pathlib, glob
+base = ['spec/legend.md','spec/ontology.md','spec/core.md',
+        'spec/phrases.md','spec/glossary.md','spec/reader.md']
+t = lambda p: len(pathlib.Path(p).read_text())/4
+sub = sum(t(f) for f in base)
+for f in sorted(glob.glob('spec/profiles/*.md')):
+    print(f'{sub+t(f):8.0f}  {f}')
+"
 ```
 
-### While you edit
+Rough proxy: characters ÷ 4. Treat anything over 25,000 as a defect to fix in the same change, not a follow-up. The first places to cut are restated source material and micro-examples — never a normative statement, a closed list, or an ITWS-original mechanism.
 
-A new or changed rule needs the complete §1.3 template, including the four §1.6 navigation lines. `itws/annotations.py` holds the curated metadata, and `tools/itws_annotate.py` writes it into the Markdown:
+### Rule format
 
-```text
-python3 tools/itws_annotate.py --spec-dir spec
-```
-
-A new permanent rule ID enters the registry once it is assigned:
+A rule is one row in a core or profile table:
 
 ```text
-python3 tools/itws_index.py --spec-dir spec --update-registry
+| 2.1.1 | M | word/term carries exactly one meaning throughout a document |
 ```
 
-A rule marked `Machine-checkable: yes` needs a registered checker in `itws/lint/`. The compiler fails without one. If no standard-library checker can decide the rule, change the metadata to `partial` and record the reason in the rule's rationale and in the changelog.
+- **ID** — permanent. Assigned once, never reused, never renumbered, including across profiles. Changed wording does not earn a new ID. A withdrawn ID stays reserved.
+- **C** — `M` mandatory (*shall*), `R` recommended (*should*), `P` permitted (*may*).
+- **Rule** — one independently testable outcome. Clauses that can pass or fail independently are separate rules with separate IDs.
 
-A phrase list lives in exactly one place: the phrase-list paragraph beside its rule (§8.2.1). Never copy a list into the linter.
+New rule → append within its section, next free number.
 
-### After you edit
+### Placement
 
-Regenerate every artifact and rerun everything:
+| Content | File |
+|---|---|
+| applies to all twelve profiles | `spec/core.md` |
+| applies to some profiles | each of those `spec/profiles/<id>.md` |
+| literal prohibited or replacement strings | `spec/phrases.md` |
+| canonical term meanings | `spec/glossary.md` |
+| what the reader knows | `spec/reader.md` |
+| external source and ITWS delta | `spec/ontology.md` |
 
-```text
-python3 tools/itws_index.py --spec-dir spec
-python3 tools/itws_compile.py --spec-dir spec
-python3 tools/itws_check_all.py
-```
+A profile file holds genuine genre differences only. It never duplicates core, and it never smuggles in domain knowledge (P8).
 
-### What a complete change contains
+A rule scoped to several profiles is repeated verbatim in each of their files, under a "shared with" heading. Repetition is the cost of dropping the overlay directory; keep the wording identical.
 
-- The Markdown edit.
-- Navigation metadata for any new or changed rule.
-- A regenerated Annex C and a regenerated catalog under `spec/generated/agent/`.
-- An Annex F row when the source framework or applicability changed.
-- An Annex G entry naming every affected rule ID, profile, and reader assumption.
-- A version increment in `spec/00-front-matter.md` and in every current-version declaration.
-- A passing `python3 tools/itws_check_all.py`.
+### A complete change contains
+
+- the markdown edit;
+- a `CHANGELOG.md` entry naming every affected rule ID, profile, and reader assumption;
+- a version bump in every file declaring one (`spec/*.md`, `spec/profiles/*.md`, `README.md`);
+- a check that no rule ID was reused or silently renumbered.
+
+### Version rules
+
+Semantic Versioning, per core §9. Major: adds or tightens a mandatory rule, widens applicability, removes a reader-baseline item, or changes a profile ID. Minor: adds a recommended or permitted rule, relaxes, narrows applicability, adds a baseline or glossary entry. Patch: wording and typography only.
+
+---
 
 ## Repository map
 
 | Path | Contents |
 |---|---|
-| `spec/` | the authoritative specification |
-| `spec/overlays/` | one directory per profile, plus shared family modules |
-| `spec/annexes/` | Annexes A–G |
-| `spec/agent/README.md` | the consumer-session entry point |
-| `spec/generated/agent/` | the committed navigation catalog (generated) |
-| `assurance/` | optional, non-normative review and release guidance |
-| `itws/` | the parser, model, compiler, catalog, linter, and scaffolds |
-| `itws/assurance/` | optional assurance helpers; default lint and validation do not import them |
-| `tools/` | command-line entry points |
-| `examples/agent-scripts/` | copyable scripts for a consumer session |
-| `tests/` | the unit tests and the document fixtures |
+| `spec/legend.md` | notation and the voice fence — load first |
+| `spec/ontology.md` | external standards, recall policy, ITWS deltas |
+| `spec/core.md` | the shared normative core |
+| `spec/phrases.md` | literal phrase lists |
+| `spec/glossary.md` | canonical admitted terms |
+| `spec/reader.md` | the assumed-reader baseline |
+| `spec/profiles/` | one file per profile |
+| `CHANGELOG.md` | version history |

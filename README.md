@@ -1,96 +1,63 @@
-# writing_spec
+# Invene Technical Writing Specification (ITWS)
 
-## For an AI agent
+**Version 1.0.0** · controlled English for technical documents
 
-If you were given this repository and a governed unit to rewrite, start at
-[spec/agent/README.md](spec/agent/README.md). It tells you how to produce the
-best safe draft, continue around missing facts, and report machine coverage.
+ITWS gives a working technical reader a **correct shallow model at low reading cost**, while the main text stays complete for the document's declared job and exact detail stays reachable. Conformance does not depend on who or what wrote the text.
 
-Everything runs from a clone with the Python standard library. No installation
-or network call is required.
+One shared core plus twelve document profiles. A governed document declares one profile and satisfies the core plus that profile.
 
-## Invene Technical Writing Specification
+## Breaking change in 1.0.0
 
-`spec/` contains ITWS 0.10.0-draft, a controlled-language specification for
-technical writing. It combines one shared core with twelve profiles. Eleven
-profiles govern Markdown documents; `maintenance-comment` governs selected
-comment changes through a JSON declaration carrier.
+1.0.0 replaces the tool-backed 0.10.0-draft tree with a markdown-only specification.
 
-A governed unit declares only:
+**Removed:** the `itws` Python package, every `tools/` command, the test suite, the generated navigation catalog under `spec/generated/`, the numbered chapter files, Annexes A–G as separate documents, and the `spec/overlays/` directory.
 
-```text
-ITWS version: 0.10.0-draft
-Profile: <canonical profile ID>
-```
+**Consequence:** there is no machine `pass` / `fail` result. A document is checked by a reader or an agent citing rule IDs. Conformance claims made against 0.10.0-draft do not carry over — re-check against 1.0.0, or keep citing the older version.
 
-Textual conformance is binary for that version and profile. There is no
-conformance tier, reviewer, waiver, reader-test, release, evidence, or
-machine-proposal-disposition requirement in the language specification.
+**Kept:** every permanent rule ID. §2.1.1 in 1.0.0 is the rule §2.1.1 was in 0.10.0-draft. Existing citations remain valid.
 
-Optional organizational review and release practices live in
-[assurance/](assurance/README.md). Rewrite agents do not load that directory
-unless a request explicitly asks for assurance work.
-
-## Rewrite path
+## Layout
 
 ```text
-python3 tools/itws_compile.py --check
-python3 tools/itws_retrieve.py get-profile <profile>
-python3 tools/itws_document.py index --input <document>.md --out structure.json
-# read and classify; preserve exact facts; rewrite every safe span
-python3 tools/itws_patch.py check --base <document>.md --proposed <rewrite>.md
-python3 tools/itws_lint.py --input <rewrite>.md
-python3 tools/itws_validate.py --input <rewrite>.md
+spec/legend.md          notation and the voice fence — read first
+spec/ontology.md        external standards ITWS borrows from, and where it forks them
+spec/core.md            the shared normative core
+spec/phrases.md         literal prohibited and replacement strings
+spec/glossary.md        canonical admitted terms
+spec/reader.md          what the assumed reader knows
+spec/profiles/*.md      one file per profile
+AGENTS.md               working instructions for agent sessions
+CHANGELOG.md            version history
 ```
 
-Validation reports machine `pass` or `fail` plus fully checked, partially
-checked, and untested rule IDs. Candidates and missing source facts remain
-separate. A machine pass is not full semantic certification.
+## Profiles
 
-For hosted comment sets:
+`design-rfc` · `decision-record` · `procedure` · `explanation` · `incident` · `technical-report` · `research-paper` · `investigation-log` · `epic` · `task` · `subtask` · `maintenance-comment`
+
+## Using it
+
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs about 22,000 tokens.
+
+A conforming document declares:
 
 ```text
-python3 tools/itws_comment.py index     --carrier <set>.json
-python3 tools/itws_comment.py scan-path --carrier <set>.json
-python3 tools/itws_comment.py lint      --carrier <set>.json
-python3 tools/itws_comment.py stale     --carrier <set>.json
-python3 tools/itws_comment.py validate  --carrier <set>.json
+ITWS version: 1.0.0
+Profile: design-rfc
+AI disclosure: assisted — drafted the rollout section; reviewed by the platform pod
 ```
 
-Comment rules apply regardless of authorship. The carrier needs no provenance,
-proposal, disposition, tier, or conformance-evidence field.
+The `AI disclosure` field is `none`, `assisted`, or `generated`. It records provenance for transparency; it never affects whether the document conforms.
 
-## Repository map
+Three obligations carry across every review: cite a rule ID for every finding, report a missing fact instead of generating one, and continue around unresolved spans — returning the best safe draft plus a missing-fact list.
 
-| Path | Contents |
-|---|---|
-| `spec/` | authoritative language specification |
-| `spec/overlays/` | one directory per profile plus shared family modules |
-| `spec/generated/agent/` | deterministic language-navigation catalog |
-| `spec/agent/README.md` | rewrite-agent entry point |
-| `itws/` | parser, model, catalog, linter, validator, and rewrite scaffolds |
-| `itws/assurance/` | optional assurance helpers, isolated from default validation |
-| `assurance/` | non-normative assurance companion |
-| `tools/` | command-line entry points |
-| `tests/` | unit tests and governed-unit fixtures |
+[AGENTS.md](AGENTS.md) has the full sequence.
 
-Verify the repository:
+## A note on voice
 
-```text
-python3 tools/itws_check_all.py
-```
+The specification is written in compressed notation for agent reading. **Governed documents are not.** Documents written against ITWS use normal professional English. [spec/legend.md](spec/legend.md) states the fence.
 
-This default check creates no `.itws-check` bundle and loads no assurance
-record.
+## Where it comes from
 
-## Copyable kickoff prompt
+ITWS assembles existing standards — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, RFC 2119, IPCC calibrated uncertainty language, and others. [spec/ontology.md](spec/ontology.md) names each source, says whether you need to recall it, and states exactly where ITWS forks it.
 
-```text
-Open <repository>. Read spec/agent/README.md. Rewrite <document> against ITWS
-using profile <profile>. Preserve exact facts and do not invent missing ones.
-Continue around any unresolved span, return the best safe draft plus a concise
-missing-fact list, and report machine pass/fail with its coverage summary.
-```
-
-The same flow is available as
-[skills/itws-rewrite/SKILL.md](skills/itws-rewrite/SKILL.md).
+ITWS-original: the two-layer exact/plain model, the term ladder, the scan path, path-agnostic prose, the work-item hierarchy, and the maintenance-comment surface.
