@@ -64,6 +64,12 @@ def parse_args() -> argparse.Namespace:
         help="append newly assigned IDs to the permanent registry",
     )
     parser.add_argument(
+        "--retired-registry",
+        type=Path,
+        default=Path("spec/retired-rule-ids.txt"),
+        help="reserved IDs whose current normative text was retired",
+    )
+    parser.add_argument(
         "--check",
         action="store_true",
         help="compare the committed annex with a fresh build; write nothing",
@@ -105,6 +111,26 @@ def write_registry(path: Path, ids: set[str]) -> None:
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
+
+
+def read_retired_registry(path: Path) -> set[str]:
+    """Read the first rule-ID field from the retired-ID ledger."""
+    if not path.exists():
+        return set()
+    ids: set[str] = set()
+    for line_number, raw_line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        rule_id = line.split()[0]
+        if not re.fullmatch(r"\d+\.\d+\.\d+", rule_id):
+            raise ValueError(f"{path}:{line_number}: malformed retired rule ID")
+        if rule_id in ids:
+            raise ValueError(f"{path}:{line_number}: duplicate retired rule ID")
+        ids.add(rule_id)
+    return ids
 
 
 def render(version: str, generated_date: str, rules: list[Rule]) -> str:
@@ -168,7 +194,9 @@ A scoped rule keeps its section number and sits in an overlay file. The `File` c
 
 The full rule record, including chunk types, skeleton slots, resources, typed relations, examples, and source line ranges, is in `spec/generated/agent/rules.jsonl`. This annex is the human-readable view of the same model.
 
-The index is sorted numerically by rule number. It is the input to the §8.1 checklist generator, which filters rules by declared ITWS version and profile before grouping them into the four self-check passes. Tier obligations come from §0.4.3 and Part 8; they are not rule-profile metadata.
+The index is sorted numerically by rule number. It contains current normative
+rules only. `spec/retired-rule-ids.txt` reserves IDs whose historical rule text
+is outside the current language specification.
 
 ## C.2 Generation command
 
@@ -180,24 +208,14 @@ python3 tools/itws_index.py \\
   --out spec/annexes/annex-c-rule-index.md
 ```
 
-After approving a new permanent rule ID, add `--update-registry` once to append it to `spec/rule-ids.txt`.
+After assigning a new permanent rule ID, add `--update-registry` once to append it to `spec/rule-ids.txt`.
 
-The generator reads the core parts and the overlay files in `spec/overlays/`. It validates rule IDs against `spec/rule-ids.txt` independently of the output path. It fails on a duplicate or removed rule number, an unregistered new ID without `--update-registry`, malformed metadata, an unknown profile ID, a profile list outside canonical registry order, an unknown §1.6 navigation value, an unresolved rule relation, or a rule outside the file that §1.5.2 requires. A deprecated rule remains in its source file with `**Status:** deprecated since <version>; replacement <rule ID | none>`; generation never drops its permanent ID.
+The generator reads the core parts and the overlay files in `spec/overlays/`. It validates rule IDs against `spec/rule-ids.txt` and the retired-ID ledger independently of the output path. It fails on a duplicate, an unregistered removal, an unregistered new ID without `--update-registry`, malformed metadata, an unknown profile ID, a profile list outside canonical registry order, an unknown §1.6 navigation value, an unresolved rule relation, or a rule outside the file that §1.5.2 requires.
 
 Regenerate the machine catalog in the same change:
 
 ```text
 python3 tools/itws_compile.py --spec-dir spec
-```
-
-Generate a document's §8.1 checklist from this annex:
-
-```text
-python3 tools/itws_checklist.py \\
-  --spec-version {version} \\
-  --profile <canonical profile ID> \\
-  --tier <core | reviewed | publication> \\
-  --out <document-checklist.md>
 ```
 
 ## C.3 Index
@@ -222,11 +240,24 @@ def main() -> int:
 
     current_ids = {rule.number for rule in rules}
     registry_ids = read_registry(args.registry)
+    retired_ids = read_retired_registry(args.retired_registry)
     if not registry_ids and not args.update_registry:
         raise ValueError(
             f"permanent rule-ID registry missing or empty: {args.registry}"
         )
-    removed_ids = registry_ids - current_ids
+    overlap = current_ids & retired_ids
+    if overlap:
+        raise ValueError(
+            "rule ID(s) are both current and retired: "
+            + ", ".join(sorted(overlap))
+        )
+    unknown_retired = retired_ids - registry_ids
+    if unknown_retired:
+        raise ValueError(
+            "retired rule ID(s) absent from permanent registry: "
+            + ", ".join(sorted(unknown_retired))
+        )
+    removed_ids = registry_ids - current_ids - retired_ids
     if removed_ids:
         raise ValueError(
             "permanent rule ID(s) removed from source: " + ", ".join(sorted(removed_ids))

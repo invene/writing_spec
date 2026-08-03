@@ -1,8 +1,7 @@
 # Request failures after the 14:04 configuration rollout
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: incident
-Conformance tier: reviewed
 
 ## Summary
 

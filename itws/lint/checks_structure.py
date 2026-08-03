@@ -584,24 +584,57 @@ def diagram_terms(context: LintContext) -> Iterable[Finding]:
     return findings
 
 
+#: Alt text that names the artifact instead of stating what it shows. Rule
+#: 6.4.4's own non-compliant example, `alt="diagram"`, is one of these.
+PLACEHOLDER_ALT = frozenset(
+    {
+        "diagram",
+        "image",
+        "figure",
+        "picture",
+        "photo",
+        "screenshot",
+        "chart",
+        "graph",
+        "illustration",
+        "alt text",
+        "todo",
+    }
+)
+
+
 @register("6.4.4", name="diagram-alt-text")
 def diagram_alt_text(context: LintContext) -> Iterable[Finding]:
-    """Every diagram carries alt text."""
+    """Every diagram carries alt text that says what it shows.
+
+    Absence, emptiness, and a bare placeholder are decided here. Whether
+    real alt text states the diagram's point in its labels' admitted terms
+    is a reader's judgment, which is why Rule 6.4.4 is `partial`.
+    """
     findings: list[Finding] = []
     for unit in context.manifest.units:
         for match in ALT_TEXT_RE.finditer(unit.text):
-            if match.group("alt").strip():
+            alt = match.group("alt").strip()
+            if not alt:
+                message = "the image carries no alt text (§6.4.4)"
+            elif alt.strip(".!\"' ").casefold() in PLACEHOLDER_ALT:
+                message = (
+                    f"the alt text {alt!r} names the artifact instead of "
+                    "stating what it shows (§6.4.4)"
+                )
+            else:
                 continue
             findings.append(
                 Finding(
                     rule="6.4.4",
                     severity=context.severity_for("6.4.4"),
                     kind="violation",
-                    message="the image carries no alt text (§6.4.4)",
+                    message=message,
                     path=unit.span.path,
                     start_line=unit.span.start_line,
                     end_line=unit.span.end_line,
                     checker="diagram-alt-text",
+                    excerpt=alt,
                 )
             )
     return findings

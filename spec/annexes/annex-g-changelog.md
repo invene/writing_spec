@@ -2,16 +2,119 @@
 
 Format: [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/). Section 0.8 defines version semantics. Every entry that changes a rule cites the rule number. Rule numbers are permanent, and deprecation replaces deletion (§0.8).
 
+## Retained versions
+
+Section 0.8 guarantees checkability for a retained version only. A retained version has one recoverable revision of this repository carrying its complete specification and compatible tooling. An unavailable version was released during pre-1.0 drafting without one; its changelog entry below is the historical record, and no §0.8 guarantee reaches it.
+
+| Version | Status | Notes |
+|---|---|---|
+| 0.10.0-draft | retained | current |
+| 0.9.0-draft | retained | |
+| 0.8.0-draft | retained | |
+| 0.7.0-draft | unavailable | superseded within the drafting series |
+| 0.6.0-draft | retained | |
+| 0.5.1-draft | unavailable | superseded within the drafting series |
+| 0.5.0-draft | unavailable | superseded within the drafting series |
+| 0.4.0-draft | unavailable | superseded within the drafting series |
+| 0.3.0-draft | unavailable | superseded within the drafting series |
+| 0.2.1-draft | retained | |
+| 0.2.0-draft | unavailable | superseded within the drafting series |
+| 0.1.0 | unavailable | released as Research Writing Specification (RWS) 0.1 |
+
+A document pinned to an unavailable version is re-pinned to a retained version before its conformance is recorded. From 1.0 onward every released version is retained.
+
 ## [Unreleased]
 
 - Pending: validate Annex B with members across software engineering pod roles. Also validate that each profile overlay adds conventions only.
-- Pending: pilot the §8.3 reader protocol on documents from multiple profiles. Keep pass/fail criteria provisional until then.
-- Pending: widen Annex D's source mix. Every profile now has at least two examples, but all 23 non-research examples are constructed.
+- Pending: pilot optional assurance protocols in `assurance/` on documents from multiple profiles. Keep organization-specific pass/fail criteria provisional until then.
+- Pending: widen Annex D's source mix. Every profile now has at least two examples, but all 22 non-research examples are constructed.
 - Pending: add a second host adapter under the §4.13 adapter contract. The 0.8.0-draft release ships the Python adapter only, so the language neutrality of the contract is designed but not yet exercised.
-- Pending: pilot the `maintenance-comment` workflow on a real repository change. The 0.8.0-draft release verified the machine path with the fixture suite; it did not verify an end-to-end change on production code.
-- Pending: run the four cold-start agent pilots listed in `spec/agent/README.md` §A.7. Each needs a fresh session that receives only the repository URL, a raw document, and a one-sentence rewrite request. The 0.6.0-draft release verified the machine path with the fixture suite; it did not verify the cold start.
-- Pending: calibrate the Rule 3.5.1 noun-cluster detector against reader-test results. The lexical detector reports candidates and produces false positives on verb-noun homographs.
-- Pending: calibrate the §8.1.1 source-independent delay across profiles. The scan record stores the intervening task and elapsed interval; ITWS sets no timing threshold.
+- Pending: pilot the `maintenance-comment` workflow on a real repository change. The language path is verified with the fixture suite; an end-to-end change on production code is not.
+- Pending: run the cold-start agent pilots listed in `spec/agent/README.md`. Each needs a fresh session that receives only the repository URL, a raw document, and a one-sentence rewrite request.
+- Pending: calibrate the Rule 3.5.1 noun-cluster detector against independent reader results. The lexical detector reports candidates and produces false positives on verb-noun homographs.
+
+## [0.10.0-draft] — 2026-07-29
+
+Draft change that separates assurance process from the normative language specification. ITWS declares only version and profile. Machine checking reports binary `pass`/`fail` with explicit coverage. Reviews, waivers, reader tests, release checks, tiers, and AI-comment disposition gates move to the non-normative `assurance/` companion that rewrite agents do not load.
+
+### Added
+
+- Added the non-normative companion `assurance/README.md` with optional assurance levels, checklist practice, scan and reader protocols, accepted-deviation records, release checks, and machine-proposed-comment disposition guidance.
+- Added `itws/assurance/` for optional checklist, evidence, waiver, and scan-test helpers. Default lint and validation do not import that package.
+- Added `tools/itws_assurance.py` and kept `tools/itws_checklist.py` as a thin wrapper over the optional companion path.
+- Added Rules 8.2.5 and 8.6.6: machine reports disclose coverage, and machine validation is binary and coverage-aware.
+- Added `spec/retired-rule-ids.txt` reserving retired process rule IDs 8.1.1–8.1.5, 8.2.4, 8.3.1–8.3.5, 8.4.1–8.4.4, 8.5.1–8.5.2, 8.6.3–8.6.5, and 8.7.1–8.7.4 with companion mappings.
+
+### Changed
+
+- Rewrote §0.4 around binary textual conformance. The required declaration is `ITWS version` and `Profile` only. Conformance tiers, minimum-tier tables, and waiver/review/release evidence are removed from normative ITWS.
+- Removed §1.2.2 tier-proportional evidence. Exact/plain acceptance questions remain properties of the text.
+- Replaced `spec/08-review-compliance-tooling.md` with `spec/08-textual-conformance-and-machine-checking.md`. Active Part 8 rules are 8.2.1–8.2.3, 8.2.5, 8.6.1–8.6.2, and 8.6.6.
+- Removed minimum tiers, reader-test outcomes, and owner-review focus from every overlay README. Renamed scan-test outcomes to shallow-model outcomes.
+- Removed Provenance, Conformance evidence, and disposition obligations from the `maintenance-comment` skeleton and carrier. Rules 4.13.1–4.13.9 remain.
+- Default validation reports only `pass` or `fail`, with candidates, skipped checks, and unresolved facts disclosed separately. `needs_review` and `blocked` are no longer validation states.
+- Updated `spec/agent/README.md`, `skills/itws-rewrite/SKILL.md`, `README.md`, and `AGENTS.md` so rewrite sessions continue around unresolved facts and do not load `assurance/` unless asked.
+- Advanced the generated-artifact schema for language-only profile envelopes without tier, gate, checklist-pass, or assurance-path fields.
+
+### Compatibility
+
+- This pre-1.0 minor release is breaking under §0.8. Documents that declare `Conformance tier` fail structural parsing. Process rules retired in `spec/retired-rule-ids.txt` are no longer part of the rewrite envelope.
+- A clean machine `pass` discloses coverage and does not certify every semantic rule.
+- Documents pinned to 0.9.x retain their earlier rule envelope under §0.4.4 and §0.8.
+
+### Migration notes
+
+- Re-pin to 0.10.0-draft and delete the `Conformance tier` line.
+- For rewrite work, run lint and validate without evidence files.
+- Load `assurance/` only when performing optional review, waiver, reader-test, or release work.
+- Run `python3 tools/itws_check_all.py`.
+
+## [0.9.0-draft] — 2026-07-29
+
+Draft change that closes an audit of the 0.8.0-draft tree. The audit found that several checks reported a result they had not computed: a bare rule ID cleared any finding, a hand-authored file satisfied the checklist gate, a tier override skipped the gates the document declared, and enabling network mode resolved nothing. It also found rules whose construct metadata deleted them from the documents they exist to catch, and a reader baseline that recorded exclusions as assumptions. The release makes each check state what it actually did.
+
+### Added
+
+- Added `itws/lint/waivers.py` and the typed waiver record. A record completes every Rule 8.5.2 template field — `rule`, `location`, `justification`, `compensating_measure`, `approver`, `scope` — and may bind itself to one governed unit with `document`. An incomplete record, or one naming Rule 8.5.1, suppresses nothing and is reported.
+- Added checkers `waiver-prohibited` (Rule 8.5.1) and `waiver-record` (Rule 8.5.2) over the supplied evidence, beside the existing prose checker.
+- Added `itws/lint/resolvers.py`: the `CitationResolver` seam, the standard-library `UrllibResolver` that `--network` installs, and the offline default that resolves nothing.
+- Added `checklist_body` and `checklist_digest` to `itws/checklist.py`, and a `Checklist digest` header line. Rule 8.1.1 now compares the supplied file against the checklist this specification generates.
+- Added the §E.0.2 definition of the **front-matter region**, and parser enforcement of declaration placement, section-map placement, and mapped-heading existence.
+- Added `polarity`, `kind`, and `conditional` to every Annex B baseline item, `parse_reader_overlay` for the twelve `reader.md` files, and `moved_units` and `blocking_questions` to the comment-set manifest.
+- Added the §7.1 boundary locations for `maintenance-comment`, the `Change kind` slot to §E.12, and the `Summary` slot to §E.2.
+- Added the Annex G retained-versions table, an Annex D pointer check in `tools/itws_overlays.py`, and the `conforming-removal` comment fixture.
+
+### Changed
+
+- Rules 2.3.1, 5.4.3, 5.8.1, and 6.4.4 are reclassified `yes` → `partial`. Each checker decided part of its rule and reported the whole as checked; each rationale now states which part is mechanical and which needs a reader. Rule 6.4.4's checker additionally rejects placeholder alt text, its own non-compliant example.
+- Rule 8.2.3 compares the run's tier against the declared tier and validates that tier before using it as an ordinal. A run at a tier the document does not declare is a violation, not a silent pass at fewer gates.
+- Rules 8.1.2 and 8.6.3 report an unrecorded human gate as `review`, so §8.6.2 assigns it `needs_review`. `blocked` returns to its stated meaning: a required input the run never received.
+- Rules 2.5.1, 2.6.4, 2.6.6, 2.6.11, 4.3.2, 4.8.1, 5.6.1, 7.1.1, 8.2.1, and 8.5.1 are generalized from "governed document" to "governed unit". Section 0.2.1 now states that a rule enforced on both surfaces names the governed unit, and §8 opens on the governed unit.
+- Rules 6.2.1, 6.4.1, and 7.1.1 are rescoped to `Constructs: any` and Rule 8.7.1 to `Constructs: comment`. Each required the construct it was scoped to, so its absence removed the rule. Section 1.4 item 3 now forbids that scoping and defines multi-construct applicability as disjunction.
+- Rule 4.13.3 resolves a removed comment's anchor against the base source; Rule 4.13.8 reaches only the markers a change set adds or modifies, so deleting a bare `TODO` conforms.
+- Section 8.6.1 condition 2 excludes the inventory from its own hash, and §0.8's checkability guarantee is narrowed to retained versions.
+- Comment deltas are occurrence-aware. A moved comment and a duplicated comment are changed units; a dropped duplicate is a removed unit.
+- `validate_comment_set` reads the carrier's `Conformance evidence` slot, with a caller-supplied value winning, and reports a carrier open question in state `blocked` as `blocked`.
+- `tools/itws_check_all.py` runs each fixture through the documented CLI with an evidence bundle under `.itws-check/`, so every printed command reproduces its printed result. No step passes `--network`.
+- The Annex A *gradient* entry is corrected: the gradient points toward steepest increase, and training moves the opposite way.
+- Annex F records `task` and `subtask` under §7.3. Example D.1 admits *model* before use; Example D.18 drops Rules 5.2.3 and 6.4.4 and names a table rather than a figure.
+- Every overlay's Annex D pointer is refreshed and now mechanically checked. The §A.6 cross-reference, the non-research example count, the comment-command list, and the Part 4 and Part 8 summaries are corrected.
+
+### Compatibility
+
+- This pre-1.0 minor release is breaking under §0.8. It tightens Rules 8.1.1, 8.2.3, 8.5.1, and 8.5.2, adds the required `Summary` slot to §E.2 and the required `Change kind` slot to §E.12, and reclassifies four rules to `partial`.
+- A run that supplied a bare `{"rule": "<id>"}` waiver now reports `fail`. Complete the six template fields.
+- A `decision-record` conforming to 0.8.0-draft needs a `Summary` slot before `Context` to conform to 0.9.0-draft.
+- A document whose gates are unrecorded now reports `needs_review` where it reported `blocked`. No document moves into `pass`.
+- Annex B §B.1 and §B.2 gain and lose no item. Their records gain polarity, so an acronym named in §B.2's not-in-baseline list or in §B.3 is no longer treated as assumed; `MMLU`, `GSM8K`, `SOTA`, `SQL`, `CPU`, `GPU`, and `C4` now require expansion under Rule 2.1.4.
+- Documents pinned to 0.8.x retain their earlier rule envelope under §0.4.4 and §0.8.
+
+### Migration notes
+
+- Re-pin, add a `Summary` slot to each `decision-record`, and add `Change kind` to each comment record.
+- Replace each evidence-file waiver with a complete record. `tools/itws_validate.py --help` states the fields.
+- Regenerate every checklist: Rule 8.1.1 compares against the generated body, so a checklist from 0.8.0-draft no longer matches.
+- Run `python3 tools/itws_check_all.py`. It writes `.itws-check/` and prints the command it ran for each fixture.
 
 ## [0.8.0-draft] — 2026-07-29
 

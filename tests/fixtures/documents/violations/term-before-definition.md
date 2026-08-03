@@ -1,14 +1,17 @@
 # Choose a coordinator for invoice writes
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: decision-record
-Conformance tier: core
 
 <!-- Risk fixture: a term is used before its definition (§2.3.1). -->
 
 ## Status
 
 Accepted on 2026-06-02 by the storage pod.
+
+## Summary
+
+One elected member holds each invoice write while the cluster agrees on it. The Decision section states the exact form of this outcome.
 
 ## Context
 

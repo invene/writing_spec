@@ -1,6 +1,6 @@
 # Annex E §E.7 — `research-paper` skeleton
 
-**ITWS version:** 0.8.0-draft · **Status:** normative
+**ITWS version:** 0.10.0-draft · **Status:** normative
 
 The README in this directory states the profile job. Annex E states the shared slot policy and the §E.0.1 rename and merge policy.
 

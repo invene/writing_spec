@@ -2,17 +2,19 @@
 
 Every rule marked ``Machine-checkable: yes`` must appear here, and the
 compiler fails when one does not (Rule 8.6.1 support). A ``partial`` rule may
-also register a checker; its findings are candidates, never violations.
+also register a checker. Such a checker reports a candidate for the part of
+the rule that needs a reader, and reports a violation only for a sub-clause
+it decides completely on its own.
 
 A checker declares a scope so the runner supplies the right input:
 
 ``document``
     Reads the structural manifest and the specification model.
-``evidence``
-    Reads the conformance evidence a run supplies. Absent evidence produces
-    a ``blocked`` finding, never a pass (Rule 8.6.3).
 ``tooling``
-    Checks the toolchain itself, such as the §8.2 severity map.
+    Checks the machine-report contract itself, such as the §8.2 severity map.
+``assurance``
+    Belongs to the optional :mod:`itws.assurance` package and is never run by
+    the default lint engine.
 """
 
 from __future__ import annotations
@@ -24,7 +26,7 @@ from itws.lint.model import Finding, LintContext
 
 Checker = Callable[[LintContext], Iterable[Finding]]
 
-SCOPES = ("document", "evidence", "tooling")
+SCOPES = ("document", "tooling", "assurance")
 
 
 @dataclass(frozen=True)
@@ -83,5 +85,5 @@ def _load() -> None:
     from itws.lint import checks_sentences  # noqa: F401
     from itws.lint import checks_structure  # noqa: F401
     from itws.lint import checks_exactness  # noqa: F401
-    from itws.lint import checks_process  # noqa: F401
+    from itws.lint import checks_tooling  # noqa: F401
     from itws.lint import checks_comments  # noqa: F401

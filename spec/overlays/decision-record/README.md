@@ -1,6 +1,6 @@
 # `decision-record` overlay
 
-**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `core`
+**ITWS version:** 0.10.0-draft
 
 **Job:** preserve one settled technical decision, its context and options, its status, and its consequences.
 
@@ -8,27 +8,19 @@ A `decision-record` tells future readers what governs and why. A `decision-recor
 
 ## Load set
 
-A writer, reviewer, or tool loads the following material for a `decision-record` document:
+A writer, rewriting agent, or tool loads the following material for a `decision-record` document:
 
-- The shared core in `spec/00-front-matter.md` through `spec/08-review-compliance-tooling.md`.
+- The shared core in `spec/00-front-matter.md` through `spec/08-textual-conformance-and-machine-checking.md`.
 - The shared annexes in `spec/annexes/`.
 - This directory: [reader.md](reader.md), [skeleton.md](skeleton.md), and [rules.md](rules.md).
 - Shared overlay modules: none.
 
 No other profile overlay applies to a `decision-record` document.
 
-## Scan-test outcome
+## Shallow-model outcome
 
-A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the decision, its status, the main reason, and its material consequence or boundary.
-
-## Reader-test outcome
-
-A publication-tier document measures this primary outcome (§8.3): state the decision, why it was chosen, the rejected alternatives, and its consequences.
-
-## Owner review focus
-
-The subject-matter owner focuses on alternatives and consequences (§8.4).
+The scan path shall support this outcome (§4.12): state the decision, its status, the main reason, and its material consequence or boundary.
 
 ## Examples
 
-Annex D contains one `decision-record` example: D.4.
+Annex D contains two `decision-record` examples: D.4 and D.14.

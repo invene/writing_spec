@@ -1,8 +1,7 @@
 # Completion time of the replacement job scheduler
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: technical-report
-Conformance tier: reviewed
 
 <!-- Risk fixture: an absent measurement stays absent. Every unknown value -->
 <!-- is recorded as unknown, so validation reports `blocked` rather than -->

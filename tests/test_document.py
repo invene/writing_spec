@@ -120,8 +120,7 @@ class TestScanPath(unittest.TestCase):
     def test_scan_path_excludes_appendix_content(self) -> None:
         path = self._write(
             "# Queue design\n\n"
-            "ITWS version: 0.8.0-draft\nProfile: design-rfc\n"
-            "Conformance tier: reviewed\n\n"
+            "ITWS version: 0.10.0-draft\nProfile: design-rfc\n\n"
             "## Summary\n\nThe proposal bounds concurrent writes.\n\n"
             "## Appendix A\n\nThe appendix gives formal details.\n\n"
             "### Semaphore proof\n\nThe proof uses invariant I.\n"
@@ -136,8 +135,7 @@ class TestScanPath(unittest.TestCase):
     def test_scan_path_reports_a_section_without_an_opening_chunk(self) -> None:
         path = self._write(
             "# Queue design\n\n"
-            "ITWS version: 0.8.0-draft\nProfile: design-rfc\n"
-            "Conformance tier: reviewed\n\n"
+            "ITWS version: 0.10.0-draft\nProfile: design-rfc\n\n"
             "## Risks\n\n### Shared clock\n\n"
             "A shared clock failure can stop writes.\n"
         )
@@ -164,8 +162,8 @@ class TestDeclarationProblems(unittest.TestCase):
 
     def test_conflicting_declarations_are_reported(self) -> None:
         path = self._write(
-            "# T\n\nITWS version: 0.8.0-draft\nProfile: epic\n"
-            "Profile: task\nConformance tier: core\n"
+            "# T\n\nITWS version: 0.10.0-draft\nProfile: epic\n"
+            "Profile: task\n"
         )
         manifest = parse_document(path)
         self.assertIsNone(manifest.declarations)
@@ -195,8 +193,7 @@ class TestSectionMap(unittest.TestCase):
 
     def test_a_section_map_links_a_heading_to_a_slot(self) -> None:
         path = self._document(
-            "# T\n\nITWS version: 0.8.0-draft\nProfile: decision-record\n"
-            "Conformance tier: core\n\n"
+            "# T\n\nITWS version: 0.10.0-draft\nProfile: decision-record\n\n"
             "```itws-section-map\n"
             '"Why we did this" -> Context\n'
             "```\n\n"
@@ -215,8 +212,7 @@ class TestSectionMap(unittest.TestCase):
 
     def test_a_repeated_heading_or_slot_is_rejected(self) -> None:
         path = self._document(
-            "# T\n\nITWS version: 0.8.0-draft\nProfile: decision-record\n"
-            "Conformance tier: core\n\n"
+            "# T\n\nITWS version: 0.10.0-draft\nProfile: decision-record\n\n"
             "```itws-section-map\n"
             '"A" -> Context\n'
             '"B" -> Context\n'
@@ -230,8 +226,7 @@ class TestSectionMap(unittest.TestCase):
 
     def test_a_cross_profile_slot_is_rejected(self) -> None:
         path = self._document(
-            "# T\n\nITWS version: 0.8.0-draft\nProfile: decision-record\n"
-            "Conformance tier: core\n\n"
+            "# T\n\nITWS version: 0.10.0-draft\nProfile: decision-record\n\n"
             "```itws-section-map\n"
             '"A" -> Rollback\n'
             "```\n"
@@ -242,6 +237,103 @@ class TestSectionMap(unittest.TestCase):
                 for p in manifest.section_map_problems)
         )
         path.unlink()
+
+
+class TestFrontMatterRegion(unittest.TestCase):
+    """§E.0.2: declarations and the section map live in the front matter."""
+
+    BASE = (
+        "# A title\n\n"
+        "ITWS version: 0.10.0-draft\n"
+        "Profile: decision-record\n\n"
+        "## Status\n\nAccepted.\n"
+    )
+
+    def _parse(self, text: str):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "document.md"
+            path.write_text(text, encoding="utf-8")
+            return parse_document(path)
+
+    def test_a_front_matter_declaration_reports_no_placement_problem(self) -> None:
+        manifest = self._parse(self.BASE)
+        self.assertEqual(
+            [p for p in manifest.declaration_problems if "front-matter" in p], []
+        )
+
+    def test_a_declaration_below_the_region_is_a_problem(self) -> None:
+        text = (
+            "# A title\n\n"
+            "ITWS version: 0.10.0-draft\n\n"
+            "## Status\n\n"
+            "Profile: decision-record\n"
+        )
+        manifest = self._parse(text)
+        self.assertTrue(
+            any("front-matter" in p for p in manifest.declaration_problems),
+            manifest.declaration_problems,
+        )
+
+    def test_a_section_map_below_the_region_is_a_problem(self) -> None:
+        text = self.BASE + (
+            "\n```itws-section-map\n"
+            '"Status" -> Status\n'
+            "```\n"
+        )
+        manifest = self._parse(text)
+        self.assertTrue(
+            any("front-matter" in p for p in manifest.section_map_problems),
+            manifest.section_map_problems,
+        )
+
+    def test_a_map_naming_an_absent_heading_is_a_problem(self) -> None:
+        text = (
+            "# A title\n\n"
+            "ITWS version: 0.10.0-draft\n"
+            "Profile: decision-record\n\n"
+            "```itws-section-map\n"
+            '"Nowhere at all" -> Context\n'
+            "```\n\n"
+            "## Status\n\nAccepted.\n"
+        )
+        manifest = self._parse(text)
+        self.assertTrue(
+            any("absent from the document" in p for p in manifest.section_map_problems),
+            manifest.section_map_problems,
+        )
+
+    def test_a_map_naming_a_present_heading_is_accepted(self) -> None:
+        text = (
+            "# A title\n\n"
+            "ITWS version: 0.10.0-draft\n"
+            "Profile: decision-record\n\n"
+            "```itws-section-map\n"
+            '"Status" -> Status\n'
+            "```\n\n"
+            "## Status\n\nAccepted.\n"
+        )
+        manifest = self._parse(text)
+        self.assertEqual(
+            [p for p in manifest.section_map_problems if "absent from the document" in p],
+            [],
+        )
+
+
+    def test_an_obsolete_tier_declaration_is_reported(self) -> None:
+        text = (
+            "# A title\n\n"
+            "ITWS version: 0.10.0-draft\n"
+            "Profile: epic\n"
+            "Conformance tier: core\n\n"
+            "## Status\n\nOpen.\n"
+        )
+        manifest = self._parse(text)
+        self.assertTrue(
+            any("obsolete conformance-tier" in p for p in manifest.declaration_problems),
+            manifest.declaration_problems,
+        )
 
 
 if __name__ == "__main__":

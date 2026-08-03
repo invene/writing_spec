@@ -1,6 +1,6 @@
 # Report overlay module
 
-**ITWS version:** 0.8.0-draft · **Status:** normative
+**ITWS version:** 0.10.0-draft · **Status:** normative
 
 **Family:** report · **Profiles:** `technical-report`, `research-paper`
 
@@ -76,7 +76,7 @@ The statement summarizes the check in the main document. A technical appendix ma
 **Applicable statement elements:** every element §5.8 lists for the profile, subject, and selected statement form.
 
 #### Rule 5.8.1 — Reports include the applicable checkability statement
-**Class:** mandatory · **Machine-checkable:** yes · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS checklist / ML Reproducibility Checklist (research adaptation)
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS checklist / ML Reproducibility Checklist (research adaptation)
 **Profiles:** technical-report, research-paper
 **Constructs:** section
 **Navigation:** target: document · chunks: any · slots: Reproducibility or verification · layers: exact · context: document · rewrite: candidate
@@ -88,6 +88,8 @@ The statement summarizes the check in the main document. A technical appendix ma
 > The statement **shall** contain every applicable statement element.
 
 **Rationale:** A claim that cannot be repeated or independently checked remains dependent on the authors' environment and access. The profile-specific form makes checkability explicit without forcing an experiment-oriented statement onto a system report. Serves P6.
+
+The rule is `partial` because only the first sentence is mechanical. The linter finds the resolved section and reports its absence. Whether the section states every applicable statement element is a reader's judgment about content, which a word count cannot stand in for.
 
 **Compliant:** A system report's "Verification" section names the tested build, replay input, environment, commands, pass thresholds, and access gap. A research paper's "Reproducing this work" section covers data, code or procedure, resources, key settings, and gaps.
 **Non-compliant:** A system report says only "tests passed," or a research paper scatters settings across footnotes without stating data availability or required resources.

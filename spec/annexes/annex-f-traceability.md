@@ -1,6 +1,6 @@
 # Annex F — Mapping to source frameworks
 
-**Status:** v0.8.0-draft. This annex is maintained at shared-core and profile granularity.
+**Status:** v0.10.0-draft. This annex is maintained at shared-core and profile granularity.
 
 Annex C exposes generated `Source`, `Profiles`, and `File` metadata for every rule. A disagreement between that metadata and this annex is a traceability defect.
 
@@ -39,9 +39,9 @@ However, these sources do not independently impose conformance outside `research
 
 A similar shared-core or other-profile rule must cite a general anchor or be marked original.
 
-## F.2.1 Attention, memory, and scan-test evidence
+## F.2.1 Attention, memory, and scan-path evidence
 
-The 0.7.0 scan contract uses the following peer-reviewed evidence:
+The scan-path language rules use the following peer-reviewed evidence:
 
 - Duggan and Payne, "Text skimming: The process and effectiveness of foraging through text under time pressure," *Journal of Experimental Psychology: Applied* 15(3), 2009, 228–242, DOI 10.1037/a0016995.
 - Duggan and Payne, "Skim reading by satisficing," *CHI 2011*, DOI 10.1145/1978942.1979114.
@@ -68,7 +68,7 @@ Gilbert and Kaup support review of negated or late qualifications under constrai
 | §0.2, 0.5, 0.6, 0.7 | shared core | ISO/IEC Directives Part 2; ISO 26514 | section and audience framework adapted |
 | §0.3 Assumed reader | shared core | ISO 26514; PlainLanguage.gov; Google audience guidance | audience framework adapted; cross-functional software-pod baseline **original** |
 | §0.2.1, §0.3.4 Governed surfaces and host supplement | shared core + `maintenance-comment` | original | **original**; the hosted comment set, declaration carrier, and conditional host-language supplement |
-| §0.4 Conformance | shared core | RFC 2119 / RFC 8174 | keywords adopted; profile applicability and cumulative tier architecture **original** |
+| §0.4 Conformance | shared core | RFC 2119 / RFC 8174 | keywords adopted; profile applicability and binary textual-conformance model **original** |
 | §0.8 Versioning | shared core | SemVer 2.0.0; STE issue practice | semantics adopted; conformity mapping original |
 | §1.1 Principles | shared core | PlainLanguage.gov; ASD-STE100; ISO 26514; Cowan; Sweller | effort optimization adapted; profile-relative completeness **original** |
 | §1.2 Two-layer model | shared core | — | **original** core doctrine |
@@ -117,17 +117,13 @@ Gilbert and Kaup support review of negated or late qualifications under constrai
 | §7.1 General limitations | shared core | ISO 26514; IEC 82079-1 | limits and warnings generalized |
 | §7.1 Research-source adaptations within general rules | `research-paper` | NeurIPS checklist; Model Cards; Datasheets for Datasets | checklist fields adapted for research; general anchors govern universal applicability |
 | §7.2 Caveat placement | shared core | ASD-STE100; IEC 82079-1 warning placement | caveat-as-warning mechanism forked |
-| §7.3 Observation and interpretation | `incident`, `technical-report`, `research-paper`, `investigation-log` | ISO 26514; IPCC calibrated language; original | separation generalized; speculation-block mechanism original |
+| §7.3 Observation and interpretation | `incident`, `technical-report`, `research-paper`, `investigation-log`, `task`, `subtask` | ISO 26514; IPCC calibrated language; original | separation generalized; speculation-block mechanism original |
 | §7.3 Research results/discussion | `research-paper` | IMRaD; APA JARS | research overlay formalized |
 | §7.4 Generalization claims | shared core | ISO 26514 | scope discipline generalized |
 | §7.4 Research additions | `research-paper` | NeurIPS checklist; APA JARS; CONSORT | research applicability disclosures adapted |
-| §8.1 Checklist and scan test | shared core + profile overlays | STE checker workflows; Glenberg et al.; Thiede et al.; Duggan and Payne; original | generation and delayed-recall evidence adapted; exact-layer key, strengthened foils, pass assignment, and invalidation contract **original** |
-| §8.2 Automated checks | shared core + profile overlays | STE checker practice; Google and Microsoft word-list adjudications; original | checker workflow adopted; word and phrase adjudications restated as generated phrase lists; the repository-local engine, severity map, and version-pin checks **original** |
-| §8.3 Reader testing | shared core + profile overlays | PlainLanguage.gov; ISO 26514; teach-back method | adapted; pass/fail criteria original |
-| §8.4 Reviewer roles | shared core | ISO 26514; IEC 82079-1; original | two-pass review adapted; finding-citation rule original |
-| §8.5 Waivers | shared core | IEC 82079-1; engineering standards-deviation practice | pattern copied |
-| §8.6 Generated artifacts and validation states | shared core + all profiles | reproducible-build practice; requirements-traceability practice; original | content-hash pinning adapted; the four validation states, the agent-record obligation, and the collision report are **original** |
-| §8.7 Machine-proposed comments | `maintenance-comment` | original | **original**; reuses the §8.5 recorded-deviation and §8.6 hash-pinning patterns |
+| §8.1 Textual conformance | shared core + all profiles | requirements-conformance practice; original | binary text property and separation from assurance **original** |
+| §8.2 Machine checks | shared core + all profiles | STE checker practice; Google and Microsoft word-list adjudications; original | checker workflow adopted; phrase lists generated from rule-adjacent source; severity, version pinning, and coverage disclosure **original** |
+| §8.3 Generated artifacts | shared core + all profiles | reproducible-build practice; requirements-traceability practice; original | content-hash pinning adapted; deterministic catalog and binary machine report **original** |
 | Annex A | shared core + tagged profile entries | ASD-STE100 dictionary; ISO 704/10241 | format forked; ladder/profile fields original |
 | Annex B | shared core + convention-only overlays | ISO 26514; Diátaxis | base and overlay boundary **original**; audience-analysis framework adapted |
 | Annex C | shared core + profile applicability | ASD-STE100 rule summary | build artifact |

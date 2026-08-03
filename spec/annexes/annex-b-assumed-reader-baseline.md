@@ -1,6 +1,6 @@
 # Annex B — Assumed-reader baseline (normative)
 
-**Status:** v0.8.0-draft. Members across software engineering pod roles have not yet validated this annex.
+**Status:** v0.10.0-draft. Members across software engineering pod roles have not yet validated this annex.
 
 Until that review, treat borderline items as not assumed (§0.3.3).
 
@@ -201,7 +201,7 @@ Examples that remain unassumed include venue prestige as evidence, "SOTA," "came
 
 Each overlay adds only navigation or document conventions. Each overlay states its own conventions in the `reader.md` file of its overlay directory. Section 1.5 defines that layout.
 
-The following table is the complete profile registry for ITWS 0.8.0-draft. Each row is normative through the file it names.
+The following table is the complete profile registry for ITWS 0.10.0-draft. Each row is normative through the file it names.
 
 | Overlay | Profile | File |
 |---|---|---|
@@ -236,6 +236,6 @@ Removing an item from §B.1 or §B.2 is breaking.
 
 Adding an item is a minor change.
 
-Each change names its evidence. Typical evidence is a failed or contested §8.3 reader test or a recurring §8.4 proxy finding.
+Each change names its evidence. Typical evidence is repeated reader confusion, recurring rewrite findings, or documented use that the current baseline misclassifies.
 
 A profile overlay change must state whether it adds only a convention. Subject-matter knowledge belongs in §B.1, not in an overlay.

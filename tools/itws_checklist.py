@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Generate a profile- and tier-filtered ITWS conformance checklist.
+"""Generate an optional profile-aware assurance checklist.
 
 The generator consumes the normalized model in :mod:`itws.parser`, not the
 rendered Annex C table. Annex C remains the human-readable index; the
-checklist and the profile manifest resolve one rule set, and
-``tools/itws_compile.py`` fails when the two disagree.
+checklist is outside textual conformance and is never used by default
+validation. New integrations should use ``tools/itws_assurance.py``.
 """
 
 from __future__ import annotations
@@ -16,22 +16,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from itws.checklist import (
+from itws.assurance.checklist import (
     annex_revision,
-    applies_to_tier_gate,
     checklist_line,
     render,
-    validate_tier,
 )
 from itws.parser import SpecError, parse_specification
-from itws.vocab import MINIMUM_TIER, PROFILE_IDS, TIERS
+from itws.vocab import PROFILE_IDS
 
 __all__ = [
-    "MINIMUM_TIER",
-    "TIERS",
-    "applies_to_tier_gate",
     "checklist_line",
-    "validate_tier",
 ]
 
 
@@ -39,7 +33,6 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--spec-version", required=True)
     parser.add_argument("--profile", required=True, choices=PROFILE_IDS)
-    parser.add_argument("--tier", required=True, choices=TIERS)
     parser.add_argument("--spec-dir", type=Path, default=Path("spec"))
     parser.add_argument(
         "--index",
@@ -55,22 +48,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def validate_minimum_tiers() -> None:
-    if tuple(MINIMUM_TIER) != PROFILE_IDS:
-        raise ValueError(
-            "MINIMUM_TIER keys must match PROFILE_IDS in canonical order"
-        )
-    unknown = [tier for tier in MINIMUM_TIER.values() if tier not in TIERS]
-    if unknown:
-        raise ValueError(
-            "MINIMUM_TIER contains unknown tier(s): " + ", ".join(sorted(set(unknown)))
-        )
-
-
 def main() -> int:
-    validate_minimum_tiers()
     args = parse_args()
-    validate_tier(args.profile, args.tier)
     try:
         spec = parse_specification(args.spec_dir)
     except SpecError as error:
@@ -91,7 +70,6 @@ def main() -> int:
     output = render(
         spec,
         profile=args.profile,
-        tier=args.tier,
         generated_date=args.generated_date,
         index_revision=revision,
     )

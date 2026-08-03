@@ -2,95 +2,95 @@
 
 ## For an AI agent
 
-You were probably given this repository and a document to rewrite. Read [spec/agent/README.md](spec/agent/README.md) and follow the sequence there. That file is the entry point; nothing else is required reading first.
+If you were given this repository and a governed unit to rewrite, start at
+[spec/agent/README.md](spec/agent/README.md). It tells you how to produce the
+best safe draft, continue around missing facts, and report machine coverage.
 
-Everything runs from a clone with the Python standard library. There is nothing to install and no network call to make.
+Everything runs from a clone with the Python standard library. No installation
+or network call is required.
 
-## Invene Technical Writing Specification (ITWS)
+## Invene Technical Writing Specification
 
-`spec/` contains **ITWS 0.8.0-draft**. ITWS is a controlled-language specification for technical writing.
+`spec/` contains ITWS 0.10.0-draft, a controlled-language specification for
+technical writing. It combines one shared core with twelve profiles. Eleven
+profiles govern Markdown documents; `maintenance-comment` governs selected
+comment changes through a JSON declaration carrier.
 
-The specification combines a shared core with twelve profiles. The profiles cover sustained technical documents, governed work items, and governed code-comment changes.
+A governed unit declares only:
 
-The work-item profiles are `epic`, `task`, and `subtask`. The `maintenance-comment` profile governs a comment change set inside a host source file through a JSON declaration carrier; the source code itself stays outside conformance (§0.2.1).
+```text
+ITWS version: 0.10.0-draft
+Profile: <canonical profile ID>
+```
 
-Each profile keeps its overlay in its own directory under [spec/overlays/](spec/overlays/). A reader, writer, or tool loads the shared core, the shared annexes, one profile directory, and the shared modules that directory lists. No other overlay is needed.
+Textual conformance is binary for that version and profile. There is no
+conformance tier, reviewer, waiver, reader-test, release, evidence, or
+machine-proposal-disposition requirement in the language specification.
 
-The base reader is any working member of a software engineering pod. Annex B defines the shared technical baseline, and each overlay defines its own reader conventions.
+Optional organizational review and release practices live in
+[assurance/](assurance/README.md). Rewrite agents do not load that directory
+unless a request explicitly asks for assurance work.
 
-See [spec/README.md](spec/README.md) for the profile registry, conformance tiers, and contents.
+## Rewrite path
 
-## The application path for a writer
+```text
+python3 tools/itws_compile.py --check
+python3 tools/itws_retrieve.py get-profile <profile>
+python3 tools/itws_document.py index --input <document>.md --out structure.json
+# read and classify; preserve exact facts; rewrite every safe span
+python3 tools/itws_patch.py check --base <document>.md --proposed <rewrite>.md
+python3 tools/itws_lint.py --input <rewrite>.md
+python3 tools/itws_validate.py --input <rewrite>.md
+```
 
-1. Choose a profile from the registry in [spec/README.md](spec/README.md) and a tier no lower than that profile's minimum.
-2. Read Part 1 once. Load the profile's overlay directory and draft from its skeleton.
-3. Generate your checklist and complete the four self-check passes:
+Validation reports machine `pass` or `fail` plus fully checked, partially
+checked, and untested rule IDs. Candidates and missing source facts remain
+separate. A machine pass is not full semantic certification.
 
-   ```text
-   python3 tools/itws_checklist.py \
-     --spec-version 0.8.0-draft \
-     --profile design-rfc \
-     --tier reviewed \
-     --out design-rfc-checklist.md
-   ```
+For hosted comment sets:
 
-4. Run the linter and read every finding:
+```text
+python3 tools/itws_comment.py index     --carrier <set>.json
+python3 tools/itws_comment.py scan-path --carrier <set>.json
+python3 tools/itws_comment.py lint      --carrier <set>.json
+python3 tools/itws_comment.py stale     --carrier <set>.json
+python3 tools/itws_comment.py validate  --carrier <set>.json
+```
 
-   ```text
-   python3 tools/itws_lint.py --input your-document.md
-   ```
+Comment rules apply regardless of authorship. The carrier needs no provenance,
+proposal, disposition, tier, or conformance-evidence field.
 
-5. Validate, and read the state it reports:
+## Repository map
 
-   ```text
-   python3 tools/itws_validate.py --input your-document.md
-   ```
+| Path | Contents |
+|---|---|
+| `spec/` | authoritative language specification |
+| `spec/overlays/` | one directory per profile plus shared family modules |
+| `spec/generated/agent/` | deterministic language-navigation catalog |
+| `spec/agent/README.md` | rewrite-agent entry point |
+| `itws/` | parser, model, catalog, linter, validator, and rewrite scaffolds |
+| `itws/assurance/` | optional assurance helpers, isolated from default validation |
+| `assurance/` | non-normative assurance companion |
+| `tools/` | command-line entry points |
+| `tests/` | unit tests and governed-unit fixtures |
 
-A clean linter run is not conformance. Rule 8.2.4 says so, and the validator reports `needs_review` rather than `pass` until a reader has done their part.
-
-For a comment change set, the same path runs through one tool: `python3 tools/itws_comment.py index | scan-path | lint | validate --carrier <set>.json`. The carrier declares the change set, one record per governed comment, and — for machine-proposed comments — the §8.7 proposal record and human disposition.
-
-## The application path for a tool author
-
-The Markdown under `spec/` is authoritative. Everything else derives from it.
-
-| Layer | Where | What it does |
-|---|---|---|
-| Model | `itws/model.py`, `itws/parser.py` | one typed model of the whole specification |
-| Compiler | `itws/compile.py` | writes the deterministic catalog under `spec/generated/agent/` |
-| Catalog | `itws/catalog.py` | rule lookup, search, facets, relation traversal, context packets |
-| Structure | `itws/document.py` | syntactic indexing of a governed document |
-| Comments | `itws/comments/` | the hosted comment-set surface: carrier records, host adapters, extraction |
-| Scaffolds | `itws/analysis.py`, `itws/work.py`, `itws/patch.py` | optional records for agent-authored analysis, plans, and patch guards |
-| Checks | `itws/lint/`, `itws/validate.py` | the repository-local linter and four-state validation |
-
-Regenerate and verify everything with one command:
+Verify the repository:
 
 ```text
 python3 tools/itws_check_all.py
 ```
 
-The individual commands are listed in [spec/README.md](spec/README.md), so a failure can be isolated.
+This default check creates no `.itws-check` bundle and loads no assurance
+record.
 
-## A kickoff prompt you can copy
-
-Give an agent the repository and this message:
+## Copyable kickoff prompt
 
 ```text
-Clone or open <repository URL>. Read spec/agent/README.md and follow the
-sequence it describes. Rewrite <document> so it conforms to ITWS.
-
-The intended audience is <audience>, so the profile is probably <profile>.
-If you disagree with that profile, say which one you chose and why.
-
-Cite a rule for every change you propose. If a rewrite would need a fact the
-document does not contain, stop and tell me what is missing instead of
-supplying it. Report the validation state you reach, including
-needs_review or blocked.
+Open <repository>. Read spec/agent/README.md. Rewrite <document> against ITWS
+using profile <profile>. Preserve exact facts and do not invent missing ones.
+Continue around any unresolved span, return the best safe draft plus a concise
+missing-fact list, and report machine pass/fail with its coverage summary.
 ```
 
-The same instruction is available as an installable skill in [skills/itws-rewrite/SKILL.md](skills/itws-rewrite/SKILL.md). Both are optional. The entry-point README alone is enough.
-
-## Lineage
-
-Annex G records the Research Writing Specification (RWS) 0.1 lineage. This repository does not contain a checkable 0.1 snapshot.
+The same flow is available as
+[skills/itws-rewrite/SKILL.md](skills/itws-rewrite/SKILL.md).

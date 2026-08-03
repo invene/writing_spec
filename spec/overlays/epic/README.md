@@ -1,6 +1,6 @@
 # `epic` overlay
 
-**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `reviewed`
+**ITWS version:** 0.10.0-draft
 
 **Job:** define one strategic product outcome that requires several independently acceptable tasks.
 
@@ -8,27 +8,19 @@ An `epic` is a concise product requirements document. It states evidence, scope,
 
 ## Load set
 
-A writer, reviewer, or tool loads the following material for an `epic` document:
+A writer, rewriting agent, or tool loads the following material for an `epic` document:
 
-- The shared core in `spec/00-front-matter.md` through `spec/08-review-compliance-tooling.md`.
+- The shared core in `spec/00-front-matter.md` through `spec/08-textual-conformance-and-machine-checking.md`.
 - The shared annexes in `spec/annexes/`.
 - This directory: [reader.md](reader.md), [skeleton.md](skeleton.md), and [rules.md](rules.md).
 - The shared overlay module [../shared/work-item.md](../shared/work-item.md).
 
 No other profile overlay applies to an `epic` document.
 
-## Scan-test outcome
+## Shallow-model outcome
 
-A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the strategic outcome, approval status, scope boundary, and success-measure boundary.
-
-## Reader-test outcome
-
-A publication-tier document measures this primary outcome (§8.3): state the strategic outcome, supporting evidence, scope, success measures, technical invariants, child-task boundaries, and definition of done.
-
-## Owner review focus
-
-The subject-matter owner focuses on product evidence, measures, and inherited invariants (§8.4).
+The scan path shall support this outcome (§4.12): state the strategic outcome, approval status, scope boundary, and success-measure boundary.
 
 ## Examples
 
-Annex D contains one `epic` example: D.10.
+Annex D contains two `epic` examples: D.10 and D.21.

@@ -118,10 +118,8 @@ def _text_profile(payload: dict) -> str:
     envelope = payload["envelope"]
     lines = [
         f"{payload['id']} — {payload['label']}",
-        f"  minimum tier : {payload['minimum_tier']}",
         f"  job          : {payload['job']}",
-        f"  reader test  : {payload['reader_test_outcome']}",
-        f"  owner focus  : {payload['owner_review_focus']}",
+        f"  shallow model: {payload['shallow_model_outcome']}",
         f"  modules      : {', '.join(payload['shared_modules']) or 'none'}",
         f"  envelope     : {envelope['rule_count']} active rules "
         f"({len(envelope['universal'])} universal, "
@@ -129,9 +127,9 @@ def _text_profile(payload: dict) -> str:
         "  load set:",
     ]
     lines.extend(f"    {item}" for item in payload["load_set"])
-    lines.append("  rules by self-check pass:")
-    for name, ids in envelope["by_checklist_pass"].items():
-        lines.append(f"    {name}: {len(ids)}")
+    lines.append("  rules by machine checkability:")
+    for state, ids in envelope["by_machine_checkability"].items():
+        lines.append(f"    {state}: {len(ids)}")
     return "\n".join(lines)
 
 

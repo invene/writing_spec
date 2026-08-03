@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from pathlib import Path
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Protocol
 
 from itws.document import Declarations, StructuralManifest
@@ -32,7 +31,7 @@ class GovernedManifest(Protocol):
     def units(self): ...
 
 #: What a finding asserts.
-FINDING_KINDS = ("violation", "candidate", "review", "skipped", "blocked")
+FINDING_KINDS = ("violation", "candidate", "unresolved", "skipped")
 
 
 @dataclass(frozen=True)
@@ -73,67 +72,6 @@ class Finding:
 
 
 @dataclass
-class Evidence:
-    """Conformance evidence a run may supply for the Part 8 process rules.
-
-    Every field defaults to absent. An absent field produces a `blocked`
-    finding rather than a pass, which is what Rule 8.6.3 requires.
-    """
-
-    checklist_path: Path | None = None
-    checklist_annex_hash: str = ""
-    self_check_recorded: bool | None = None
-    lint_run_version: str = ""
-    lint_run_profile: str = ""
-    waivers: tuple[dict[str, str], ...] = ()
-    owner_review_recorded: bool | None = None
-    proxy_review_recorded: bool | None = None
-    reader_test_recorded: bool | None = None
-    artifacts_current: bool | None = None
-    artifact_problems: tuple[str, ...] = ()
-    network_checks_enabled: bool = False
-
-    @classmethod
-    def from_json_file(cls, path: Path | None) -> "Evidence":
-        """Load recorded evidence from a JSON file, or return the empty record."""
-        if path is None:
-            return cls()
-        import json
-
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        checklist = payload.get("checklist_path")
-        return cls(
-            checklist_path=Path(checklist) if checklist else None,
-            checklist_annex_hash=payload.get("checklist_annex_hash", ""),
-            self_check_recorded=payload.get("self_check_recorded"),
-            lint_run_version=payload.get("lint_run_version", ""),
-            lint_run_profile=payload.get("lint_run_profile", ""),
-            waivers=tuple(payload.get("waivers", ())),
-            owner_review_recorded=payload.get("owner_review_recorded"),
-            proxy_review_recorded=payload.get("proxy_review_recorded"),
-            reader_test_recorded=payload.get("reader_test_recorded"),
-        )
-
-    def to_json(self) -> dict[str, object]:
-        return {
-            "checklist_path": (
-                self.checklist_path.as_posix() if self.checklist_path else None
-            ),
-            "checklist_annex_hash": self.checklist_annex_hash,
-            "self_check_recorded": self.self_check_recorded,
-            "lint_run_version": self.lint_run_version,
-            "lint_run_profile": self.lint_run_profile,
-            "waiver_count": len(self.waivers),
-            "owner_review_recorded": self.owner_review_recorded,
-            "proxy_review_recorded": self.proxy_review_recorded,
-            "reader_test_recorded": self.reader_test_recorded,
-            "artifacts_current": self.artifacts_current,
-            "artifact_problems": list(self.artifact_problems),
-            "network_checks_enabled": self.network_checks_enabled,
-        }
-
-
-@dataclass
 class LintContext:
     """Everything a checker may read.
 
@@ -145,8 +83,9 @@ class LintContext:
     spec: Specification
     manifest: StructuralManifest
     profile: str
-    tier: str
-    evidence: Evidence = field(default_factory=Evidence)
+    network_checks_enabled: bool = False
+    citation_resolver: object | None = None
+    artifact_problems: tuple[str, ...] | None = None
     comment_set: "CommentSetManifest | None" = None
 
     def severity_for(self, rule_id: str) -> str:
@@ -165,10 +104,12 @@ class LintReport:
     path: str
     itws_version: str
     profile: str
-    tier: str
     findings: tuple[Finding, ...]
-    checked_rules: tuple[str, ...]
-    skipped_rules: tuple[str, ...]
+    fully_checked_rules: tuple[str, ...]
+    partially_checked_rules: tuple[str, ...]
+    untested_rules: tuple[str, ...]
+    checker_rules: tuple[str, ...]
+    coverage_by_machine_checkability: dict[str, tuple[str, ...]]
     readability: dict[str, float]
 
     @property
@@ -180,26 +121,56 @@ class LintReport:
         )
 
     @property
-    def blocked(self) -> tuple[Finding, ...]:
+    def candidates(self) -> tuple[Finding, ...]:
         return tuple(
-            finding for finding in self.findings if finding.kind == "blocked"
+            finding for finding in self.findings if finding.kind == "candidate"
         )
+
+    @property
+    def unresolved_facts(self) -> tuple[Finding, ...]:
+        return tuple(
+            finding
+            for finding in self.findings
+            if finding.kind in {"unresolved", "skipped"}
+        )
+
+    @property
+    def result(self) -> str:
+        return "fail" if self.errors else "pass"
 
     def to_json(self) -> dict[str, object]:
         return {
             "path": self.path,
             "itws_version": self.itws_version,
             "profile": self.profile,
-            "conformance_tier": self.tier,
+            "result": self.result,
             "counts": {
                 "findings": len(self.findings),
                 "errors": len(self.errors),
-                "blocked": len(self.blocked),
-                "checked_rules": len(self.checked_rules),
-                "skipped_rules": len(self.skipped_rules),
+                "candidates": len(self.candidates),
+                "unresolved_facts": len(self.unresolved_facts),
+                "fully_checked_rules": len(self.fully_checked_rules),
+                "partially_checked_rules": len(self.partially_checked_rules),
+                "untested_rules": len(self.untested_rules),
             },
             "readability": self.readability,
-            "checked_rules": list(self.checked_rules),
-            "skipped_rules": list(self.skipped_rules),
+            "coverage": {
+                "fully_checked_rules": list(self.fully_checked_rules),
+                "partially_checked_rules": list(self.partially_checked_rules),
+                "untested_rules": list(self.untested_rules),
+                "checker_rules": list(self.checker_rules),
+                "by_machine_checkability": {
+                    state: list(rule_ids)
+                    for state, rule_ids in sorted(
+                        self.coverage_by_machine_checkability.items()
+                    )
+                },
+            },
+            "candidates": [
+                finding.to_json() for finding in self.candidates
+            ],
+            "unresolved_facts": [
+                finding.to_json() for finding in self.unresolved_facts
+            ],
             "findings": [finding.to_json() for finding in self.findings],
         }

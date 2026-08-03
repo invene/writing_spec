@@ -32,7 +32,7 @@ def main() -> int:
     baseline = catalog.get_reader_baseline(args.profile)
 
     print(f"ITWS {catalog.version} — profile {profile['id']} ({profile['label']})")
-    print(f"minimum tier: {profile['minimum_tier']}")
+    print(f"shallow-model outcome: {profile.get('shallow_model_outcome', '')}")
     print(f"job: {profile['job']}")
 
     print("\nload set:")

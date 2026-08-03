@@ -10,6 +10,7 @@ from pathlib import Path
 from itws.analysis import validate_comment_judgments
 from itws.comments.adapter import PythonAdapter
 from itws.comments.changeset import (
+    CommentSetManifest,
     comment_scan_path,
     load_comment_set,
     structural_manifest,
@@ -25,6 +26,94 @@ FIXTURES = REPO_ROOT / "tests" / "fixtures" / "comments"
 
 def _load(relative: str):
     return load_comment_set(FIXTURES / relative / "carrier.json")
+
+
+def _delta_manifest(base: str, proposed: str):
+    """Build a manifest holding only the two extracted comment sets."""
+    adapter = PythonAdapter()
+    return CommentSetManifest(
+        carrier_path="memory/carrier.json",
+        declarations=None,
+        declaration_problems=(),
+        records=(),
+        base_source=base,
+        proposed_source=proposed,
+        base_units=tuple(adapter.extract_comments(base, "host.py")),
+        proposed_units=tuple(adapter.extract_comments(proposed, "host.py")),
+    )
+
+
+class TestCommentDeltas(unittest.TestCase):
+    """§4.13: a change set compares occurrences, not sets of comment text."""
+
+    def test_a_moved_comment_is_a_changed_unit(self) -> None:
+        base = (
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def first():\n    return 1\n\n\n"
+            "def second():\n    return 2\n"
+        )
+        proposed = (
+            "def first():\n    return 1\n\n\n"
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def second():\n    return 2\n"
+        )
+        manifest = _delta_manifest(base, proposed)
+        moved = manifest.moved_units()
+        self.assertEqual(len(moved), 1)
+        self.assertNotEqual(moved[0][0].span.start_line, moved[0][1].span.start_line)
+        self.assertEqual(len(manifest.changed_units()), 1)
+        self.assertEqual(manifest.removed_units(), ())
+
+    def test_a_second_identical_marker_is_a_changed_unit(self) -> None:
+        base = (
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def first():\n    return 1\n"
+        )
+        proposed = (
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def first():\n    return 1\n\n\n"
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def second():\n    return 2\n"
+        )
+        manifest = _delta_manifest(base, proposed)
+        self.assertEqual(len(manifest.changed_units()), 1)
+        self.assertEqual(manifest.removed_units(), ())
+
+    def test_a_dropped_duplicate_is_a_removed_unit(self) -> None:
+        base = (
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def first():\n    return 1\n\n\n"
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def second():\n    return 2\n"
+        )
+        proposed = (
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def first():\n    return 1\n\n\n"
+            "def second():\n    return 2\n"
+        )
+        manifest = _delta_manifest(base, proposed)
+        self.assertEqual(len(manifest.removed_units()), 1)
+        self.assertEqual(manifest.changed_units(), ())
+
+    def test_an_unchanged_set_reports_no_delta(self) -> None:
+        source = (
+            "# TODO(TASK-9): remove when the v2 endpoint lands\n"
+            "def first():\n    return 1\n"
+        )
+        manifest = _delta_manifest(source, source)
+        self.assertEqual(manifest.changed_units(), ())
+        self.assertEqual(manifest.removed_units(), ())
+        self.assertEqual(manifest.moved_units(), ())
+
+    def test_a_moved_bare_marker_is_still_uncovered(self) -> None:
+        """A move with no carrier record leaves the marker uncovered."""
+        base = "# TODO: fix later\ndef first():\n    return 1\n"
+        proposed = (
+            "def first():\n    return 1\n\n\n"
+            "# TODO: fix later\ndef second():\n    return 2\n"
+        )
+        manifest = _delta_manifest(base, proposed)
+        self.assertEqual(len(manifest.uncovered_markers()), 1)
 
 
 class TestPythonAdapter(unittest.TestCase):
@@ -108,34 +197,20 @@ class TestChangeSetExtraction(unittest.TestCase):
         self.assertEqual(comment_set.uncovered_markers(), ())
         self.assertEqual(comment_set.unmatched_records(), ())
         self.assertEqual(comment_set.anchor_problems(), ())
-        self.assertEqual(comment_set.stale_proposals(), ())
-        self.assertEqual(comment_set.open_dispositions(), ())
 
-    def test_provenance_is_declared_never_inferred(self) -> None:
-        """A comment with no record stays outside the governed set."""
+    def test_records_carry_no_assurance_provenance_fields(self) -> None:
         comment_set = _load("conforming")
-        human = [
-            record
-            for record in comment_set.records
-            if record.provenance == "human-authored"
-        ]
-        self.assertEqual(len(human), 1)
-        self.assertIsNone(human[0].proposal)
-        machine = [
-            record
-            for record in comment_set.records
-            if record.provenance == "ai-proposed"
-        ]
-        self.assertEqual(len(machine), 1)
-        self.assertIsNotNone(machine[0].proposal)
+        for record in comment_set.records:
+            payload = record.to_json()
+            for key in (
+                "provenance",
+                "proposal",
+                "disposition",
+                "conformance_tier",
+            ):
+                self.assertNotIn(key, payload)
 
-    def test_stale_hashes_are_detected(self) -> None:
-        comment_set = _load("violations/stale-proposal")
-        messages = [message for _, message in comment_set.stale_proposals()]
-        self.assertTrue(any("comment hash is stale" in item for item in messages))
-        self.assertTrue(any("anchor hash is stale" in item for item in messages))
-
-    def test_recorded_source_hash_mismatch_blocks(self) -> None:
+    def test_recorded_source_hash_mismatch_is_structural(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             directory = Path(raw)
             carrier = FIXTURES / "conforming" / "carrier.json"
@@ -216,7 +291,19 @@ class TestJudgmentsAndCollisions(unittest.TestCase):
         )
         problems = validate_comment_judgments(comment_set, known_rules=["4.13.6"])
         self.assertTrue(any("unknown comment ID" in item for item in problems))
-        self.assertTrue(any("cites no rule" in item for item in problems))
+        comment_set.judgments = (
+            {
+                "kind": "conflict",
+                "value": "code disagrees",
+                "span_ids": ["C-1"],
+                "support": ["9.9.9"],
+                "state": "proposed",
+            },
+        )
+        problems = validate_comment_judgments(comment_set, known_rules=["4.13.6"])
+        self.assertTrue(
+            any("neither a known rule ID" in item for item in problems)
+        )
 
     def test_two_sets_writing_one_anchor_collide(self) -> None:
         left = _load("conforming")
@@ -230,52 +317,52 @@ class TestJudgmentsAndCollisions(unittest.TestCase):
         self.assertEqual(detect_comment_collisions([("a", left)]), [])
 
 
-class TestFourStateValidation(unittest.TestCase):
+class TestCommentValidation(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.spec = load_spec()
 
-    def _validate(self, relative: str, **evidence_fields):
-        from itws.lint.model import Evidence
-
-        evidence = Evidence(
-            self_check_recorded=True,
-            owner_review_recorded=True,
-            proxy_review_recorded=True,
-            reader_test_recorded=True,
-            artifacts_current=True,
-            lint_run_version=self.spec.version,
-            **evidence_fields,
-        )
+    def _validate(self, relative: str):
         return validate_comment_set(
             self.spec,
             FIXTURES / relative / "carrier.json",
             spec_dir=REPO_ROOT / "spec",
-            evidence=evidence,
             check_artifacts=False,
         )
 
     def test_bare_marker_fails(self) -> None:
         report = self._validate("violations/bare-marker")
-        self.assertEqual(report.state, "fail")
+        self.assertEqual(report.result, "fail")
+        rules = {finding.rule for finding in report.lint.errors}
+        self.assertIn("4.13.8", rules)
 
-    def test_unsupported_rationale_fails(self) -> None:
+    def test_unsupported_rationale_passes_machine_checks(self) -> None:
+        """A recorded basis-none reason satisfies the partial basis checker."""
         report = self._validate("violations/unsupported-rationale")
-        self.assertEqual(report.state, "fail")
-        rules = {finding.rule for finding in report.lint.errors}
-        self.assertIn("8.7.2", rules)
+        self.assertEqual(report.result, "pass", report.reasons)
 
-    def test_stale_proposal_fails(self) -> None:
-        report = self._validate("violations/stale-proposal")
-        self.assertEqual(report.state, "fail")
-        rules = {finding.rule for finding in report.lint.errors}
-        self.assertIn("8.7.4", rules)
-
-    def test_pending_disposition_blocks(self) -> None:
-        report = self._validate("blocked/pending-disposition")
-        self.assertEqual(report.state, "blocked")
+    def test_stale_recorded_hash_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            carrier = FIXTURES / "violations/stale-proposal" / "carrier.json"
+            payload = json.loads(carrier.read_text(encoding="utf-8"))
+            payload["proposed_hash"] = "sha256:deadbeef"
+            for name in ("retry_base.py", "retry_proposed.py"):
+                (directory / name).write_text(
+                    (FIXTURES / "violations/stale-proposal" / name).read_text(
+                        encoding="utf-8"
+                    ),
+                    encoding="utf-8",
+                )
+            target = directory / "carrier.json"
+            target.write_text(json.dumps(payload), encoding="utf-8")
+            report = validate_comment_set(
+                self.spec, target, spec_dir=REPO_ROOT / "spec", check_artifacts=False
+            )
+        self.assertEqual(report.result, "fail")
         self.assertTrue(
-            any("8.7.3" in reason for reason in report.reasons)
+            any("does not match" in p for p in report.structural_problems),
+            report.structural_problems,
         )
 
     def test_markdown_profile_carrier_fails(self) -> None:
@@ -295,8 +382,11 @@ class TestFourStateValidation(unittest.TestCase):
                 self.spec, target, spec_dir=REPO_ROOT / "spec",
                 check_artifacts=False,
             )
-        self.assertEqual(report.state, "fail")
-        self.assertTrue(any("§0.2.1" in reason for reason in report.reasons))
+        self.assertEqual(report.result, "fail")
+        self.assertTrue(
+            any("§0.2.1" in p for p in report.structural_problems),
+            report.structural_problems,
+        )
 
 
 class TestSerialization(unittest.TestCase):

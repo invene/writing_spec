@@ -32,7 +32,7 @@ python3 tools/itws_patch.py check --base <document>.md --proposed <rewritten>.md
 python3 tools/itws_validate.py --input <rewritten>.md
 ```
 
-Two obligations carry across every step. Cite a rule for every finding and every semantic judgment. Report a missing fact as missing instead of generating one.
+Three obligations carry across every step. Cite a rule for every finding and material semantic judgment. Report a missing fact instead of generating one. Continue around unresolved spans and return the best safe draft plus a missing-fact list.
 
 ## Maintainer session
 
@@ -52,7 +52,7 @@ A new or changed rule needs the complete §1.3 template, including the four §1.
 python3 tools/itws_annotate.py --spec-dir spec
 ```
 
-A new permanent rule ID needs one approving pass before it enters the registry:
+A new permanent rule ID enters the registry once it is assigned:
 
 ```text
 python3 tools/itws_index.py --spec-dir spec --update-registry
@@ -78,7 +78,7 @@ python3 tools/itws_check_all.py
 - Navigation metadata for any new or changed rule.
 - A regenerated Annex C and a regenerated catalog under `spec/generated/agent/`.
 - An Annex F row when the source framework or applicability changed.
-- An Annex G entry naming every affected rule ID, profile, tier, and reader assumption.
+- An Annex G entry naming every affected rule ID, profile, and reader assumption.
 - A version increment in `spec/00-front-matter.md` and in every current-version declaration.
 - A passing `python3 tools/itws_check_all.py`.
 
@@ -91,7 +91,9 @@ python3 tools/itws_check_all.py
 | `spec/annexes/` | Annexes A–G |
 | `spec/agent/README.md` | the consumer-session entry point |
 | `spec/generated/agent/` | the committed navigation catalog (generated) |
+| `assurance/` | optional, non-normative review and release guidance |
 | `itws/` | the parser, model, compiler, catalog, linter, and scaffolds |
+| `itws/assurance/` | optional assurance helpers; default lint and validation do not import them |
 | `tools/` | command-line entry points |
 | `examples/agent-scripts/` | copyable scripts for a consumer session |
 | `tests/` | the unit tests and the document fixtures |

@@ -1,6 +1,6 @@
 # `task` overlay
 
-**ITWS version:** 0.8.0-draft · **Minimum conformance tier:** `core`
+**ITWS version:** 0.10.0-draft
 
 **Job:** define the smallest independently acceptable tactical outcome.
 
@@ -8,27 +8,19 @@ A `task` normally states one user journey. An engineering-only `task` states acc
 
 ## Load set
 
-A writer, reviewer, or tool loads the following material for a `task` document:
+A writer, rewriting agent, or tool loads the following material for a `task` document:
 
-- The shared core in `spec/00-front-matter.md` through `spec/08-review-compliance-tooling.md`.
+- The shared core in `spec/00-front-matter.md` through `spec/08-textual-conformance-and-machine-checking.md`.
 - The shared annexes in `spec/annexes/`.
 - This directory: [reader.md](reader.md), [skeleton.md](skeleton.md), and [rules.md](rules.md).
 - The shared overlay module [../shared/work-item.md](../shared/work-item.md).
 
 No other profile overlay applies to a `task` document.
 
-## Scan-test outcome
+## Shallow-model outcome
 
-A scan test at every tier measures this shallow outcome (§4.12, §8.1): state the tactical outcome, classification, critical boundary, and integrated-acceptance status.
-
-## Reader-test outcome
-
-A publication-tier document measures this primary outcome (§8.3): reconstruct the user journey or engineering outcome, its paths, inherited invariants, completion conditions, and integrated acceptance.
-
-## Owner review focus
-
-The subject-matter owner focuses on paths, completion conditions, and integrated acceptance (§8.4).
+The scan path shall support this outcome (§4.12): state the tactical outcome, classification, critical boundary, and integrated-acceptance status.
 
 ## Examples
 
-Annex D contains one `task` example: D.11.
+Annex D contains two `task` examples: D.11 and D.23.

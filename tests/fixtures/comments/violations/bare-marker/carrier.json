@@ -1,7 +1,6 @@
 {
-  "itws_version": "0.8.0-draft",
+  "itws_version": "0.10.0-draft",
   "profile": "maintenance-comment",
-  "conformance_tier": "core",
   "change_set_id": "CS-2026-015",
   "host_adapter": "python",
   "base_path": "retry_base.py",
@@ -30,14 +29,13 @@
       "information_delta": "None; the marker names no work.",
       "basis": [],
       "lifecycle": "temporary",
-      "removal_condition": "",
-      "provenance": "human-authored"
+      "removal_condition": ""
     }
   ],
   "judgments": [],
   "open_questions": [],
   "conformance_evidence": {
-    "lint_run_version": "0.8.0-draft",
+    "lint_run_version": "0.10.0-draft",
     "self_check_recorded": true
   }
 }

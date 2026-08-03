@@ -2,7 +2,6 @@
 
 ITWS version: 0.5.1-draft
 Profile: decision-record
-Conformance tier: core
 
 <!-- Risk fixture: the document declares an earlier ITWS version than the -->
 <!-- checkout holds. Rule 8.6.2 rejects a result computed from a different -->

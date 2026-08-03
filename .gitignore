@@ -4,3 +4,6 @@ __pycache__/
 
 # Cursor editor planning state
 .cursor/
+
+# Evidence bundles written by tools/itws_check_all.py
+.itws-check/

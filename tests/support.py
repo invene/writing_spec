@@ -36,3 +36,36 @@ def catalog() -> Catalog:
 
 def conforming_documents() -> list[Path]:
     return sorted(CONFORMING.glob("*.md"))
+
+
+def rule_registry_ids() -> set[str]:
+    """Permanent rule IDs from the source-controlled registry."""
+    path = SPEC_DIR / "rule-ids.txt"
+    return {
+        line.strip()
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.startswith("#")
+    }
+
+
+def retired_rule_ids() -> set[str]:
+    """IDs reserved after process-rule retirement."""
+    path = SPEC_DIR / "retired-rule-ids.txt"
+    ids: set[str] = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        ids.add(stripped.split()[0])
+    return ids
+
+
+def registry_matches_spec() -> bool:
+    """True when the permanent registry equals active rules ∪ retired IDs."""
+    current = {rule.number for rule in spec().rules}
+    registry = rule_registry_ids()
+    retired = retired_rule_ids()
+    return (
+        registry == current | retired
+        and not (current & retired)
+    )

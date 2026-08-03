@@ -1,8 +1,7 @@
 # Epic E-7 proposal: reduce checkout abandonment after recoverable payment failures
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: epic
-Conformance tier: reviewed
 
 ## Summary
 

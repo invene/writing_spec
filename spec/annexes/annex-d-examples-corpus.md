@@ -1,6 +1,6 @@
 # Annex D — Examples corpus
 
-**Status:** v0.8.0-draft. The corpus has 25 paired examples, at least two for every ITWS profile.
+**Status:** v0.10.0-draft. The corpus has 25 paired examples, at least two for every ITWS profile.
 
 Both original research examples remain. The other 23 examples are constructed and cover every profile.
 
@@ -73,8 +73,10 @@ Before:
 
 After:
 
-> Language models that generate text sometimes state facts their input does not
-> support. We call these facts unsupported statements.
+> A *model* is a function plus many stored numeric settings, called parameters,
+> that determine how the function maps inputs to outputs. A model that generates
+> text sometimes states facts its input does not support. We call these facts
+> unsupported statements.
 >
 > We built VeriFrame, a system that checks each generated sentence against the
 > input before accepting it.
@@ -90,6 +92,7 @@ Annotation:
 
 - Section 2.6 requires deletion of these empty puffery terms: "revolutionized," "pivotal," "underscoring," "robust," "novel," "crucial," "remarkable," "showcasing," and "transformative." None describes this system (P5).
 - The passage uses "hallucination" before defining it. The rewrite uses a defined plain term under §2.3. The original term can be admitted later.
+- The passage also uses "models" in the machine-learning sense, which Annex B §B.3 lists as not assumed. The rewrite admits *model* with its Annex A definition before first use, as Rule 2.3.1 requires of an Annex A term.
 - "Doesn't just detect" and "it prevents" form negative parallelism under §3.10. The rewrite states what the system does.
 - "Serves as a crucial bridge" combines an inflated copula substitute with a metaphor. Section 3.10 requires its deletion.
 - "A remarkable 43% improvement" is a naked percentage under §5.4. The rewrite names the quantity, endpoints, comparison condition, and cost.
@@ -749,9 +752,9 @@ Annotation:
 ### Example D.18 — A report that reuses one symbol for two quantities
 Profile: technical-report
 Source: constructed
-Rules applied: 5.2.1, 5.2.2, 5.2.3, 5.3.1, 6.4.4
+Rules applied: 5.2.1, 5.2.2, 5.3.1
 Chunk types: mechanism, evidence
-Constructs: symbol, equation, figure
+Constructs: symbol, equation, table
 Repair operators: rename-conflicting-symbol, define-symbol-at-first-use, add-notation-table, add-plain-reading
 
 Before:
@@ -781,7 +784,7 @@ Annotation:
 - One symbol carried two meanings, which Rule 5.2.2 forbids in both directions.
 - Neither symbol was defined before use. Rule 5.2.1 requires a prose definition at or before first use.
 - The equation appeared without a reading. Rule 5.3.1 requires an adjacent plain-language reading, so the rewrite adds one sentence of reading and one of consequence.
-- Rule 5.2.3 requires a notation table above six symbols; this report has three, so the table here is an aid rather than a requirement. Adding it early keeps the document compliant as the symbol set grows.
+- Rule 5.2.3 requires a notation table above six symbols; this report has three, so the rule is not applied here and the table is an aid rather than a requirement. Adding it early keeps the document compliant as the symbol set grows.
 
 ### Example D.19 — A research limitation that understates what was untested
 Profile: research-paper
@@ -970,9 +973,9 @@ Annotation:
 ### Example D.24 — Machine narration that restates the code it annotates
 Profile: maintenance-comment
 Source: constructed
-Rules applied: 4.13.1, 4.13.2, 4.13.5, 8.7.1, 8.7.2
+Rules applied: 4.13.1, 4.13.2, 4.13.4, 4.13.5
 Chunk types: any
-Constructs: comment, proposal-record
+Constructs: comment
 Repair operators: delete-restated-code, state-information-delta, replace-inferred-intent-with-basis
 Preservation notes: the 250 ms retry delay; decision record DR-12 as the recorded basis
 
@@ -998,7 +1001,7 @@ Annotation:
 - "Increment the retry counter and sleep" restates the two lines below it. Rule 4.13.1 requires an information delta, and the delta here is the burst limit that the code cannot show.
 - "Ensures compliance with our performance requirements" names a requirement that exists nowhere. Rule 4.13.5 forbids intent inferred from the implementation alone; the rewrite cites the decision record that actually fixed the number.
 - One comment carried narration and an intent claim. Rule 4.13.2 gives the surviving comment one purpose, `rationale`.
-- The comment was machine-proposed, so Rule 8.7.1 requires a proposal record, and Rule 8.7.2 requires that record to cite DR-12 rather than its generation prompt.
+- Rule 4.13.4 requires the rationale to carry a durable basis; DR-12 supplies it.
 
 ### Example D.25 — A bare marker with no route back to its work
 Profile: maintenance-comment

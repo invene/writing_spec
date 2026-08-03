@@ -1,8 +1,7 @@
 # How a read cache reduces database load
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: explanation
-Conformance tier: core
 
 ## Summary
 

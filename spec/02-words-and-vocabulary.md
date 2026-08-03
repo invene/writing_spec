@@ -113,7 +113,7 @@ Sections 2.1–2.2 give the general word rules and permitted baseline. Sections 
 The ladder is this specification's core original mechanism. A document builds vocabulary as a program builds state: nothing is referenced before initialization. Each admitted term becomes a rung for the next definition. Section 5.2 applies the mechanism to mathematical symbols. Section 4.9 applies the same discipline to context.
 
 #### Rule 2.3.1 — Define before first use
-**Class:** mandatory · **Machine-checkable:** yes · **Source:** original
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** original
 **Constructs:** domain-term
 **Navigation:** target: term · chunks: definition · slots: any · layers: both · context: document · rewrite: review
 **Resources:** reads: chunk-text, term-ledger · writes: chunk-text, term-ledger
@@ -122,6 +122,8 @@ The ladder is this specification's core original mechanism. A document builds vo
 > A term outside Rule 2.2.1's permitted vocabulary **shall** be defined before first body use, including Annex A terms.
 
 **Rationale:** The reader climbs the ladder in reading order (P4). Use before definition forces the assumed reader to stall or continue with a gap. Every later sentence that uses the term inherits the gap.
+
+The rule is `partial` because the linter can decide only the part with a ledger behind it. An Annex A term used without admission, and a term the document admits after using it, are both mechanical. Whether an unfamiliar phrase is a domain term at all is a reader's judgment against Annex B, so the linter cannot flag every unadmitted term and the reader still checks the rest.
 
 **Compliant:** "A *quorum* is the smallest number of members that must agree before the cluster accepts a change. This cluster requires a quorum of three."
 **Non-compliant:** "The cluster requires a quorum of three. (Quorum is defined in §4.)"
@@ -290,7 +292,7 @@ Definitions live at two levels: per-document definitions written under §2.3–2
 **Resources:** reads: chunk-text, term-ledger · writes: chunk-text
 **Relations:** requires 2.3.1
 
-> A governed document **shall not** contradict an Annex A term's meaning in its definition or use.
+> A governed unit **shall not** contradict an Annex A term's meaning in its definition or use.
 
 **Rationale:** The glossary is one-word-one-meaning (P2) lifted from document scope to organization scope. A document that quietly redefines a canonical term breaks every reader who carries the canonical meaning between documents.
 
@@ -394,7 +396,7 @@ The rules in this section prohibit specific vocabulary-level patterns. Most show
 **Resources:** reads: chunk-text · writes: chunk-text
 **Relations:** pairs-with 2.6.3
 
-> Except in quotations or discussion, a governed document **shall not** use an item on the prohibited-word list.
+> Except in quotations or discussion, a governed unit **shall not** use an item on the prohibited-word list.
 
 **Rationale:** These words commonly carry generic significance instead of specific information (P5). Their source does not affect the prohibition. Conforming documents also avoid machine-generated phrasing. The list is **era-specific and living** because model-era vocabulary changes. For example, the 2023 list differs from the 2025 list. The list remains a versioned artifact under §2.5 and §0.8. The rule does not freeze the enumeration.
 
@@ -430,7 +432,7 @@ The rules in this section prohibit specific vocabulary-level patterns. Most show
 **Resources:** reads: chunk-text · writes: chunk-text
 **Relations:** validates 4.9.1
 
-> A governed document **shall not** use a covered marker or equivalent.
+> A governed unit **shall not** use a covered marker or equivalent.
 
 **Rationale:** These phrases expose prose written relative to a history the reader does not share. Section 4.9 owns the structural rule. That rule requires deletion or promotion to a framed prior. Rule 2.6.6 owns the phrase list so §8.2 can lint it.
 
@@ -528,7 +530,7 @@ The rule prohibits stacking. A linter reports a covered opener only when it appe
 **Resources:** reads: chunk-text · writes: chunk-text
 **Relations:** none
 
-> A governed document **shall not** contain a covered chat phrase or unfilled placeholder.
+> A governed unit **shall not** contain a covered chat phrase or unfilled placeholder.
 
 **Rationale:** These are tool-leakage artifacts: text addressed to a chat user or slots a template left empty. Their presence means the document was not read end-to-end by its author, which is a review failure before it is a style failure.
 
@@ -613,4 +615,4 @@ Covered external artifacts include libraries, tools, services, standards, models
 
 ---
 
-> **Drafting note (ITWS 0.8.0-draft):** The prohibited-word seed list in Rule 2.6.4 is a versioned linter asset. The inline list above is the ITWS 0.8.0-draft snapshot. Organization-specific naming conventions belong in a separately versioned policy layered on this shared core.
+> **Drafting note (ITWS 0.9.0-draft):** The prohibited-word seed list in Rule 2.6.4 is a versioned linter asset. The inline list above is the ITWS 0.9.0-draft snapshot. Organization-specific naming conventions belong in a separately versioned policy layered on this shared core.

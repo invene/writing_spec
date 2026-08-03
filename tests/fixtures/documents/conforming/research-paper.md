@@ -1,8 +1,7 @@
 # Checking generated sentences against their input before accepting them
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: research-paper
-Conformance tier: publication
 
 ## Abstract
 

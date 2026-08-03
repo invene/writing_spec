@@ -8,15 +8,17 @@ from tests.support import CONFORMING, PATCHES, catalog, spec
 
 from itws.analysis import (
     AgentAnalysis,
-    FoilResponse,
     LedgerEntry,
     OpenQuestion,
+    contradictions,
+    validate_analysis,
+)
+from itws.assurance.scan import (
+    FoilResponse,
     ScanKeyField,
     ScanTestKey,
     ScanTestRecord,
     StrengthenedFoil,
-    contradictions,
-    validate_analysis,
     validate_scan_test,
 )
 from itws.document import parse_document, scan_path
@@ -59,11 +61,13 @@ class TestAgentAnalysis(unittest.TestCase):
         )
 
     def test_a_judgment_without_a_citation_is_rejected(self) -> None:
-        self.analysis.classify([self.body[0].id], "evidence", [])
+        self.analysis.classify([self.body[0].id], "evidence", ["not-a-rule"])
         problems = validate_analysis(
             self.analysis, self.manifest, known_rules=self.known
         )
-        self.assertTrue(any("cites no rule" in p for p in problems))
+        self.assertTrue(
+            any("neither a known rule ID" in p for p in problems)
+        )
 
     def test_a_judgment_without_a_span_is_rejected(self) -> None:
         self.analysis.classify([], "claim", ["5.6.1"])
@@ -223,7 +227,7 @@ class TestScanTestRecords(unittest.TestCase):
             self.path,
             known_rules=self.known,
         )
-        self.assertTrue(any("accepts strengthened foil" in p for p in problems))
+        self.assertTrue(any("the scan response accepts foil" in p for p in problems))
 
     def test_a_stale_linked_source_hash_is_rejected(self) -> None:
         record = self._record()
@@ -243,7 +247,7 @@ class TestScanTestRecords(unittest.TestCase):
             self.path,
             known_rules=self.known,
         )
-        self.assertTrue(any("stale source hash" in p for p in problems))
+        self.assertTrue(any("missing or stale" in p for p in problems))
 
 
 class TestWorkPlan(unittest.TestCase):

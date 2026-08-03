@@ -15,14 +15,11 @@ from itws.jsonio import dumps, dumps_lines
 from itws.model import Relation, Rule, Specification, content_hash
 from itws.parser import parse_specification
 from itws.vocab import (
-    CHECKLIST_PASS_ORDER,
-    MINIMUM_TIER,
     PRECEDENCE_LAYERS,
     PROFILE_FAMILIES,
     PROFILE_IDS,
     PROFILE_SURFACES,
     SEVERITY_BY_CLASS,
-    TIERS,
     profile_families,
 )
 
@@ -147,11 +144,20 @@ def build_artifacts(spec: Specification) -> list[Artifact]:
                     "schema_version": SCHEMA_VERSION,
                     "shared": [item.to_json() for item in spec.baseline],
                     "profile_overlays": {
-                        profile.id: list(profile.reader_overlay)
+                        profile.id: [
+                            item.to_json() for item in profile.reader_overlay
+                        ]
                         for profile in spec.profiles
                     },
+                    # The supplement is the conditional grant of §0.3.4 only.
+                    # An exclusion beside it is not a supplement, and listing
+                    # one here would read as a grant.
                     "host_supplements": {
-                        profile.id: list(profile.reader_overlay)
+                        profile.id: [
+                            item.to_json()
+                            for item in profile.reader_overlay
+                            if item.conditional and item.is_assumed
+                        ]
                         for profile in spec.profiles
                         if profile.surface == "hosted-comment-set"
                     },
@@ -190,11 +196,6 @@ def build_artifacts(spec: Specification) -> list[Artifact]:
             {
                 "itws_version": spec.version,
                 "schema_version": SCHEMA_VERSION,
-                "permitted_tiers": [
-                    tier
-                    for tier in TIERS
-                    if TIERS.index(tier) >= TIERS.index(profile.minimum_tier)
-                ],
                 "families": list(profile_families(profile.id)),
                 "envelope": {
                     "rule_count": len(envelope),
@@ -204,17 +205,14 @@ def build_artifacts(spec: Specification) -> list[Artifact]:
                     "profile_scoped": [
                         rule.number for rule in envelope if rule.profiles
                     ],
-                    "by_checklist_pass": {
-                        name: [
+                    "by_machine_checkability": {
+                        state: [
                             rule.number
                             for rule in envelope
-                            if rule.checklist_pass == name
+                            if rule.machine_checkable == state
                         ]
-                        for name in CHECKLIST_PASS_ORDER
+                        for state in ("yes", "partial", "no")
                     },
-                    "gate_rules": [
-                        rule.number for rule in envelope if rule.part == "8"
-                    ],
                 },
             }
         )
@@ -246,7 +244,6 @@ def build_manifest(spec: Specification, artifacts: list[Artifact]) -> Artifact:
             family: list(members) for family, members in sorted(PROFILE_FAMILIES.items())
         },
         "profile_surfaces": dict(PROFILE_SURFACES),
-        "minimum_tiers": dict(MINIMUM_TIER),
         "counts": {
             "rules": len(spec.rules),
             "active_rules": sum(1 for rule in spec.rules if rule.is_active),
@@ -265,24 +262,20 @@ def build_manifest(spec: Specification, artifacts: list[Artifact]) -> Artifact:
 
 
 def check_envelope_agreement(spec: Specification) -> list[str]:
-    """Compare each profile manifest's envelope with checklist filtering.
-
-    The checklist generator and the profile manifest must resolve one rule
-    set. A disagreement means one of the two filters drifted.
-    """
+    """Confirm that every profile envelope follows rule applicability."""
     problems: list[str] = []
     for profile in PROFILE_IDS:
         envelope = {rule.number for rule in spec.envelope(profile)}
-        checklist = {
+        expected = {
             rule.number
             for rule in spec.rules
             if rule.is_active and rule.applies_to_profile(profile)
         }
-        if envelope != checklist:
-            missing = sorted(checklist - envelope)
-            extra = sorted(envelope - checklist)
+        if envelope != expected:
+            missing = sorted(expected - envelope)
+            extra = sorted(envelope - expected)
             problems.append(
-                f"{profile}: envelope and checklist disagree "
+                f"{profile}: envelope and applicability disagree "
                 f"(missing {missing}; extra {extra})"
             )
     return problems

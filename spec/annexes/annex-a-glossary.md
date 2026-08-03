@@ -1,6 +1,6 @@
 # Annex A — Glossary (normative, living)
 
-**Status:** v0.8.0-draft. This living annex contains 24 admitted entries.
+**Status:** v0.10.0-draft. This living annex contains 24 admitted entries.
 
 Maintainers add, revise, and deprecate entries under §2.5. They version each change under §0.8.
 
@@ -108,11 +108,12 @@ Version:               added in v0.1
 
 ### gradient (noun) — admitted
 ```
-Definition:            For each model parameter, the direction and relative amount that would
-                       reduce the loss fastest after a small parameter change. Training computes
-                       this direction and amount from the loss.
-Approved example:      Each training step adjusts every parameter a small amount in the
-                       direction given by the gradient.
+Definition:            For each trainable model parameter, the direction and relative amount
+                       that would raise the loss fastest after a small parameter change.
+                       Training computes this from the loss and then moves each parameter the
+                       opposite way, which is the direction that reduces the loss.
+Approved example:      Each training step adjusts every trainable parameter a small amount in
+                       the direction opposite the gradient.
 Do not use for / say:  Do not use "gradient" loosely for "trend" or "slope of a plot." This entry
                        admits the operational sense, not the calculus definition as a vector of
                        partial derivatives.

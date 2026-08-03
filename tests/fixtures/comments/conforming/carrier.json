@@ -1,7 +1,6 @@
 {
-  "itws_version": "0.8.0-draft",
+  "itws_version": "0.10.0-draft",
   "profile": "maintenance-comment",
-  "conformance_tier": "core",
   "change_set_id": "CS-2026-014",
   "host_adapter": "python",
   "base_path": "retry_base.py",
@@ -31,21 +30,7 @@
       "basis": [
         "decision record DR-12"
       ],
-      "lifecycle": "durable",
-      "provenance": "ai-proposed",
-      "proposal": {
-        "prompt_provenance": "Prompt recorded in the change request: state why the retry pause is 250 ms.",
-        "bases": [
-          "decision record DR-12",
-          "test T-7"
-        ],
-        "source_hash": "sha256:07612075a756da73c13a7f0ab30a59c377e17060f2174de4bffa7e4cc59a00c8",
-        "anchor_hash": "sha256:6744258ae0fd29970db66defa3c43e59b9fc9f3a446205666cb7dc20bf162fe7",
-        "comment_hash": "sha256:efe71825555b9736ad5ae89329f8073fc42be02cba2de829a21fb668ecef9196",
-        "disposition": "accepted",
-        "disposed_by": "R. Alvarez",
-        "disposed_on": "2026-07-29"
-      }
+      "lifecycle": "durable"
     },
     {
       "comment_id": "C-2",
@@ -68,8 +53,7 @@
         "work item TASK-142"
       ],
       "lifecycle": "temporary",
-      "removal_condition": "The v2 totals endpoint is live and test T-9 passes against it.",
-      "provenance": "human-authored"
+      "removal_condition": "The v2 totals endpoint is live and test T-9 passes against it."
     }
   ],
   "judgments": [
@@ -87,7 +71,7 @@
   ],
   "open_questions": [],
   "conformance_evidence": {
-    "lint_run_version": "0.8.0-draft",
+    "lint_run_version": "0.10.0-draft",
     "self_check_recorded": true
   }
 }

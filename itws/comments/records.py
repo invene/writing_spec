@@ -14,11 +14,8 @@ from itws.model import SourceSpan, content_hash
 from itws.vocab import (
     COMMENT_CHANGES,
     COMMENT_LIFECYCLES,
-    COMMENT_PROVENANCES,
     COMMENT_PURPOSES,
     HOST_ADAPTERS,
-    PROPOSAL_DISPOSITIONS,
-    TIERS,
 )
 
 #: A durable work-item or issue reference inside a marker, such as
@@ -55,32 +52,6 @@ class HostAnchor:
             "end_line": self.end_line,
             "construct": self.construct,
             "anchor_hash": self.anchor_hash,
-        }
-
-
-@dataclass(frozen=True)
-class CommentProposalRecord:
-    """The §8.7 record behind one machine-proposed comment."""
-
-    prompt_provenance: str
-    bases: tuple[str, ...]
-    source_hash: str
-    anchor_hash: str
-    comment_hash: str
-    disposition: str
-    disposed_by: str
-    disposed_on: str
-
-    def to_json(self) -> dict[str, object]:
-        return {
-            "prompt_provenance": self.prompt_provenance,
-            "bases": list(self.bases),
-            "source_hash": self.source_hash,
-            "anchor_hash": self.anchor_hash,
-            "comment_hash": self.comment_hash,
-            "disposition": self.disposition,
-            "disposed_by": self.disposed_by,
-            "disposed_on": self.disposed_on,
         }
 
 
@@ -135,8 +106,6 @@ class CommentRecord:
     basis_none_reason: str
     lifecycle: str
     removal_condition: str
-    provenance: str
-    proposal: CommentProposalRecord | None
 
     @property
     def text_hash(self) -> str:
@@ -156,8 +125,6 @@ class CommentRecord:
             "basis_none_reason": self.basis_none_reason,
             "lifecycle": self.lifecycle,
             "removal_condition": self.removal_condition,
-            "provenance": self.provenance,
-            "proposal": self.proposal.to_json() if self.proposal else None,
         }
         return payload
 
@@ -168,7 +135,6 @@ class CommentSetDeclarations:
 
     itws_version: str
     profile: str
-    tier: str
     change_set_id: str
     host_adapter: str
     base_path: str
@@ -182,7 +148,6 @@ class CommentSetDeclarations:
         return {
             "itws_version": self.itws_version,
             "profile": self.profile,
-            "conformance_tier": self.tier,
             "change_set_id": self.change_set_id,
             "host_adapter": self.host_adapter,
             "base_path": self.base_path,
@@ -230,10 +195,6 @@ def parse_declarations(
     declarations = CommentSetDeclarations(
         itws_version=_string(payload, "itws_version", problems),
         profile=_string(payload, "profile", problems),
-        tier=_closed(
-            _string(payload, "conformance_tier", problems), TIERS,
-            "conformance_tier", problems,
-        ),
         change_set_id=_string(payload, "change_set_id", problems),
         host_adapter=_closed(
             _string(payload, "host_adapter", problems), HOST_ADAPTERS,
@@ -282,33 +243,6 @@ def _parse_anchor(payload: dict, problems: list[str], label: str) -> HostAnchor:
     return record
 
 
-def _parse_proposal(
-    payload: dict, problems: list[str], label: str
-) -> CommentProposalRecord | None:
-    proposal = payload.get("proposal")
-    if proposal is None:
-        return None
-    if not isinstance(proposal, dict):
-        problems.append(f"{label}: proposal must be an object")
-        return None
-    local: list[str] = []
-    record = CommentProposalRecord(
-        prompt_provenance=_string(proposal, "prompt_provenance", local),
-        bases=_string_list(proposal, "bases", local),
-        source_hash=_string(proposal, "source_hash", local),
-        anchor_hash=_string(proposal, "anchor_hash", local),
-        comment_hash=_string(proposal, "comment_hash", local),
-        disposition=_closed(
-            _string(proposal, "disposition", local), PROPOSAL_DISPOSITIONS,
-            "disposition", local,
-        ),
-        disposed_by=_string(proposal, "disposed_by", local, required=False),
-        disposed_on=_string(proposal, "disposed_on", local, required=False),
-    )
-    problems.extend(f"{label}: {problem}" for problem in local)
-    return record
-
-
 def parse_comment_records(
     payload: dict, proposed_path: str, problems: list[str]
 ) -> tuple[CommentRecord, ...]:
@@ -352,11 +286,6 @@ def parse_comment_records(
                 "lifecycle", local,
             ),
             removal_condition=_string(raw, "removal_condition", local, required=False),
-            provenance=_closed(
-                _string(raw, "provenance", local), COMMENT_PROVENANCES,
-                "provenance", local,
-            ),
-            proposal=_parse_proposal(raw, local, label),
         )
         problems.extend(f"{label}: {problem}" for problem in local)
         records.append(record)

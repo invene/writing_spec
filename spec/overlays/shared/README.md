@@ -1,6 +1,6 @@
 # Shared overlay modules
 
-**ITWS version:** 0.8.0-draft
+**ITWS version:** 0.10.0-draft
 
 A shared overlay module holds rules that apply to several profiles in one profile family. Section 1.5 defines the placement policy that assigns a rule to this directory.
 

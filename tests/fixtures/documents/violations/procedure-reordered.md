@@ -1,8 +1,7 @@
 # Replace the worker binary on one host
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: procedure
-Conformance tier: reviewed
 
 <!-- Risk fixture: a safety dependency is reordered. The Verification and -->
 <!-- Rollback slots appear before Steps, which §4.4.1 forbids. -->

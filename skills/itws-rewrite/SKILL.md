@@ -1,6 +1,6 @@
 ---
 name: itws-rewrite
-description: Rewrite a document so it conforms to the Invene Technical Writing Specification (ITWS). Use when asked to make a design RFC, decision record, runbook, explanation, incident report, technical report, research paper, investigation log, epic, task, or subtask conform to ITWS, when asked to review a document against ITWS rules, or when asked to govern the code comments a change adds or edits (the maintenance-comment profile).
+description: Rewrite a document so it conforms to the Invene Technical Writing Specification (ITWS). Use when asked to make a design RFC, decision record, runbook, explanation, incident report, technical report, research paper, investigation log, epic, task, or subtask conform to ITWS, when asked to review a document against ITWS rules, or when asked to govern the code comments a change adds, edits, or removes (the maintenance-comment profile).
 ---
 
 # Rewrite a document to conform to ITWS
@@ -23,20 +23,20 @@ It points you at one repository and one entry point. The repository holds the sp
 
 4. **Pick the profile.** If the document declares one, use it. If not, choose from `spec/overlays/README.md`, and say which one you chose and why. Ask if two profiles fit equally.
 
-5. **Work through the sequence in the entry point.** Load the profile envelope, index the document, extract its scan path, read and classify it yourself, navigate to the triggered rules, rewrite, guard the patch, and validate. Compare the scan path with the exact layer, but do not present that agent comparison as a human scan test.
+5. **Work through the sequence in the entry point.** Load the language envelope, index the document, extract its scan path, read and classify it yourself, navigate to the triggered rules, rewrite, guard the patch, and validate. Produce the best safe draft even when one span has an unresolved fact.
 
-6. **For a comment change set, use the comment sequence instead.** A `maintenance-comment` unit is not a Markdown document: it is the governed comments changed in one host source file, declared by a JSON carrier. Follow §A.3.1 of the entry point and drive `python3 tools/itws_comment.py` through `index`, `scan-path`, `lint`, `stale`, and `validate`. Two obligations are specific to this surface: declare provenance rather than inferring it from prose style, and give every comment you drafted a §8.7 proposal record with durable bases and a pending human disposition — a person, not you, records `accepted` or `revised`.
+6. **For a comment change set, use the comment sequence instead.** A `maintenance-comment` unit is not a Markdown document: it is the governed comments changed in one host source file, declared by a JSON carrier. Follow §A.3.1 of the entry point and drive `python3 tools/itws_comment.py` through `index`, `scan-path`, `lint`, `stale`, and `validate`. Apply the same text rules regardless of authorship; no proposal disposition is needed to finish a rewrite.
 
 ## What you must not do
 
 - Do not edit anything under `spec/`, `itws/`, or `tools/`. Those belong to a maintainer session; see `AGENTS.md`.
 - Do not invent a threshold, a measurement, a source, or an acceptance condition. If one is missing, report it as missing.
 - Do not weaken or widen an exact statement to make a sentence shorter. Rule 3.1.4 requires a split; Rule 5.1.1 forbids the change.
-- Do not report `pass` when the validator reported `needs_review` or `blocked`.
-- Do not edit a comment or its code to resolve a disagreement between them. Rule 4.13.6 requires the conflict to be reported, and only an owner decides which side is wrong.
+- Do not report `pass` when the validator reported `fail`, and do not describe a machine `pass` as full semantic certification.
+- Do not edit a comment or its code merely to force agreement between them. Rule 4.13.6 requires preserving and reporting the local conflict while work continues elsewhere.
 
 ## What you owe
 
-- A rule citation for every finding and every semantic judgment.
-- The validation state you actually reached.
-- A named list of anything you could not resolve.
+- A rule citation for every finding and material semantic judgment.
+- The machine result and coverage summary you actually reached.
+- A best safe draft plus a named list of anything you could not resolve.

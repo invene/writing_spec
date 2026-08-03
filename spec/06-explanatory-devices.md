@@ -68,7 +68,7 @@ A worked example runs a mechanism, decision test, or procedure path on concrete 
 
 #### Rule 6.2.1 — Central mechanisms get a worked example
 **Class:** mandatory · **Machine-checkable:** no · **Source:** Carroll minimalism
-**Constructs:** worked-example
+**Constructs:** any
 **Navigation:** target: chunk · chunks: mechanism · slots: any · layers: plain · context: section · rewrite: review
 **Resources:** reads: chunk-text · writes: chunk-text
 **Relations:** pairs-with 5.3.1
@@ -153,7 +153,7 @@ An intuition block is a bounded, labeled span of informal explanation. The block
 
 > An intuition block **shall not** be the only location of an exact-content type.
 
-**Rationale:** Rule 6.3.2 extends ISO/IEC Directives Part 2's "notes shall not contain requirements" to every profile. Exact content hidden in an intuition block escapes evidence rules (§5.4, §5.6). The content may also escape required subject-matter review (§8.4). Block content must derive from the exact layer or remain removable without harm. A linter can flag calibrated phrases and normative keywords inside intuition blocks. A human must find unphrased exact content.
+**Rationale:** Rule 6.3.2 extends ISO/IEC Directives Part 2's "notes shall not contain requirements" to every profile. Exact content hidden in an intuition block escapes evidence rules (§5.4, §5.6) and ordinary reading paths. Block content must derive from the exact layer or remain removable without harm. A linter can flag calibrated phrases and normative keywords inside intuition blocks. A reader or agent must find unphrased exact content.
 
 **Compliant:**
 > **[Intuition — compatibility window]** Keeping both response fields for one release resembles briefly supporting two function signatures. Unlike local callers, network clients upgrade independently. Section 4.2 gives the exact compatibility invariant and removal date.
@@ -187,7 +187,7 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 
 #### Rule 6.4.1 — Diagram structures that prose cannot carry
 **Class:** recommended · **Machine-checkable:** no · **Source:** ISO/IEC/IEEE 26514 / IEC 82079-1
-**Constructs:** diagram
+**Constructs:** any
 **Navigation:** target: figure · chunks: any · slots: any · layers: plain · context: section · rewrite: review
 **Resources:** reads: chunk-text, figure-ledger · writes: figure-ledger
 **Relations:** pairs-with 6.4.2
@@ -240,7 +240,7 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 **Cross-references:** Rule 2.3.1, Rule 6.4.2, §8.2.
 
 #### Rule 6.4.4 — Diagrams carry alt text
-**Class:** recommended · **Machine-checkable:** yes · **Source:** Google style guide
+**Class:** recommended · **Machine-checkable:** partial · **Source:** Google style guide
 **Constructs:** diagram
 **Navigation:** target: figure · chunks: any · slots: any · layers: plain · context: local · rewrite: candidate
 **Resources:** reads: figure-ledger · writes: figure-ledger
@@ -249,6 +249,8 @@ The requirements adapt ISO/IEC/IEEE 26514 and IEC 82079-1 guidance on illustrati
 > Every diagram **should** carry alt text that states what the diagram shows, using the same admitted terms as its labels.
 
 **Rationale:** Some tools that display governed documents may not render images. Alt text also tests whether the diagram has one stateable point.
+
+The rule is `partial` because absence and emptiness are mechanical, and so is a bare placeholder such as `alt="diagram"`, which names the artifact instead of what it shows. Whether the text states the diagram's point in the same admitted terms as its labels is a reader's judgment.
 
 **Compliant:** `alt="Requests flow from gateway to queue to worker. Overload rejection occurs before the queue."`
 **Non-compliant:** `alt="diagram"`.
@@ -290,7 +292,7 @@ Prohibited restatement repeats recently read content without adding information.
 
 > A use meeting the distant-reuse trigger **should** include distant-reuse support.
 
-**Rationale:** The ladder admits a term once, but admission does not ensure retention (P1, P4). The 2,500-word threshold represents five Rule 4.8.1 pages. The threshold is provisional. Section 8.3 reader-testing results calibrate it.
+**Rationale:** The ladder admits a term once, but admission does not ensure retention (P1, P4). The 2,500-word threshold represents five Rule 4.8.1 pages. The threshold is provisional and may change when use evidence supports another value.
 
 **Compliant:** "The replay harness (§2.3: the tool that sends a recorded request set to a test deployment) reproduces the timeout in 92% of runs."
 **Non-compliant:** After more than 2,500 intervening words, "the replay harness" reappears bare. The assumed reader must re-derive its meaning.

@@ -41,14 +41,12 @@ from itws.vocab import (
     CONTEXT_SCOPES,
     LAYERS,
     MACHINE_CHECKABILITY,
-    MINIMUM_TIER,
     PROFILE_FAMILIES,
     PROFILE_IDS,
     PROFILE_LABELS,
     RESOURCES,
     REWRITE_GUIDANCE,
     RULE_CLASSES,
-    TIERS,
     profile_families,
     profile_surface,
     rule_sort_key,
@@ -134,22 +132,14 @@ EXAMPLE_FIELD_RE = re.compile(r"^(?P<key>[A-Za-z ]+): (?P<value>.+)$")
 
 # --- Overlay README syntax -------------------------------------------------
 
-OVERLAY_TIER_RE = re.compile(
-    r"^\*\*ITWS version:\*\* (?P<version>\S+) · "
-    r"\*\*Minimum conformance tier:\*\* `(?P<tier>core|reviewed|publication)`$",
+OVERLAY_VERSION_RE = re.compile(
+    r"^\*\*ITWS version:\*\* (?P<version>\S+)$",
     re.MULTILINE,
 )
 JOB_RE = re.compile(r"^\*\*Job:\*\* (?P<job>.+)$")
-SCAN_OUTCOME_RE = re.compile(
-    r"^A scan test at every tier measures this shallow outcome \(§4\.12, §8\.1\): "
+SHALLOW_MODEL_OUTCOME_RE = re.compile(
+    r"^The scan path shall support this outcome \(§4\.12\): "
     r"(?P<outcome>.+)$"
-)
-READER_OUTCOME_RE = re.compile(
-    r"^A publication-tier document measures this primary outcome \(§8\.3\): "
-    r"(?P<outcome>.+)$"
-)
-OWNER_FOCUS_RE = re.compile(
-    r"^The subject-matter owner focuses on (?P<focus>.+?) \(§8\.4\)\.$"
 )
 MODULE_LINK_RE = re.compile(r"\.\./shared/(?P<module>[a-z-]+)\.md")
 
@@ -712,9 +702,10 @@ def parse_phrase_lists(spec_dir: Path) -> list[PhraseListEntry]:
 
 
 def parse_profiles(spec_dir: Path) -> list[ProfileRecord]:
-    """Read each profile's job, tier, scan outcome, focus, and modules."""
+    """Read each profile's language contract and shared modules."""
     overlays = spec_dir / OVERLAY_DIRNAME
     records: list[ProfileRecord] = []
+    current_version, _ = read_version(spec_dir)
     for profile in PROFILE_IDS:
         readme = overlays / profile / "README.md"
         if not readme.is_file():
@@ -723,33 +714,30 @@ def parse_profiles(spec_dir: Path) -> list[ProfileRecord]:
         lines = text.splitlines()
         location = readme.relative_to(spec_dir.parent).as_posix()
 
-        tier_match = OVERLAY_TIER_RE.search(text)
-        if not tier_match:
-            raise SpecError(f"{readme}: missing version and tier metadata line")
-        if tier_match.group("tier") != MINIMUM_TIER[profile]:
+        version_match = OVERLAY_VERSION_RE.search(text)
+        if not version_match:
+            raise SpecError(f"{readme}: missing version metadata line")
+        if version_match.group("version") != current_version:
             raise SpecError(
-                f"{readme}: records tier {tier_match.group('tier')}; §0.4.3 "
-                f"requires {MINIMUM_TIER[profile]}"
+                f"{readme}: records ITWS version "
+                f"{version_match.group('version')}; expected {current_version}"
             )
 
         job = ""
-        scan_outcome = ""
-        reader_outcome = ""
-        owner_focus = ""
+        shallow_model_outcome = ""
         for line in lines:
             if not job and JOB_RE.match(line):
                 job = JOB_RE.match(line).group("job")
-            if not scan_outcome and SCAN_OUTCOME_RE.match(line):
-                scan_outcome = SCAN_OUTCOME_RE.match(line).group("outcome")
-            if not reader_outcome and READER_OUTCOME_RE.match(line):
-                reader_outcome = READER_OUTCOME_RE.match(line).group("outcome")
-            if not owner_focus and OWNER_FOCUS_RE.match(line):
-                owner_focus = OWNER_FOCUS_RE.match(line).group("focus")
+            if (
+                not shallow_model_outcome
+                and SHALLOW_MODEL_OUTCOME_RE.match(line)
+            ):
+                shallow_model_outcome = SHALLOW_MODEL_OUTCOME_RE.match(
+                    line
+                ).group("outcome")
         for field_name, value in (
             ("Job", job),
-            ("scan-test outcome", scan_outcome),
-            ("reader-test outcome", reader_outcome),
-            ("owner review focus", owner_focus),
+            ("shallow-model outcome", shallow_model_outcome),
         ):
             if not value:
                 raise SpecError(f"{readme}: missing {field_name}")
@@ -765,22 +753,20 @@ def parse_profiles(spec_dir: Path) -> list[ProfileRecord]:
         reader_path = overlays / profile / "reader.md"
         if not reader_path.is_file():
             raise SpecError(f"missing reader overlay: {reader_path}")
-        overlay_items = tuple(
-            line[2:].strip()
-            for line in reader_path.read_text(encoding="utf-8").splitlines()
-            if line.startswith("- ")
-        )
+        overlay_items = parse_reader_overlay(reader_path, spec_dir, profile)
+        if not overlay_items:
+            raise SpecError(
+                f"{reader_path}: the overlay states no reader convention; "
+                "Annex B §B.4 requires each overlay to state its own"
+            )
 
         records.append(
             ProfileRecord(
                 id=profile,
                 label=PROFILE_LABELS[profile],
-                minimum_tier=MINIMUM_TIER[profile],
                 surface=profile_surface(profile),
                 job=job,
-                scan_outcome=scan_outcome,
-                reader_outcome=reader_outcome,
-                owner_focus=owner_focus,
+                shallow_model_outcome=shallow_model_outcome,
                 modules=modules,
                 directory=f"spec/overlays/{profile}",
                 reader_overlay=overlay_items,
@@ -1097,34 +1083,165 @@ def validate_glossary_graph(path: Path, entries: list[GlossaryEntry]) -> None:
         visit(term, [])
 
 
+#: Wording that marks a line as stating what the reader does *not* know.
+#: Section 0.3.3 resolves every borderline case the same way, so a cue that
+#: fires wrongly can only move an item out of the assumed set, never into it.
+NEGATIVE_BASELINE_RE = re.compile(
+    r"not assume|does not admit|remain(?:s)? unassumed|remains unavailable|"
+    r"requires? admission|\bAdmit\b|not in the baseline|shall not use|"
+    r"not assumed to know|grants nothing else|not knowledge",
+    re.IGNORECASE,
+)
+
+#: Wording that makes a grant depend on a declaration rather than hold
+#: outright, as the §0.3.4 host-language supplement does.
+CONDITIONAL_GRANT_RE = re.compile(r"\bconditional\b|\bWhen\b")
+
+#: Sections of Annex B that carry baseline items. §B.4 is the profile
+#: registry and §B.5 is the change process; neither states an assumption.
+BASELINE_SECTION_POLARITY: dict[str, tuple[str, str]] = {
+    "B.1": ("assumed", "concept"),
+    "B.2": ("assumed", "notation"),
+    "B.3": ("excluded", "concept"),
+}
+
+
 def parse_reader_baseline(spec_dir: Path) -> list[BaselineItem]:
-    """Parse Annex B assumptions, notation, and explicit exclusions."""
+    """Parse Annex B assumptions, notation, and explicit exclusions.
+
+    Each item records whether the reader is assumed to hold it. A bullet
+    takes the polarity of the group it sits under. A prose line becomes an
+    item only when it carries a negative cue, because §B.1 and §B.2 mix
+    exclusions into otherwise positive sections and the surrounding
+    commentary states no assumption at all.
+    """
     path = spec_dir / "annexes" / "annex-b-assumed-reader-baseline.md"
     lines = path.read_text(encoding="utf-8").splitlines()
     location = path.relative_to(spec_dir.parent).as_posix()
     items: list[BaselineItem] = []
     section = ""
     group = ""
+    default_polarity = "assumed"
+    kind = "concept"
+    polarity = "assumed"
+
     for index, line in enumerate(lines):
+        stripped = line.strip()
         if line.startswith("## B."):
             section = line[3:].strip()
+            number = section.split()[0]
+            default_polarity, kind = BASELINE_SECTION_POLARITY.get(
+                number, ("", "")
+            )
+            polarity = default_polarity
             group = ""
             continue
-        if line.endswith(":") and not line.startswith(("-", "|", "#")):
-            group = line[:-1].strip()
+        if not section or not default_polarity:
             continue
-        if line.startswith("- ") and section:
-            category = section if not group else f"{section} — {group}"
+        if stripped.endswith(":") and not stripped.startswith(("-", "|", "#")):
+            group = stripped[:-1].strip()
+            # A new group restores the section's own polarity, so a negative
+            # aside cannot leak into the list that follows it.
+            polarity = default_polarity
+            if NEGATIVE_BASELINE_RE.search(group):
+                polarity = "excluded"
+            continue
+
+        category = section if not group else f"{section} — {group}"
+        if stripped.startswith("- "):
             items.append(
                 BaselineItem(
                     category=category,
-                    text=line[2:].strip(),
+                    text=stripped[2:].strip(),
                     span=SourceSpan(location, index + 1, index + 1),
+                    polarity=polarity,
+                    kind=kind,
                 )
             )
+            continue
+        if not stripped or stripped.startswith(("|", "#", "**")):
+            continue
+        if NEGATIVE_BASELINE_RE.search(stripped):
+            items.append(
+                BaselineItem(
+                    category=category,
+                    text=stripped,
+                    span=SourceSpan(location, index + 1, index + 1),
+                    polarity="excluded",
+                    kind=kind,
+                )
+            )
+            # Bullets that follow an exclusion sentence with no group
+            # heading of their own continue that exclusion.
+            polarity = "excluded"
+
     if not items:
         raise SpecError(f"{path}: no baseline items found")
+    if not any(item.is_assumed for item in items):
+        raise SpecError(f"{path}: no assumed baseline item was parsed")
     return items
+
+
+def parse_reader_overlay(
+    path: Path, spec_dir: Path, profile: str
+) -> tuple[BaselineItem, ...]:
+    """Parse one profile's `reader.md` into polarity-bearing records.
+
+    An overlay adds document conventions, and one overlay adds the §0.3.4
+    host-language supplement. Both appear as prose, as bullets, or as both,
+    so the parser reads all three and keeps each item's polarity with it.
+    """
+    lines = path.read_text(encoding="utf-8").splitlines()
+    location = path.relative_to(spec_dir.parent).as_posix()
+    section = f"B.4 {profile}"
+    items: list[BaselineItem] = []
+    lead_in = ""
+    polarity = "assumed"
+    conditional = False
+
+    def category() -> str:
+        return f"{section} — {lead_in}" if lead_in else section
+
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped or stripped.startswith(("#", "**", "|")):
+            continue
+        if stripped.endswith(":"):
+            # The clause nearest the list is the one that introduces it.
+            lead_in = stripped[:-1].strip().split(". ")[-1].strip()
+            polarity = (
+                "excluded" if NEGATIVE_BASELINE_RE.search(stripped) else "assumed"
+            )
+            # A grant introduced by a condition holds only while it does.
+            conditional = bool(CONDITIONAL_GRANT_RE.search(stripped))
+            continue
+        if stripped.startswith("- "):
+            items.append(
+                BaselineItem(
+                    category=category(),
+                    text=stripped[2:].strip(),
+                    span=SourceSpan(location, index + 1, index + 1),
+                    polarity=polarity,
+                    kind="host-supplement" if conditional else "convention",
+                    conditional=conditional,
+                )
+            )
+            continue
+        if stripped.startswith("The reader "):
+            items.append(
+                BaselineItem(
+                    category=section,
+                    text=stripped,
+                    span=SourceSpan(location, index + 1, index + 1),
+                    polarity=(
+                        "excluded"
+                        if NEGATIVE_BASELINE_RE.search(stripped)
+                        else "assumed"
+                    ),
+                    kind="convention",
+                )
+            )
+    return tuple(items)
 
 
 # ---------------------------------------------------------------------------

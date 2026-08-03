@@ -1,4 +1,4 @@
-"""Checks for the hosted comment-set surface (§4.13, §8.7).
+"""Checks for the hosted comment-set surface (§4.13).
 
 Every checker here reads the :class:`itws.comments.CommentSetManifest` that
 the runner supplies for a `maintenance-comment` unit. Each checker reports
@@ -78,7 +78,7 @@ def carrier_declarations(context: LintContext) -> Iterable[Finding]:
                 Finding(
                     rule="4.3.1",
                     severity=context.severity_for("4.3.1"),
-                    kind="blocked",
+                    kind="violation",
                     message=(
                         "a maintenance-comment unit is a hosted comment set; "
                         "supply its declaration carrier (§0.2.1, §4.3.1)"
@@ -227,64 +227,3 @@ def scan_path_check(context: LintContext) -> Iterable[Finding]:
         for problem in path["problems"]
     ]
 
-
-@register("8.7.1", name="proposal-coverage")
-def proposal_coverage(context: LintContext) -> Iterable[Finding]:
-    """Every ai-proposed comment carries one proposal record."""
-    comment_set = _comment_set(context)
-    if comment_set is None:
-        return []
-    return _record_findings(
-        context, "8.7.1", "violation", "proposal-coverage",
-        comment_set.proposal_coverage_problems(), "Rule 8.7.1",
-    )
-
-
-@register("8.7.2", name="proposal-bases")
-def proposal_bases(context: LintContext) -> Iterable[Finding]:
-    """Every proposal record cites a durable basis beyond its prompt."""
-    comment_set = _comment_set(context)
-    if comment_set is None:
-        return []
-    return _record_findings(
-        context, "8.7.2", "violation", "proposal-bases",
-        comment_set.proposal_basis_problems(), "Rule 8.7.2",
-    )
-
-
-@register("8.7.3", name="proposal-disposition")
-def proposal_disposition(context: LintContext) -> Iterable[Finding]:
-    """No pass while a proposal lacks an accepted or revised disposition."""
-    comment_set = _comment_set(context)
-    if comment_set is None:
-        return []
-    return [
-        _finding(
-            context,
-            "8.7.3",
-            "blocked",
-            (
-                f"comment {record.comment_id or '(unnamed)'}: the human "
-                f"disposition is "
-                f"{record.proposal.disposition if record.proposal else 'absent'!r}; "
-                "validation cannot report pass until a person records "
-                "accepted or revised (Rule 8.7.3)"
-            ),
-            record.span,
-            "proposal-disposition",
-            excerpt=record.text[:80],
-        )
-        for record in comment_set.open_dispositions()
-    ]
-
-
-@register("8.7.4", name="proposal-staleness")
-def proposal_staleness(context: LintContext) -> Iterable[Finding]:
-    """A disposition is invalid after a pinned hash ceases to match."""
-    comment_set = _comment_set(context)
-    if comment_set is None:
-        return []
-    return _record_findings(
-        context, "8.7.4", "violation", "proposal-staleness",
-        comment_set.stale_proposals(), "Rule 8.7.4",
-    )

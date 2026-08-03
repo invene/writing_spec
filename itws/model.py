@@ -11,11 +11,7 @@ import hashlib
 from dataclasses import dataclass, field, replace
 from typing import Iterable
 
-from itws.vocab import (
-    CHECKLIST_PASSES,
-    SEVERITY_BY_CLASS,
-    rule_sort_key,
-)
+from itws.vocab import SEVERITY_BY_CLASS, rule_sort_key
 
 
 @dataclass(frozen=True, order=True)
@@ -150,11 +146,6 @@ class Rule:
         return SEVERITY_BY_CLASS[self.rule_class]
 
     @property
-    def checklist_pass(self) -> str | None:
-        """Self-check pass under §8.1, or ``None`` for a Part 8 gate rule."""
-        return CHECKLIST_PASSES.get(self.part)
-
-    @property
     def precedence_layer(self) -> int:
         """§1.4 layer at which this rule wins a collision.
 
@@ -192,7 +183,6 @@ class Rule:
             "navigation": self.navigation.to_json(),
             "relations": [relation.to_json() for relation in self.relations],
             "severity": self.severity,
-            "checklist_pass": self.checklist_pass,
             "precedence_layer": self.precedence_layer,
             "source_span": self.span.to_json(),
         }
@@ -402,19 +392,16 @@ class Example:
 
 @dataclass(frozen=True)
 class ProfileRecord:
-    """One profile's job, reader overlay, outcomes, tier, and review focus."""
+    """One profile's language contract and reader overlay."""
 
     id: str
     label: str
-    minimum_tier: str
     surface: str
     job: str
-    scan_outcome: str
-    reader_outcome: str
-    owner_focus: str
+    shallow_model_outcome: str
     modules: tuple[str, ...]
     directory: str
-    reader_overlay: tuple[str, ...]
+    reader_overlay: tuple["BaselineItem", ...]
     span: SourceSpan
 
     @property
@@ -428,7 +415,7 @@ class ProfileRecord:
             "spec/05-mathematical-and-empirical-content.md",
             "spec/06-explanatory-devices.md",
             "spec/07-limitations-caveats-interpretation.md",
-            "spec/08-review-compliance-tooling.md",
+            "spec/08-textual-conformance-and-machine-checking.md",
             "spec/annexes/annex-a-glossary.md",
             "spec/annexes/annex-b-assumed-reader-baseline.md",
             "spec/annexes/annex-c-rule-index.md",
@@ -448,15 +435,12 @@ class ProfileRecord:
         return {
             "id": self.id,
             "label": self.label,
-            "minimum_tier": self.minimum_tier,
             "surface": self.surface,
             "job": self.job,
-            "scan_test_outcome": self.scan_outcome,
-            "reader_test_outcome": self.reader_outcome,
-            "owner_review_focus": self.owner_focus,
+            "shallow_model_outcome": self.shallow_model_outcome,
             "shared_modules": list(self.modules),
             "directory": self.directory,
-            "reader_overlay": list(self.reader_overlay),
+            "reader_overlay": [item.to_json() for item in self.reader_overlay],
             "load_set": list(self.load_set),
             "source_span": self.span.to_json(),
         }
@@ -464,16 +448,37 @@ class ProfileRecord:
 
 @dataclass(frozen=True)
 class BaselineItem:
-    """One Annex B assumption, exclusion, or notation entry."""
+    """One Annex B assumption, exclusion, or notation entry.
+
+    ``polarity`` is the field that makes the record usable. Annex B lists
+    what a reader knows and what a reader expressly does not know in the
+    same shape, and §0.3.3 turns the difference into an obligation: an item
+    that is not assumed must reach the reader through the §2.3 ladder. A
+    record without polarity cannot tell a checker which of the two it holds.
+
+    ``conditional`` marks a grant that depends on a declaration, such as the
+    §0.3.4 host-language supplement, which exists only once a carrier names
+    a host adapter.
+    """
 
     category: str
     text: str
     span: SourceSpan
+    polarity: str = "assumed"
+    kind: str = "concept"
+    conditional: bool = False
+
+    @property
+    def is_assumed(self) -> bool:
+        return self.polarity == "assumed"
 
     def to_json(self) -> dict[str, object]:
         return {
             "category": self.category,
             "text": self.text,
+            "polarity": self.polarity,
+            "kind": self.kind,
+            "conditional": self.conditional,
             "source_span": self.span.to_json(),
         }
 

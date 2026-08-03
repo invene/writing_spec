@@ -1,6 +1,6 @@
 {
-  "itws_version": "0.8.0-draft",
-  "schema_version": "1.1.0",
+  "itws_version": "0.10.0-draft",
+  "schema_version": "2.0.0",
   "entries": [
     {
       "term": "parameter",
@@ -97,8 +97,8 @@
       "term": "gradient",
       "part_of_speech": "noun",
       "status": "admitted",
-      "definition": "For each model parameter, the direction and relative amount that would reduce the loss fastest after a small parameter change. Training computes this direction and amount from the loss.",
-      "approved_example": "Each training step adjusts every parameter a small amount in the direction given by the gradient.",
+      "definition": "For each trainable model parameter, the direction and relative amount that would raise the loss fastest after a small parameter change. Training computes this from the loss and then moves each parameter the opposite way, which is the direction that reduces the loss.",
+      "approved_example": "Each training step adjusts every trainable parameter a small amount in the direction opposite the gradient.",
       "do_not_use": "Do not use \"gradient\" loosely for \"trend\" or \"slope of a plot.\" This entry admits the operational sense, not the calculus definition as a vector of partial derivatives.",
       "prerequisites": [
         "model",
@@ -114,7 +114,7 @@
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
         "start_line": 109,
-        "end_line": 123
+        "end_line": 124
       }
     },
     {
@@ -135,8 +135,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 125,
-        "end_line": 137
+        "start_line": 126,
+        "end_line": 138
       }
     },
     {
@@ -157,8 +157,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 139,
-        "end_line": 151
+        "start_line": 140,
+        "end_line": 152
       }
     },
     {
@@ -180,8 +180,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 153,
-        "end_line": 166
+        "start_line": 154,
+        "end_line": 167
       }
     },
     {
@@ -203,8 +203,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 168,
-        "end_line": 180
+        "start_line": 169,
+        "end_line": 181
       }
     },
     {
@@ -227,8 +227,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 182,
-        "end_line": 196
+        "start_line": 183,
+        "end_line": 197
       }
     },
     {
@@ -252,8 +252,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 198,
-        "end_line": 211
+        "start_line": 199,
+        "end_line": 212
       }
     },
     {
@@ -277,8 +277,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 213,
-        "end_line": 225
+        "start_line": 214,
+        "end_line": 226
       }
     },
     {
@@ -300,8 +300,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 227,
-        "end_line": 239
+        "start_line": 228,
+        "end_line": 240
       }
     },
     {
@@ -324,8 +324,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 241,
-        "end_line": 254
+        "start_line": 242,
+        "end_line": 255
       }
     },
     {
@@ -347,8 +347,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 256,
-        "end_line": 269
+        "start_line": 257,
+        "end_line": 270
       }
     },
     {
@@ -370,8 +370,8 @@
       "version": "added in v0.1",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 271,
-        "end_line": 282
+        "start_line": 272,
+        "end_line": 283
       }
     },
     {
@@ -400,8 +400,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 290,
-        "end_line": 303
+        "start_line": 291,
+        "end_line": 304
       }
     },
     {
@@ -430,8 +430,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 305,
-        "end_line": 318
+        "start_line": 306,
+        "end_line": 319
       }
     },
     {
@@ -460,8 +460,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 320,
-        "end_line": 332
+        "start_line": 321,
+        "end_line": 333
       }
     },
     {
@@ -489,8 +489,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 334,
-        "end_line": 346
+        "start_line": 335,
+        "end_line": 347
       }
     },
     {
@@ -520,8 +520,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 348,
-        "end_line": 361
+        "start_line": 349,
+        "end_line": 362
       }
     },
     {
@@ -553,8 +553,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 363,
-        "end_line": 376
+        "start_line": 364,
+        "end_line": 377
       }
     },
     {
@@ -587,8 +587,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 378,
-        "end_line": 391
+        "start_line": 379,
+        "end_line": 392
       }
     },
     {
@@ -617,8 +617,8 @@
       "version": "added in v0.2.0-draft",
       "source_span": {
         "path": "spec/annexes/annex-a-glossary.md",
-        "start_line": 393,
-        "end_line": 406
+        "start_line": 394,
+        "end_line": 407
       }
     }
   ]

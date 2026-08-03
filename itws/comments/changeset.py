@@ -2,14 +2,14 @@
 
 The manifest built here is the hosted-surface counterpart of
 :class:`itws.document.StructuralManifest`. It records extraction results,
-carrier matching, coverage, marker grammar, dispositions, and staleness.
+carrier matching, coverage, marker grammar, anchors, and source staleness.
 Semantic questions stay with a reader or agent (§1.6.1).
 """
 
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 from itws.comments.adapter import get_adapter
@@ -26,6 +26,16 @@ from itws.comments.records import (
 from itws.document import Declarations, SourceUnit, StructuralManifest
 from itws.model import SourceSpan, content_hash
 from itws.vocab import COMMENT_PURPOSES
+
+
+@dataclass(frozen=True)
+class _UnitDelta:
+    """One occurrence-aware comparison of base and proposed comments."""
+
+    added: tuple[CommentUnit, ...]
+    moved: tuple[tuple[CommentUnit, CommentUnit], ...]
+    removed: tuple[CommentUnit, ...]
+    unchanged: tuple[CommentUnit, ...]
 
 
 @dataclass
@@ -48,32 +58,74 @@ class CommentSetManifest:
     problems: tuple[str, ...] = ()
     judgments: tuple[dict, ...] = ()
     open_questions: tuple[dict, ...] = ()
-    conformance_evidence: dict = field(default_factory=dict)
 
     # ---- derived facts ----------------------------------------------------
 
     def governed_records(self) -> tuple[CommentRecord, ...]:
         return self.records
 
-    def changed_units(self) -> tuple[CommentUnit, ...]:
-        """Comment units present in the proposal but not the base."""
-        base_texts = {unit.text for unit in self.base_units if not unit.excluded}
-        return tuple(
-            unit
-            for unit in self.proposed_units
-            if not unit.excluded and unit.text not in base_texts
+    def _pair_units(self) -> "_UnitDelta":
+        """Pair base against proposed comments by text, then by position.
+
+        Membership alone loses two real changes. A comment whose text is
+        unchanged but whose host lines moved is attached to different code,
+        which Rule 4.13.3 governs. A second copy of an existing comment is a
+        new governed comment even though its text already occurs. Pairing
+        occurrences, rather than comparing sets, keeps both visible.
+        """
+        available: dict[str, list[CommentUnit]] = {}
+        for unit in self.base_units:
+            if not unit.excluded:
+                available.setdefault(unit.text, []).append(unit)
+
+        added: list[CommentUnit] = []
+        moved: list[tuple[CommentUnit, CommentUnit]] = []
+        unchanged: list[CommentUnit] = []
+        for unit in self.proposed_units:
+            if unit.excluded:
+                continue
+            pool = available.get(unit.text)
+            if not pool:
+                added.append(unit)
+                continue
+            # The nearest remaining occurrence keeps the pairing stable when
+            # one text repeats, so a move is reported once rather than twice.
+            partner = min(
+                pool,
+                key=lambda candidate: (
+                    abs(candidate.span.start_line - unit.span.start_line),
+                    candidate.span.start_line,
+                ),
+            )
+            pool.remove(partner)
+            if not pool:
+                available.pop(unit.text, None)
+            if partner.span.start_line == unit.span.start_line:
+                unchanged.append(unit)
+            else:
+                moved.append((partner, unit))
+
+        removed = [unit for pool in available.values() for unit in pool]
+        return _UnitDelta(
+            added=tuple(added),
+            moved=tuple(moved),
+            removed=tuple(sorted(removed, key=lambda unit: unit.span.start_line)),
+            unchanged=tuple(unchanged),
         )
 
+    def changed_units(self) -> tuple[CommentUnit, ...]:
+        """Comment units the proposal adds or attaches to different lines."""
+        delta = self._pair_units()
+        units = [*delta.added, *(proposed for _, proposed in delta.moved)]
+        return tuple(sorted(units, key=lambda unit: unit.span.start_line))
+
+    def moved_units(self) -> tuple[tuple[CommentUnit, CommentUnit], ...]:
+        """Base and proposed positions of each comment that kept its text."""
+        return self._pair_units().moved
+
     def removed_units(self) -> tuple[CommentUnit, ...]:
-        """Comment units present in the base but not the proposal."""
-        proposed_texts = {
-            unit.text for unit in self.proposed_units if not unit.excluded
-        }
-        return tuple(
-            unit
-            for unit in self.base_units
-            if not unit.excluded and unit.text not in proposed_texts
-        )
+        """Comment units the proposal drops, counting repeated text once each."""
+        return self._pair_units().removed
 
     def uncovered_markers(self) -> tuple[CommentUnit, ...]:
         """Changed markers with no carrier record (§4.3.3 coverage)."""
@@ -103,19 +155,28 @@ class CommentSetManifest:
         return tuple(problems)
 
     def anchor_problems(self) -> tuple[tuple[CommentRecord, str], ...]:
-        """Records whose anchor does not resolve or does not match."""
+        """Records whose anchor does not resolve or does not match.
+
+        Rule 4.13.3 resolves each anchor against the source its change kind
+        names. A removed comment is absent from the proposed source, so its
+        anchor resolves against the base source, where it still stood.
+        """
         if self.declarations is None:
             return ()
         adapter = get_adapter(self.declarations.host_adapter)
-        if adapter is None or not self.proposed_source:
+        if adapter is None:
             return ()
         problems: list[tuple[CommentRecord, str]] = []
         for record in self.records:
             if record.change == "removed":
+                source = self.base_source
+                source_path = self.declarations.base_path
+            else:
+                source = self.proposed_source
+                source_path = self.declarations.proposed_path
+            if not source:
                 continue
-            resolved = adapter.resolve_anchor(
-                self.proposed_source, self.declarations.proposed_path, record.span
-            )
+            resolved = adapter.resolve_anchor(source, source_path, record.span)
             anchor = record.anchor
             if not anchor.construct:
                 problems.append((record, "the record names no anchor construct"))
@@ -171,9 +232,14 @@ class CommentSetManifest:
         return tuple(problems)
 
     def marker_problems(self) -> tuple[tuple[str, SourceSpan, str], ...]:
-        """Changed markers that violate the Rule 4.13.8 grammar."""
+        """Retained markers that violate the Rule 4.13.8 grammar.
+
+        A removed marker is not checked. It is absent from the proposed
+        source, so requiring it to be complete would make deleting a bare
+        `TODO` a violation and leave keeping it as the conforming option.
+        """
         problems: list[tuple[str, SourceSpan, str]] = []
-        for unit in (*self.changed_units(), *self.removed_units()):
+        for unit in self.changed_units():
             if not unit.is_marker or not unit.text:
                 continue
             match = MARKER_GRAMMAR_RE.match(unit.text)
@@ -197,89 +263,8 @@ class CommentSetManifest:
                 )
         return tuple(problems)
 
-    def proposal_coverage_problems(self) -> tuple[tuple[CommentRecord, str], ...]:
-        problems: list[tuple[CommentRecord, str]] = []
-        for record in self.records:
-            if record.provenance == "ai-proposed" and record.proposal is None:
-                problems.append(
-                    (record, "provenance is ai-proposed with no proposal record")
-                )
-        return tuple(problems)
-
-    def proposal_basis_problems(self) -> tuple[tuple[CommentRecord, str], ...]:
-        problems: list[tuple[CommentRecord, str]] = []
-        for record in self.records:
-            proposal = record.proposal
-            if proposal is None:
-                continue
-            durable = [
-                basis
-                for basis in proposal.bases
-                if basis and basis != proposal.prompt_provenance
-            ]
-            if not durable:
-                problems.append(
-                    (
-                        record,
-                        "the proposal cites no durable basis beyond its "
-                        "generation prompt",
-                    )
-                )
-        return tuple(problems)
-
-    def open_dispositions(self) -> tuple[CommentRecord, ...]:
-        return tuple(
-            record
-            for record in self.records
-            if record.proposal is not None
-            and record.proposal.disposition not in {"accepted", "revised"}
-        )
-
-    def stale_proposals(self) -> tuple[tuple[CommentRecord, str], ...]:
-        """Proposal records whose pinned hashes no longer match."""
-        problems: list[tuple[CommentRecord, str]] = []
-        declarations = self.declarations
-        adapter = (
-            get_adapter(declarations.host_adapter) if declarations else None
-        )
-        proposed_hash = (
-            content_hash(self.proposed_source) if self.proposed_source else ""
-        )
-        for record in self.records:
-            proposal = record.proposal
-            if proposal is None:
-                continue
-            missing = [
-                name
-                for name, value in (
-                    ("source_hash", proposal.source_hash),
-                    ("anchor_hash", proposal.anchor_hash),
-                    ("comment_hash", proposal.comment_hash),
-                )
-                if not value
-            ]
-            if missing:
-                problems.append(
-                    (record, "the proposal pins no " + ", ".join(missing))
-                )
-                continue
-            if proposed_hash and proposal.source_hash != proposed_hash:
-                problems.append((record, "the pinned source hash is stale"))
-            if proposal.comment_hash != record.text_hash:
-                problems.append((record, "the pinned comment hash is stale"))
-            if (
-                adapter is not None
-                and self.proposed_source
-                and record.change != "removed"
-            ):
-                resolved = adapter.resolve_anchor(
-                    self.proposed_source, declarations.proposed_path, record.span
-                )
-                if proposal.anchor_hash != resolved.anchor_hash:
-                    problems.append((record, "the pinned anchor hash is stale"))
-        return tuple(problems)
-
     def to_json(self) -> dict[str, object]:
+        delta = self._pair_units()
         return {
             "carrier_path": self.carrier_path,
             "declarations": (
@@ -289,7 +274,12 @@ class CommentSetManifest:
             "problems": list(self.problems),
             "records": [record.to_json() for record in self.records],
             "changed_units": [unit.to_json() for unit in self.changed_units()],
-            "removed_units": [unit.to_json() for unit in self.removed_units()],
+            "added_units": [unit.to_json() for unit in delta.added],
+            "moved_units": [
+                {"base": base.to_json(), "proposed": proposed.to_json()}
+                for base, proposed in delta.moved
+            ],
+            "removed_units": [unit.to_json() for unit in delta.removed],
             "uncovered_markers": [
                 unit.to_json() for unit in self.uncovered_markers()
             ],
@@ -367,13 +357,6 @@ def load_comment_set(carrier_path: Path) -> CommentSetManifest:
                 adapter.extract_comments(proposed_source, declarations.proposed_path)
             )
 
-    evidence = payload.get("conformance_evidence")
-    if not isinstance(evidence, dict):
-        declaration_problems.append(
-            "missing carrier field: conformance_evidence"
-        )
-        evidence = {}
-
     return CommentSetManifest(
         carrier_path=location,
         declarations=declarations,
@@ -386,7 +369,6 @@ def load_comment_set(carrier_path: Path) -> CommentSetManifest:
         problems=tuple(problems),
         judgments=tuple(payload.get("judgments", ()) or ()),
         open_questions=tuple(payload.get("open_questions", ()) or ()),
-        conformance_evidence=evidence,
     )
 
 
@@ -490,7 +472,6 @@ def structural_manifest(manifest: CommentSetManifest) -> StructuralManifest:
         document_declarations = Declarations(
             itws_version=declarations.itws_version,
             profile=declarations.profile,
-            tier=declarations.tier,
             span=SourceSpan(manifest.carrier_path, 0, 0),
         )
     line_count = len(manifest.proposed_source.splitlines())

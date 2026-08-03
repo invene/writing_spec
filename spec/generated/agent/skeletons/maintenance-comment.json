@@ -23,10 +23,19 @@
       "repeats": true
     },
     {
-      "name": "Anchor",
+      "name": "Change kind",
       "required": true,
       "order": 3,
-      "description": "The host file, line span, and enclosing named construct the comment attaches to.",
+      "description": "Exactly one of \"added\", \"modified\", or \"removed\". The kind selects the source the Anchor resolves against (Rule 4.13.3).",
+      "renames": [],
+      "parent": "Comment record",
+      "repeats": false
+    },
+    {
+      "name": "Anchor",
+      "required": true,
+      "order": 4,
+      "description": "The host file, line span, and enclosing named construct the comment attaches to: in the proposed source for an added or modified comment, and in the base source for a removed one.",
       "renames": [],
       "parent": "Comment record",
       "repeats": false
@@ -34,8 +43,8 @@
     {
       "name": "Comment text",
       "required": true,
-      "order": 4,
-      "description": "The exact governed comment text, with comment markers stripped.",
+      "order": 5,
+      "description": "The exact governed comment text, with comment markers stripped. A removed comment records the text as it stood in the base source.",
       "renames": [],
       "parent": "Comment record",
       "repeats": false
@@ -43,7 +52,7 @@
     {
       "name": "Purpose",
       "required": true,
-      "order": 5,
+      "order": 6,
       "description": "Exactly one closed purpose from Rule 4.13.2.",
       "renames": [],
       "parent": "Comment record",
@@ -52,7 +61,7 @@
     {
       "name": "Information delta",
       "required": true,
-      "order": 6,
+      "order": 7,
       "description": "The knowledge deleting the comment would lose, stated against the anchored code.",
       "renames": [],
       "parent": "Comment record",
@@ -61,7 +70,7 @@
     {
       "name": "Basis",
       "required": true,
-      "order": 7,
+      "order": 8,
       "description": "The durable code, test, contract, work-item, or decision references that support the comment, or \"None\" with a reason.",
       "renames": [],
       "parent": "Comment record",
@@ -70,17 +79,8 @@
     {
       "name": "Lifecycle",
       "required": true,
-      "order": 8,
-      "description": "\"durable\", or \"temporary\" with the observable removal condition.",
-      "renames": [],
-      "parent": "Comment record",
-      "repeats": false
-    },
-    {
-      "name": "Provenance",
-      "required": true,
       "order": 9,
-      "description": "\"human-authored\", or \"ai-proposed\" with the §8.7 comment proposal record.",
+      "description": "\"durable\", or \"temporary\" with the observable removal condition.",
       "renames": [],
       "parent": "Comment record",
       "repeats": false
@@ -93,37 +93,27 @@
       "renames": [],
       "parent": "",
       "repeats": false
-    },
-    {
-      "name": "Conformance evidence",
-      "required": true,
-      "order": 11,
-      "description": "The pinned lint run, self-check, and scan-test records for the declared tier.",
-      "renames": [],
-      "parent": "",
-      "repeats": false
     }
   ],
   "required_slots": [
     "Change scope",
     "Comment record",
+    "Change kind",
     "Anchor",
     "Comment text",
     "Purpose",
     "Information delta",
     "Basis",
     "Lifecycle",
-    "Provenance",
-    "Boundaries",
-    "Conformance evidence"
+    "Boundaries"
   ],
   "merges": [],
   "mutation_policies": [],
   "source_span": {
     "path": "spec/overlays/maintenance-comment/skeleton.md",
     "start_line": 1,
-    "end_line": 45
+    "end_line": 47
   },
-  "itws_version": "0.8.0-draft",
-  "schema_version": "1.1.0"
+  "itws_version": "0.10.0-draft",
+  "schema_version": "2.0.0"
 }

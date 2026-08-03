@@ -22,15 +22,25 @@ from itws.parser import (
     parse_profiles,
     parse_skeletons,
 )
-from itws.vocab import MINIMUM_TIER, PROFILE_FAMILIES, PROFILE_IDS, profile_families
+from itws.vocab import PROFILE_FAMILIES, PROFILE_IDS, profile_families
 
 REQUIRED_FILES = ("README.md", "reader.md", "skeleton.md", PROFILE_RULES_FILENAME)
 
 REGISTRY_ROW_RE = re.compile(
     r"^\| `(?P<profile>[a-z-]+)` \| \[(?P<dir>[a-z-]+)/\]\([a-z-]+/\) \| "
-    r"`(?P<tier>core|reviewed|publication)` \| (?P<modules>.+?) \|$",
+    r"(?P<modules>.+?) \|$",
     re.MULTILINE,
 )
+
+#: An overlay's Annex D pointer sentence. The identifiers themselves carry
+#: periods, so the list runs to the end of the line and loses its final one.
+EXAMPLE_POINTER_RE = re.compile(
+    r"Annex D contains \w+ `(?P<profile>[a-z-]+)` examples?: (?P<ids>[^\n]*)"
+)
+
+#: One Annex D example header and the profile line that follows it.
+EXAMPLE_HEADER_RE = re.compile(r"^### Example (?P<id>D\.\d+)", re.MULTILINE)
+EXAMPLE_PROFILE_RE = re.compile(r"^Profile: (?P<profiles>.+)$", re.MULTILINE)
 
 
 def parse_args() -> argparse.Namespace:
@@ -74,20 +84,73 @@ def check_registry(overlays: Path, errors: list[str]) -> None:
         )
         return
 
-    for profile, directory, tier, modules in rows:
+    for profile, directory, modules in rows:
         if directory != profile:
             errors.append(f"{registry}: `{profile}` points at {directory}/")
-        if tier != MINIMUM_TIER[profile]:
-            errors.append(
-                f"{registry}: `{profile}` records tier {tier}; §0.4.3 "
-                f"requires {MINIMUM_TIER[profile]}"
-            )
         expected = profile_families(profile)
         found = tuple(sorted(set(re.findall(r"shared/([a-z-]+)\.md", modules))))
         if found != expected:
             errors.append(
                 f"{registry}: `{profile}` lists modules {found or ('none',)}; "
                 f"expected {expected or ('none',)}"
+            )
+
+
+def corpus_examples(spec_dir: Path) -> dict[str, list[str]]:
+    """Map each profile to the Annex D examples that declare it."""
+    corpus = spec_dir / "annexes" / "annex-d-examples-corpus.md"
+    text = corpus.read_text(encoding="utf-8")
+    mapping: dict[str, list[str]] = {}
+    headers = list(EXAMPLE_HEADER_RE.finditer(text))
+    for position, header in enumerate(headers):
+        stop = (
+            headers[position + 1].start()
+            if position + 1 < len(headers)
+            else len(text)
+        )
+        profile_line = EXAMPLE_PROFILE_RE.search(text, header.end(), stop)
+        if profile_line is None:
+            continue
+        for name in (
+            item.strip() for item in profile_line.group("profiles").split(",")
+        ):
+            mapping.setdefault(name, []).append(header.group("id"))
+    return mapping
+
+
+def check_example_pointers(overlays: Path, spec_dir: Path, errors: list[str]) -> None:
+    """Each overlay's example pointer names exactly the Annex D examples.
+
+    The pointer is hand-written prose about generated content, so it drifts
+    the moment the corpus grows. Comparing it here turns that drift into a
+    failed check rather than a stale sentence a reader has to disbelieve.
+    """
+    corpus = corpus_examples(spec_dir)
+    for profile in PROFILE_IDS:
+        readme = overlays / profile / "README.md"
+        if not readme.is_file():
+            continue
+        match = EXAMPLE_POINTER_RE.search(readme.read_text(encoding="utf-8"))
+        if match is None:
+            errors.append(f"{readme}: no Annex D example pointer")
+            continue
+        if match.group("profile") != profile:
+            errors.append(
+                f"{readme}: the example pointer names profile "
+                f"`{match.group('profile')}`"
+            )
+            continue
+        raw = match.group("ids").strip().rstrip(".")
+        listed = [
+            item.strip()
+            for item in raw.replace(", and ", ", ").replace(" and ", ", ").split(",")
+            if item.strip()
+        ]
+        expected = corpus.get(profile, [])
+        if listed != expected:
+            errors.append(
+                f"{readme}: the example pointer lists {listed or ['none']}; "
+                f"Annex D declares {expected or ['none']}"
             )
 
 
@@ -102,6 +165,7 @@ def main() -> int:
 
     check_files(overlays, errors)
     check_registry(overlays, errors)
+    check_example_pointers(overlays, args.spec_dir, errors)
 
     skeleton_count = 0
     try:

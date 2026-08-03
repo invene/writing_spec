@@ -1,6 +1,6 @@
 # Annex E — Document skeletons
 
-**Status:** v0.8.0-draft.
+**Status:** v0.10.0-draft.
 
 This annex defines the shared slot policy and registers the required-section skeleton of every profile.
 
@@ -12,7 +12,7 @@ Human-readable labels may vary. Label variations do not create additional IDs.
 
 Every document also has a title. Every document must include the exact §0.4.3 declaration fields:
 
-`ITWS version: 0.8.0-draft`, `Profile: <canonical ID>`, and `Conformance tier: <permitted tier>`.
+`ITWS version: 0.10.0-draft` and `Profile: <canonical ID>`.
 
 The title and declaration fields are required document elements, not profile sections.
 
@@ -35,6 +35,8 @@ Optional bounded blocks and appendices may be added under the shared-core rules.
 - A permitted shared section must label the observation or evidence job separately from the analysis or interpretation job.
 
 ### E.0.2 Section map syntax
+
+The **front-matter region** of a Markdown document runs from the first line through the last line before the document's first second-level (`##`) heading. A document with no second-level heading is front matter throughout. The region carries the title, the two §0.4.3 declarations, and the optional section map, and nothing in it is body content. Placing a declaration or a section map after the region puts it in the body, where a reader resolving the document's profile, version, or slot names would not find it.
 
 A `Section map` connects one actual heading to one canonical slot of the declared profile. The map is optional. A document needs it only for a rename that the profile's skeleton file does not list.
 
@@ -67,7 +69,7 @@ A skeleton file **may** declare a limit on rewriting content that already exists
 **Mutation policy:** <scope> · <policy> · rule <rule ID> · <note>
 ```
 
-The policy value is `append-only`, `replace-permitted`, or `owner-approval`. A tool reads the declaration and refuses a rewrite that the policy forbids. A skeleton without a declaration permits ordinary revision under the shared core.
+The policy value is `append-only` or `replace-permitted`. A tool reports an edit that violates the declared policy while preserving every independent edit it can apply safely. A skeleton without a declaration permits ordinary revision under the shared core.
 
 ### E.0.4 Hosted-surface slots
 
@@ -77,7 +79,7 @@ A `hosted-comment-set` skeleton binds the fields of a JSON declaration carrier i
 
 Each profile keeps its skeleton in the `skeleton.md` file of its overlay directory. Section 1.5 defines that layout. Each file states the profile's dependency order, required sections, permitted renames, and permitted merges.
 
-The following table is the complete skeleton registry for ITWS 0.8.0-draft. Each row is normative through the file it names.
+The following table is the complete skeleton registry for ITWS 0.10.0-draft. Each row is normative through the file it names.
 
 | Skeleton | Profile | File |
 |---|---|---|
@@ -94,6 +96,6 @@ The following table is the complete skeleton registry for ITWS 0.8.0-draft. Each
 | §E.11 | `subtask` | [../overlays/subtask/skeleton.md](../overlays/subtask/skeleton.md) |
 | §E.12 | `maintenance-comment` | [../overlays/maintenance-comment/skeleton.md](../overlays/maintenance-comment/skeleton.md) |
 
-A citation of the form "Annex E §E.9" resolves to the row above and to the file it names. The section numbers are stable across the reorganization in 0.8.0-draft.
+A citation of the form "Annex E §E.9" resolves to the row above and to the file it names. The section numbers are stable across the reorganization in 0.10.0-draft.
 
-The rename and merge policy in §E.0.1 governs every skeleton. A skeleton file adds only the renames and merges permitted for its profile.
+The rename and merge policy in §E.0.1 governs every `markdown-document` skeleton, and a skeleton file adds only the renames and merges permitted for its profile. A `hosted-comment-set` skeleton is outside that policy: §E.0.4 fixes its carrier field names, so §E.12 permits no rename and no merge.

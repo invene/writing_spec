@@ -1,6 +1,6 @@
 # Annex C — Rule index (generated)
 
-**Status:** generated 2026-07-29 from ITWS 0.8.0-draft. Do not edit this annex by hand.
+**Status:** generated 2026-07-29 from ITWS 0.10.0-draft. Do not edit this annex by hand.
 
 ## C.1 Generation contract
 
@@ -27,7 +27,9 @@ A scoped rule keeps its section number and sits in an overlay file. The `File` c
 
 The full rule record, including chunk types, skeleton slots, resources, typed relations, examples, and source line ranges, is in `spec/generated/agent/rules.jsonl`. This annex is the human-readable view of the same model.
 
-The index is sorted numerically by rule number. It is the input to the §8.1 checklist generator, which filters rules by declared ITWS version and profile before grouping them into the four self-check passes. Tier obligations come from §0.4.3 and Part 8; they are not rule-profile metadata.
+The index is sorted numerically by rule number. It contains current normative
+rules only. `spec/retired-rule-ids.txt` reserves IDs whose historical rule text
+is outside the current language specification.
 
 ## C.2 Generation command
 
@@ -39,9 +41,9 @@ python3 tools/itws_index.py \
   --out spec/annexes/annex-c-rule-index.md
 ```
 
-After approving a new permanent rule ID, add `--update-registry` once to append it to `spec/rule-ids.txt`.
+After assigning a new permanent rule ID, add `--update-registry` once to append it to `spec/rule-ids.txt`.
 
-The generator reads the core parts and the overlay files in `spec/overlays/`. It validates rule IDs against `spec/rule-ids.txt` independently of the output path. It fails on a duplicate or removed rule number, an unregistered new ID without `--update-registry`, malformed metadata, an unknown profile ID, a profile list outside canonical registry order, an unknown §1.6 navigation value, an unresolved rule relation, or a rule outside the file that §1.5.2 requires. A deprecated rule remains in its source file with `**Status:** deprecated since <version>; replacement <rule ID | none>`; generation never drops its permanent ID.
+The generator reads the core parts and the overlay files in `spec/overlays/`. It validates rule IDs against `spec/rule-ids.txt` and the retired-ID ledger independently of the output path. It fails on a duplicate, an unregistered removal, an unregistered new ID without `--update-registry`, malformed metadata, an unknown profile ID, a profile list outside canonical registry order, an unknown §1.6 navigation value, an unresolved rule relation, or a rule outside the file that §1.5.2 requires.
 
 Regenerate the machine catalog in the same change:
 
@@ -49,19 +51,9 @@ Regenerate the machine catalog in the same change:
 python3 tools/itws_compile.py --spec-dir spec
 ```
 
-Generate a document's §8.1 checklist from this annex:
-
-```text
-python3 tools/itws_checklist.py \
-  --spec-version 0.8.0-draft \
-  --profile <canonical profile ID> \
-  --tier <core | reviewed | publication> \
-  --out <document-checklist.md>
-```
-
 ## C.3 Index
 
-**Rule count:** 214
+**Rule count:** 192
 
 | Rule | Short name | Class | Machine-checkable | Profiles | Status | Target | Constructs | Layers | Context | Rewrite | Precedence | Source | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -71,7 +63,7 @@ python3 tools/itws_checklist.py \
 | 2.1.4 | Expand every acronym at first use | mandatory | yes | all profiles | active | term | acronym | both | document | candidate | 4 | Google/Microsoft style guides | `02-words-and-vocabulary.md` |
 | 2.1.5 | One form per acronym after introduction | mandatory | yes | all profiles | active | term | acronym | both | document | candidate | 4 | Google/Microsoft style guides | `02-words-and-vocabulary.md` |
 | 2.2.1 | The permitted-vocabulary test | mandatory | partial | all profiles | active | term | domain-term | both | document | review | 4 | original (baseline enumerated in Annex B) | `02-words-and-vocabulary.md` |
-| 2.3.1 | Define before first use | mandatory | yes | all profiles | active | term | domain-term | both | document | review | 4 | original | `02-words-and-vocabulary.md` |
+| 2.3.1 | Define before first use | mandatory | partial | all profiles | active | term | domain-term | both | document | review | 4 | original | `02-words-and-vocabulary.md` |
 | 2.3.2 | Definitions stand only on lower rungs | mandatory | yes | all profiles | active | term | definition | both | document | review | 4 | original | `02-words-and-vocabulary.md` |
 | 2.3.3 | No forward references | mandatory | yes | all profiles | active | term | domain-term | both | document | review | 4 | original | `02-words-and-vocabulary.md` |
 | 2.3.4 | Definitions are operational | mandatory | no | all profiles | active | term | definition | exact | local | review | 4 | original | `02-words-and-vocabulary.md` |
@@ -200,7 +192,7 @@ python3 tools/itws_checklist.py \
 | 5.3.2 | Keep inline math atomic | mandatory | partial | all profiles | active | equation | equation | exact | local | candidate | 1 | original | `05-mathematical-and-empirical-content.md` |
 | 5.4.1 | Material statements carry a complete evidence record | mandatory | partial | all profiles | active | chunk | claim, measurement | exact | document | review | 1 | ISO/IEC/IEEE 26514; IEC 82079-1; APA JARS / NeurIPS checklist (research adaptation) | `05-mathematical-and-empirical-content.md` |
 | 5.4.2 | No naked percentages | mandatory | partial | all profiles | active | sentence | quantity | exact | local | review | 1 | ISO/IEC/IEEE 26514; APA JARS (effect size + uncertainty, restated) | `05-mathematical-and-empirical-content.md` |
-| 5.4.3 | Every citation resolves | mandatory | yes | all profiles | active | citation | citation | exact | document | prohibited | 1 | Wikipedia "Signs of AI writing" (citations) | `05-mathematical-and-empirical-content.md` |
+| 5.4.3 | Every citation resolves | mandatory | partial | all profiles | active | citation | citation | exact | document | prohibited | 1 | Wikipedia "Signs of AI writing" (citations) | `05-mathematical-and-empirical-content.md` |
 | 5.4.4 | Cited sources support the claim | mandatory | no | all profiles | active | citation | citation, claim | exact | collection | prohibited | 1 | Wikipedia "Signs of AI writing" (citations) | `05-mathematical-and-empirical-content.md` |
 | 5.4.5 | Source counts are accurate | mandatory | partial | all profiles | active | sentence | citation | exact | local | candidate | 1 | Wikipedia "Signs of AI writing" (source-count inflation) | `05-mathematical-and-empirical-content.md` |
 | 5.5.1 | Label axes, units, and series completely | mandatory | partial | all profiles | active | figure | figure | exact | local | review | 1 | APA / IEEE figure conventions | `05-mathematical-and-empirical-content.md` |
@@ -210,7 +202,7 @@ python3 tools/itws_checklist.py \
 | 5.6.2 | Strength matches the evidential standard | mandatory | no | all profiles | active | sentence | claim | exact | document | prohibited | 1 | IPCC calibrated language (mechanism) | `05-mathematical-and-empirical-content.md` |
 | 5.7.1 | Admit ladder-required statistical concepts before use | mandatory | partial | `technical-report`, `research-paper` | active | term | statistic | exact | document | review | 1 | original (mechanism from §2.3) | `overlays/shared/report.md` |
 | 5.7.2 | Headline statistical results use bare concepts | mandatory | no | `technical-report`, `research-paper` | active | sentence | statistic | both | document | review | 1 | original | `overlays/shared/report.md` |
-| 5.8.1 | Reports include the applicable checkability statement | mandatory | yes | `technical-report`, `research-paper` | active | document | section | exact | document | candidate | 1 | ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS checklist / ML Reproducibility Checklist (research adaptation) | `overlays/shared/report.md` |
+| 5.8.1 | Reports include the applicable checkability statement | mandatory | partial | `technical-report`, `research-paper` | active | document | section | exact | document | candidate | 1 | ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS checklist / ML Reproducibility Checklist (research adaptation) | `overlays/shared/report.md` |
 | 5.8.2 | The statement reads in assumed-reader vocabulary | mandatory | partial | `technical-report`, `research-paper` | active | section | section | plain | document | review | 1 | original | `overlays/shared/report.md` |
 | 5.9.1 | One definition of done per work item | mandatory | yes | `epic`, `task`, `subtask` | active | document | section | exact | document | candidate | 1 | original | `overlays/shared/work-item.md` |
 | 5.9.2 | Completion conditions state the pass test | mandatory | partial | `epic`, `task`, `subtask` | active | chunk | requirement | exact | local | review | 1 | ISO/IEC/IEEE 26514; IEC/IEEE 82079-1 | `overlays/shared/work-item.md` |
@@ -223,21 +215,21 @@ python3 tools/itws_checklist.py \
 | 6.1.1 | Anchor analogies in assumed-reader vocabulary | mandatory | no | all profiles | active | chunk | analogy | plain | local | review | 3 | original | `06-explanatory-devices.md` |
 | 6.1.2 | State the breaking point | mandatory | partial | all profiles | active | chunk | analogy | plain | local | review | 3 | original | `06-explanatory-devices.md` |
 | 6.1.3 | At most one analogy per concept | mandatory | partial | all profiles | active | chunk | analogy | plain | document | review | 3 | original | `06-explanatory-devices.md` |
-| 6.2.1 | Central mechanisms get a worked example | mandatory | no | all profiles | active | chunk | worked-example | plain | section | review | 3 | Carroll minimalism | `06-explanatory-devices.md` |
+| 6.2.1 | Central mechanisms get a worked example | mandatory | no | all profiles | active | chunk | any | plain | section | review | 3 | Carroll minimalism | `06-explanatory-devices.md` |
 | 6.2.2 | Examples carry no incidental complexity | mandatory | no | all profiles | active | chunk | worked-example | plain | local | candidate | 3 | Carroll minimalism / Google style guide | `06-explanatory-devices.md` |
 | 6.2.3 | Examples use realistic values | recommended | no | all profiles | active | chunk | worked-example | plain | local | review | 3 | Google style guide | `06-explanatory-devices.md` |
 | 6.3.1 | Intuition is bounded and labeled | mandatory | yes | all profiles | active | bounded-block | bounded-block | plain | local | mechanical | 3 | ASD-STE100 (note blocks) | `06-explanatory-devices.md` |
 | 6.3.2 | Exact content does not live only in intuition blocks | mandatory | partial | all profiles | active | bounded-block | bounded-block, requirement | exact | document | prohibited | 3 | ISO/IEC Directives Part 2 | `06-explanatory-devices.md` |
 | 6.3.3 | Main text survives block removal | mandatory | no | all profiles | active | document | bounded-block | both | document | review | 3 | original | `06-explanatory-devices.md` |
-| 6.4.1 | Diagram structures that prose cannot carry | recommended | no | all profiles | active | figure | diagram | plain | section | review | 3 | ISO/IEC/IEEE 26514 / IEC 82079-1 | `06-explanatory-devices.md` |
+| 6.4.1 | Diagram structures that prose cannot carry | recommended | no | all profiles | active | figure | any | plain | section | review | 3 | ISO/IEC/IEEE 26514 / IEC 82079-1 | `06-explanatory-devices.md` |
 | 6.4.2 | Every diagram is referenced from the text | mandatory | yes | all profiles | active | figure | diagram, cross-reference | plain | document | mechanical | 3 | ISO/IEC/IEEE 26514 | `06-explanatory-devices.md` |
 | 6.4.3 | Diagram labels use admitted terms only | mandatory | yes | all profiles | active | figure | diagram, admitted-term | plain | document | review | 3 | original | `06-explanatory-devices.md` |
-| 6.4.4 | Diagrams carry alt text | recommended | yes | all profiles | active | figure | diagram | plain | local | candidate | 3 | Google style guide | `06-explanatory-devices.md` |
+| 6.4.4 | Diagrams carry alt text | recommended | partial | all profiles | active | figure | diagram | plain | local | candidate | 3 | Google style guide | `06-explanatory-devices.md` |
 | 6.5.1 | Repeat verbatim or not at all | mandatory | partial | all profiles | active | sentence | admitted-term, claim | both | document | review | 3 | ASD-STE100 | `06-explanatory-devices.md` |
 | 6.5.2 | Recall distant definitions at reuse | recommended | yes | all profiles | active | sentence | admitted-term | plain | document | candidate | 3 | original (instructional-design spaced recall) | `06-explanatory-devices.md` |
 | 6.5.3 | Recap the ladder at part boundaries | permitted | yes | all profiles | active | section | section | plain | section | candidate | 3 | original | `06-explanatory-devices.md` |
 | 6.5.4 | No hollow summaries | mandatory | partial | all profiles | active | chunk | prohibited-phrase | plain | section | candidate | 3 | Wikipedia "Signs of AI writing" | `06-explanatory-devices.md` |
-| 7.1.1 | Boundary material is required | mandatory | partial | all profiles | active | document | limitation | exact | document | candidate | 1 | ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS Paper Checklist (research adaptation) | `07-limitations-caveats-interpretation.md` |
+| 7.1.1 | Boundary material is required | mandatory | partial | all profiles | active | document | any | exact | document | candidate | 1 | ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS Paper Checklist (research adaptation) | `07-limitations-caveats-interpretation.md` |
 | 7.1.2 | State the scope of validity | mandatory | no | all profiles | active | chunk | limitation | exact | document | review | 1 | ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS Paper Checklist / Model Cards (research adaptation) | `07-limitations-caveats-interpretation.md` |
 | 7.1.3 | Disclose known failure modes and adverse effects | mandatory | no | all profiles | active | chunk | limitation, risk | exact | document | review | 1 | ISO/IEC/IEEE 26514; IEC 82079-1; Model Cards (research adaptation) | `07-limitations-caveats-interpretation.md` |
 | 7.1.4 | Disclose what was not tested or verified | mandatory | no | all profiles | active | chunk | limitation | exact | document | review | 1 | ISO/IEC/IEEE 26514; NeurIPS Paper Checklist / Datasheets for Datasets (research adaptation) | `07-limitations-caveats-interpretation.md` |
@@ -250,32 +242,10 @@ python3 tools/itws_checklist.py \
 | 7.3.3 | Speculation uses the speculative tier | mandatory | partial | `incident`, `technical-report`, `research-paper`, `investigation-log`, `task`, `subtask` | active | bounded-block | speculation | exact | local | candidate | 1 | IPCC calibrated language (via §5.6) | `07-limitations-caveats-interpretation.md` |
 | 7.4.1 | Extrapolations name the target setting | mandatory | no | all profiles | active | sentence | generalization | exact | document | review | 1 | ISO/IEC/IEEE 26514; NeurIPS Paper Checklist / APA JARS (research adaptation) | `07-limitations-caveats-interpretation.md` |
 | 7.4.2 | Beyond the boundary, drop evidential strength | mandatory | partial | all profiles | active | sentence | generalization, claim | exact | document | candidate | 1 | ISO/IEC/IEEE 26514; NeurIPS Paper Checklist / CONSORT (research adaptation) | `07-limitations-caveats-interpretation.md` |
-| 8.1.1 | Checklist is generated, not authored | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | STE checker workflows | `08-review-compliance-tooling.md` |
-| 8.1.2 | Four self-check passes | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.1.3 | Regeneration on rule change | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.1.4 | Complete the scan test | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | Thiede, Anderson, and Therriault 2003; Glenberg, Wilkinson, and Epstein 1982; Duggan and Payne 2009; original | `08-review-compliance-tooling.md` |
-| 8.1.5 | Retest after a dependent change | mandatory | partial | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.2.1 | Lint gate | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | STE checker practice | `08-review-compliance-tooling.md` |
-| 8.2.2 | Severity maps to rule class | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.2.3 | Version-pinned checking | mandatory | yes | all profiles | active | conformance-record | declaration | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.2.4 | Machine checks do not close human gates | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.3.1 | Publication gate | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | ISO 26514 / plain-language testing practice | `08-review-compliance-tooling.md` |
-| 8.3.2 | Participant sampling | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | plain-language testing practice | `08-review-compliance-tooling.md` |
-| 8.3.3 | Protocol and pass criteria | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | teach-back method, adapted | `08-review-compliance-tooling.md` |
-| 8.3.4 | Reader-test failures are recorded | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.3.5 | Failed documents are revised and independently retested | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.4.1 | Reviewed tiers use two independent roles | mandatory | no | all profiles | active | conformance-record | any | both | document | prohibited | 4 | ISO 26514 / IEC 82079-1 review process | `08-review-compliance-tooling.md` |
-| 8.4.2 | Subject-matter-owner scope | mandatory | no | all profiles | active | conformance-record | any | exact | document | prohibited | 4 | ISO 26514, renamed to §1.2 | `08-review-compliance-tooling.md` |
-| 8.4.3 | Assumed-reader proxy scope | mandatory | no | all profiles | active | conformance-record | any | plain | document | prohibited | 4 | ISO 26514, renamed to §1.2 | `08-review-compliance-tooling.md` |
-| 8.4.4 | Findings cite rules | mandatory | partial | all profiles | active | conformance-record | cross-reference | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.5.1 | Deviation requires a recorded waiver | mandatory | partial | all profiles | active | conformance-record | waiver | both | document | prohibited | 4 | IEC 82079-1 / engineering-standard practice | `08-review-compliance-tooling.md` |
-| 8.5.2 | Waiver content | mandatory | yes | all profiles | active | conformance-record | waiver | both | document | mechanical | 4 | engineering-standard practice | `08-review-compliance-tooling.md` |
-| 8.6.1 | Generated artifacts satisfy the generation contract | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.6.2 | Stale artifacts are rejected, not reused | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.6.3 | Validation reports one of four states | mandatory | yes | all profiles | active | conformance-record | any | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.6.4 | Agent-authored judgments cite their support | mandatory | partial | all profiles | active | conformance-record | cross-reference | both | document | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.6.5 | Colliding rewrites are reported, not merged | mandatory | yes | all profiles | active | conformance-record | any | both | collection | prohibited | 4 | original | `08-review-compliance-tooling.md` |
-| 8.7.1 | Every machine-proposed comment has a proposal record | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | both | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |
-| 8.7.2 | Proposal bases are durable | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | exact | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |
-| 8.7.3 | A human disposition gates pass | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | both | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |
-| 8.7.4 | Stale records invalidate their disposition | mandatory | yes | `maintenance-comment` | active | conformance-record | proposal-record | both | document | prohibited | 4 | original | `overlays/maintenance-comment/rules.md` |
+| 8.2.1 | Error violations fail the machine check | mandatory | yes | all profiles | active | conformance-record | tool-artifact | both | document | mechanical | 4 | STE checker practice | `08-textual-conformance-and-machine-checking.md` |
+| 8.2.2 | Severity maps to rule class | mandatory | yes | all profiles | active | conformance-record | tool-artifact | both | document | mechanical | 4 | original | `08-textual-conformance-and-machine-checking.md` |
+| 8.2.3 | Version- and profile-pinned checking | mandatory | yes | all profiles | active | conformance-record | declaration | both | document | mechanical | 4 | original | `08-textual-conformance-and-machine-checking.md` |
+| 8.2.5 | Machine reports disclose coverage | mandatory | no | all profiles | active | conformance-record | tool-artifact | both | document | mechanical | 4 | original | `08-textual-conformance-and-machine-checking.md` |
+| 8.6.1 | Generated artifacts satisfy the generation contract | mandatory | yes | all profiles | active | conformance-record | tool-artifact | both | collection | mechanical | 4 | original | `08-textual-conformance-and-machine-checking.md` |
+| 8.6.2 | Stale artifacts are rejected | mandatory | yes | all profiles | active | conformance-record | tool-artifact | both | collection | mechanical | 4 | original | `08-textual-conformance-and-machine-checking.md` |
+| 8.6.6 | Machine validation is binary and coverage-aware | mandatory | yes | all profiles | active | conformance-record | tool-artifact | both | document | mechanical | 4 | original | `08-textual-conformance-and-machine-checking.md` |

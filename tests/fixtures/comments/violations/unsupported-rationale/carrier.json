@@ -1,7 +1,6 @@
 {
-  "itws_version": "0.8.0-draft",
+  "itws_version": "0.10.0-draft",
   "profile": "maintenance-comment",
-  "conformance_tier": "core",
   "change_set_id": "CS-2026-016",
   "host_adapter": "python",
   "base_path": "retry_base.py",
@@ -30,24 +29,13 @@
       "information_delta": "Asserted intent with no recorded support.",
       "basis": [],
       "lifecycle": "durable",
-      "provenance": "ai-proposed",
-      "proposal": {
-        "prompt_provenance": "Prompt recorded in the change request: state why the retry pause is 250 ms.",
-        "bases": [],
-        "source_hash": "sha256:fdb77af45b97b0f2dae3b5b1f5b1d8c39b48e3d3961e5ac47279a0ed51e51947",
-        "anchor_hash": "sha256:2fcc7d7e0eb6073d9ea4dfadf83fe880215ab88b4397217db6c96463eb098bda",
-        "comment_hash": "sha256:65ff742798c61ff1b39974a34cf3bc12759a9e483eead5ccbd22f6b8f7ec4332",
-        "disposition": "accepted",
-        "disposed_by": "R. Alvarez",
-        "disposed_on": "2026-07-29"
-      },
       "basis_none_reason": "The generation prompt is the only source."
     }
   ],
   "judgments": [],
   "open_questions": [],
   "conformance_evidence": {
-    "lint_run_version": "0.8.0-draft",
+    "lint_run_version": "0.10.0-draft",
     "self_check_recorded": true
   }
 }

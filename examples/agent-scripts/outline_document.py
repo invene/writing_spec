@@ -39,8 +39,7 @@ def main() -> int:
         skeleton = spec.skeleton(declared.profile)
         manifest = parse_document(args.input, skeleton=skeleton)
         print(
-            f"ITWS {declared.itws_version} · profile {declared.profile} · "
-            f"tier {declared.tier}"
+            f"ITWS {declared.itws_version} · profile {declared.profile}"
         )
 
     print(f"\n{len(manifest.units)} source units, {manifest.line_count} lines")

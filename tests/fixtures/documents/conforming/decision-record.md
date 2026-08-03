@@ -1,12 +1,15 @@
 # Store the export retry limit in the configuration database
 
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: decision-record
-Conformance tier: core
 
 ## Status
 
 Accepted on 2026-06-14 by the platform pod.
+
+## Summary
+
+The export retry limit moves from application files into the configuration database, so an operator can change it without restarting anything. The Decision section states the exact form of this outcome.
 
 ## Context
 
@@ -22,7 +25,7 @@ An environment variable has the same restart cost and adds no audit record.
 
 ## Decision
 
-The export retry limit lives in the existing configuration database. Each process reads the limit once per minute.
+The export retry limit lives in the existing configuration database, which is the exact form of the Summary outcome. Each of the four reading processes reads the limit once per minute.
 
 ## Consequences
 

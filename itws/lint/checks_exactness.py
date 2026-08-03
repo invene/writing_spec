@@ -159,8 +159,16 @@ def notation_table(context: LintContext) -> Iterable[Finding]:
 
 @register("5.4.3", name="citation-resolution", network=False)
 def citation_resolution(context: LintContext) -> Iterable[Finding]:
-    """Offline part of §5.4.3: form, placeholders, and archive coverage."""
+    """Rule 5.4.3: citation form always, resolution when a resolver exists.
+
+    Form is decided offline and reports violations. Resolution needs the
+    network that §8.2 denies the default run, so it runs only when the run
+    supplies a resolver. Without one, each target reports as a reader
+    obligation; the run never claims a resolution it did not perform.
+    """
     findings: list[Finding] = []
+    targets: dict[str, tuple[str, int]] = {}
+
     for unit in body_units(context.manifest):
         for line_offset, line in enumerate(unit.text.splitlines()):
             line_number = unit.span.start_line + line_offset
@@ -196,24 +204,56 @@ def citation_resolution(context: LintContext) -> Iterable[Finding]:
                             excerpt=match.group(0),
                         )
                     )
-    if not context.evidence.network_checks_enabled:
-        has_links = any(unit.links for unit in context.manifest.units)
-        if has_links:
-            findings.append(
-                Finding(
-                    rule="5.4.3",
-                    severity=context.severity_for("5.4.3"),
-                    kind="skipped",
-                    message=(
-                        "link and DOI resolution needs network access; run with "
-                        "--network to complete §5.4.3"
-                    ),
-                    path=context.manifest.path,
-                    start_line=1,
-                    end_line=1,
-                    checker="citation-resolution",
-                )
+                else:
+                    targets.setdefault(match.group(0), (unit.span.path, line_number))
+
+    for unit in context.manifest.units:
+        for _label, target in unit.links:
+            if target.startswith(("http://", "https://")):
+                targets.setdefault(target, (unit.span.path, unit.span.start_line))
+
+    resolver = context.citation_resolver
+    if resolver is None:
+        findings.extend(
+            Finding(
+                rule="5.4.3",
+                severity=context.severity_for("5.4.3"),
+                kind="skipped",
+                message=(
+                    f"resolution of {target!r} needs network access; confirm it "
+                    "is live or archived, or rerun with --network (§5.4.3)"
+                ),
+                path=path,
+                start_line=line_number,
+                end_line=line_number,
+                checker="citation-resolution",
+                excerpt=target,
             )
+            for target, (path, line_number) in sorted(targets.items())
+        )
+        return findings
+
+    for target, (path, line_number) in sorted(targets.items()):
+        outcome = resolver.resolve(target)
+        if outcome.resolved:
+            continue
+        findings.append(
+            Finding(
+                rule="5.4.3",
+                severity=context.severity_for("5.4.3"),
+                kind="violation",
+                message=(
+                    f"citation target {target!r} did not resolve"
+                    + (f": {outcome.detail}" if outcome.detail else "")
+                    + "; §5.4.3 requires a live or archived target"
+                ),
+                path=path,
+                start_line=line_number,
+                end_line=line_number,
+                checker="citation-resolution",
+                excerpt=target,
+            )
+        )
     return findings
 
 

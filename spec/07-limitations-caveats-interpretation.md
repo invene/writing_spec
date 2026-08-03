@@ -37,19 +37,20 @@ Annex E supplies the boundary locations for each profile:
 - `epic` — **Scope and non-goals** carries environment, version, dependency, security, privacy, and data boundaries. **Success measures** carries capacity, duration, and evidence boundaries. **Technical invariants** carries mandatory cross-task limits. **Cross-task risks** carries failure, recovery, and unverified conditions.
 - `task` — **Context and boundaries** carries environment, version, dependency, capacity, authority, security, privacy, and data limits. **Sad or technical failure paths** carries failure and recovery behavior. **Integrated acceptance** carries cross-condition and unverified conditions.
 - `subtask` — **Boundaries and invariants** carries local environment, version, dependency, security, privacy, data, and inherited limits. **Delegated path details** carries assigned failure and recovery behavior. **Verification evidence** carries unverified conditions and evidence limits.
+- `maintenance-comment` — **Boundaries** carries the comments, files, and conditions the change set does not cover, and the environment, version, and dependency bounds within which each governed comment stays true. Each record's **Lifecycle** carries the removal condition of a temporary comment (Rule 4.13.7). Each record's **Basis** carries the evidence limits of a comment whose basis is `None`.
 
-These profile-equivalent locations form the document's boundary material for Rules 7.1.1, 7.1.2, and 7.2.2. A document may add a separate Boundaries section as an aggregate. The aggregate does not permit omission or weakening of an Annex E slot.
+These profile-equivalent locations form the governed unit's boundary material for Rules 7.1.1, 7.1.2, and 7.2.2. A document may add a separate Boundaries section as an aggregate. The aggregate does not permit omission or weakening of an Annex E slot.
 
 **Applicable boundary locations:** every Annex E location listed for the profile in §7.1.
 
 #### Rule 7.1.1 — Boundary material is required
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** ISO/IEC/IEEE 26514; IEC 82079-1; NeurIPS Paper Checklist (research adaptation)
-**Constructs:** limitation
+**Constructs:** any
 **Navigation:** target: document · chunks: limitation · slots: any · layers: exact · context: document · rewrite: candidate
 **Resources:** reads: chunk-text, skeleton-order · writes: chunk-text
 **Relations:** requires 4.3.3
 
-> Every governed document **shall** contain clearly identified boundary material in every applicable boundary location.
+> Every governed unit **shall** contain clearly identified boundary material in every applicable boundary location.
 
 **Rationale:** The aggregation point for §7.2's in-line caveats must exist before it can aggregate (P6). Short profiles may keep the section brief, but no profile is exempt from stating where its primary outcome stops.
 

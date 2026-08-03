@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from itws.model import Skeleton, SourceSpan, content_hash
-from itws.vocab import PROFILE_IDS, TIERS
+from itws.vocab import PROFILE_IDS
 
 DECLARATION_VERSION_RE = re.compile(r"^ITWS version:\s*(?P<value>\S+)\s*$")
 DECLARATION_PROFILE_RE = re.compile(r"^Profile:\s*(?P<value>[A-Za-z-]+)\s*$")
@@ -68,18 +68,16 @@ NODE_TYPES = (
 
 @dataclass(frozen=True)
 class Declarations:
-    """The three §0.4.3 declaration fields, as the document states them."""
+    """The two §0.4.3 declaration fields, as the document states them."""
 
     itws_version: str
     profile: str
-    tier: str
     span: SourceSpan
 
     def to_json(self) -> dict[str, object]:
         return {
             "itws_version": self.itws_version,
             "profile": self.profile,
-            "conformance_tier": self.tier,
             "source_span": self.span.to_json(),
         }
 
@@ -262,27 +260,50 @@ def _span_id(path: str, start: int, end: int, heading_path: tuple[str, ...], tex
     return f"u{start:05d}-{digest.hexdigest()[:10]}"
 
 
+def front_matter_end(lines: list[str]) -> int:
+    """The last line number of the §E.0.2 front-matter region, 1-based.
+
+    The region runs to the line before the first second-level heading. A
+    document with no second-level heading is front matter throughout, so a
+    fragment under construction reports no placement problem it cannot fix.
+    """
+    for index, line in enumerate(lines):
+        if line.startswith("## "):
+            return index
+    return len(lines)
+
+
 def _parse_declarations(
     lines: list[str], path: str
 ) -> tuple[Declarations | None, list[str]]:
-    """Read the three declaration lines, rejecting repeats and conflicts."""
+    """Read the two declaration lines, rejecting repeats and conflicts."""
     found: dict[str, list[tuple[int, str]]] = {
         "itws_version": [],
         "profile": [],
-        "tier": [],
     }
+    boundary = front_matter_end(lines)
+    problems: list[str] = []
     for index, line in enumerate(lines):
         stripped = line.strip()
         for key, matcher in (
             ("itws_version", DECLARATION_VERSION_RE),
             ("profile", DECLARATION_PROFILE_RE),
-            ("tier", DECLARATION_TIER_RE),
         ):
             match = matcher.match(stripped)
             if match:
                 found[key].append((index + 1, match.group("value")))
+                if index >= boundary:
+                    problems.append(
+                        f"the {key} declaration is on line {index + 1}, below "
+                        "the front-matter region; Rule 4.3.1 places it in the "
+                        "front matter (§E.0.2)"
+                    )
+        if DECLARATION_TIER_RE.match(stripped):
+            problems.append(
+                f"obsolete conformance-tier declaration on line {index + 1}; "
+                "ITWS 0.10.0-draft uses only version and profile"
+            )
 
-    problems: list[str] = []
     for key, hits in found.items():
         if not hits:
             problems.append(f"missing declaration: {key}")
@@ -305,11 +326,8 @@ def _parse_declarations(
         return None, problems
 
     profile = found["profile"][0][1]
-    tier = found["tier"][0][1]
     if profile not in PROFILE_IDS:
         problems.append(f"unknown profile ID: {profile}")
-    if tier not in TIERS:
-        problems.append(f"unknown conformance tier: {tier}")
 
     start = min(hits[0][0] for hits in found.values())
     end = max(hits[-1][0] for hits in found.values())
@@ -317,7 +335,6 @@ def _parse_declarations(
         Declarations(
             itws_version=found["itws_version"][0][1],
             profile=profile,
-            tier=tier,
             span=SourceSpan(path, start, end),
         ),
         problems,
@@ -330,6 +347,12 @@ def _parse_section_map(
     """Parse the optional ``itws-section-map`` block of §E.0.2."""
     entries: list[SectionMapEntry] = []
     problems: list[str] = []
+    boundary = front_matter_end(lines)
+    headings = {
+        line.lstrip("#").strip().casefold()
+        for line in lines
+        if line.startswith("#") and line.lstrip("#").startswith(" ")
+    }
     blocks = 0
     index = 0
     while index < len(lines):
@@ -337,6 +360,11 @@ def _parse_section_map(
         if not fence or fence.group("info").strip() != SECTION_MAP_FENCE:
             index += 1
             continue
+        if index >= boundary:
+            problems.append(
+                f"the section map begins on line {index + 1}, below the "
+                "front-matter region; §E.0.2 places it in the front matter"
+            )
         blocks += 1
         marker = fence.group("fence")
         index += 1
@@ -369,6 +397,11 @@ def _parse_section_map(
         if key in seen_headings:
             problems.append(f"section map repeats heading {entry.heading!r}")
         seen_headings.add(key)
+        if key not in headings:
+            problems.append(
+                f"section map names heading {entry.heading!r}, which is absent "
+                "from the document (§E.0.2)"
+            )
         if entry.slot in seen_slots:
             problems.append(f"section map repeats slot {entry.slot!r}")
         seen_slots.add(entry.slot)

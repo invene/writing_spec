@@ -19,9 +19,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from itws.jsonio import dumps
 from itws.lint.engine import lint_path
-from itws.lint.model import Evidence
 from itws.parser import SpecError, parse_specification
-from itws.vocab import PROFILE_IDS, TIERS
+from itws.vocab import PROFILE_IDS
 
 SEVERITY_ORDER = {"error": 0, "warning": 1, "suggestion": 2}
 
@@ -35,7 +34,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--spec-dir", type=Path, default=Path("spec"))
     parser.add_argument("--spec", dest="spec_version", help="expected ITWS version")
     parser.add_argument("--profile", choices=PROFILE_IDS)
-    parser.add_argument("--tier", choices=TIERS)
     parser.add_argument("--json", action="store_true")
     parser.add_argument(
         "--network",
@@ -70,14 +68,11 @@ def main() -> int:
         )
         return 2
 
-    evidence = Evidence(lint_run_version=spec.version)
     try:
         report = lint_path(
             spec,
             args.input,
             profile=args.profile,
-            tier=args.tier,
-            evidence=evidence,
             network=args.network,
         )
     except ValueError as error:
@@ -101,12 +96,14 @@ def main() -> int:
             )
         print(
             f"\n{len(findings)} finding(s); {len(report.errors)} error(s); "
-            f"{len(report.blocked)} blocked; "
-            f"{len(report.checked_rules)} rule(s) checked; "
+            f"{len(report.candidates)} candidate(s); "
+            f"{len(report.fully_checked_rules)} fully checked, "
+            f"{len(report.partially_checked_rules)} partially checked, "
+            f"{len(report.untested_rules)} untested rule(s); "
             f"Flesch-Kincaid grade {report.readability['grade_level']} "
             "(informative only)"
         )
-    return 1 if report.errors else 0
+    return 1 if report.result == "fail" else 0
 
 
 if __name__ == "__main__":

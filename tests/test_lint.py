@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import tempfile
 import unittest
+from pathlib import Path
 
 from tests.support import (
     BLOCKED,
@@ -14,7 +16,6 @@ from tests.support import (
 
 from itws.document import parse_document
 from itws.lint.engine import lint_path, run_lint
-from itws.lint.model import Evidence
 from itws.lint.registry import registrations
 from itws.lint.text import (
     counted_word_length,
@@ -51,7 +52,10 @@ class TestConformingFixtures(unittest.TestCase):
         for path in conforming_documents():
             report = lint_path(spec(), path)
             with self.subTest(document=path.name):
-                self.assertGreater(len(report.checked_rules), 40)
+                checked = len(report.fully_checked_rules) + len(
+                    report.partially_checked_rules
+                )
+                self.assertGreater(checked, 40)
                 self.assertTrue(report.readability["words"] > 0)
 
 
@@ -113,37 +117,93 @@ class TestRiskFixtures(unittest.TestCase):
         self.assertTrue(found)
         self.assertIn("not approved", found[0].excerpt.casefold())
 
-    def test_a_stale_version_declaration_blocks_the_run(self) -> None:
+    def test_a_stale_version_declaration_fails_pinning(self) -> None:
         report = lint_path(spec(), BLOCKED / "stale-version.md")
         rules = {finding.rule for finding in violations(report)}
-        self.assertIn("8.6.2", rules)
         self.assertIn("8.2.3", rules)
 
-    def test_absent_evidence_reports_blocked_and_never_passes(self) -> None:
+    def test_missing_evidence_fixture_has_no_retired_process_rules(self) -> None:
+        """Absent measurements stay in prose; process rules no longer block."""
         report = lint_path(spec(), BLOCKED / "missing-evidence.md")
-        self.assertTrue(report.blocked)
-        for finding in report.blocked:
-            self.assertEqual(finding.kind, "blocked")
+        rules = {finding.rule for finding in violations(report)}
+        retired_prefixes = ("8.1.", "8.3.", "8.4.", "8.5.", "8.7.")
+        self.assertFalse(
+            any(
+                any(rule.startswith(prefix) for prefix in retired_prefixes)
+                for rule in rules
+            ),
+            sorted(rules),
+        )
 
     def test_a_partial_rule_reports_a_candidate_not_a_violation(self) -> None:
         report = lint_path(spec(), CONFORMING / "technical-report.md")
         for finding in report.findings:
             rule = spec().rule(finding.rule)
             if rule and rule.machine_checkable == "partial":
-                self.assertIn(finding.kind, {"candidate", "blocked", "skipped"})
+                self.assertIn(
+                    finding.kind, {"candidate", "unresolved", "skipped"}
+                )
 
 
-class TestNetworkSeparation(unittest.TestCase):
-    def test_citation_checks_are_skipped_without_network(self) -> None:
-        report = lint_path(spec(), CONFORMING / "research-paper.md", network=False)
-        skipped = [f for f in report.findings if f.kind == "skipped"]
-        self.assertTrue(any(f.rule == "5.4.3" for f in skipped))
+class _StubResolver:
+    """Resolve from a fixed table, so the check runs without a network."""
 
-    def test_a_skipped_check_is_not_a_pass(self) -> None:
-        report = lint_path(spec(), CONFORMING / "research-paper.md", network=False)
-        self.assertTrue(
-            any(f.kind in {"skipped", "blocked"} for f in report.findings)
+    def __init__(self, resolvable: set[str]) -> None:
+        self.resolvable = resolvable
+        self.asked: list[str] = []
+
+    def resolve(self, target: str):
+        from itws.lint.resolvers import Resolution
+
+        self.asked.append(target)
+        return Resolution(
+            target, target in self.resolvable, "" if target in self.resolvable else "404"
         )
+
+
+def _citation_findings(*, citation_resolver=None, network: bool = False):
+    report = lint_path(
+        spec(),
+        CONFORMING / "research-paper.md",
+        network=network,
+        citation_resolver=citation_resolver,
+    )
+    return [finding for finding in report.findings if finding.rule == "5.4.3"]
+
+
+class TestCitationResolution(unittest.TestCase):
+    """Rule 5.4.3: the run never records a resolution it did not perform."""
+
+    def test_without_a_resolver_each_target_is_skipped(self) -> None:
+        findings = _citation_findings()
+        self.assertTrue(findings)
+        for finding in findings:
+            self.assertEqual(finding.kind, "skipped")
+        self.assertTrue(
+            any("example.invalid" in finding.excerpt for finding in findings)
+        )
+
+    def test_an_unreachable_target_is_a_violation_when_resolved(self) -> None:
+        resolver = _StubResolver(set())
+        findings = _citation_findings(citation_resolver=resolver)
+        self.assertTrue(resolver.asked)
+        self.assertTrue(findings)
+        for finding in findings:
+            self.assertEqual(finding.kind, "violation")
+
+    def test_a_reachable_target_produces_no_finding(self) -> None:
+        resolver = _StubResolver(
+            {"https://example.invalid/itws-fixture/checker"}
+        )
+        self.assertEqual(
+            _citation_findings(citation_resolver=resolver), []
+        )
+
+    def test_the_default_run_asks_no_resolver(self) -> None:
+        """§8.2: the default lint gate makes no network request."""
+        resolver = _StubResolver(set())
+        lint_path(spec(), CONFORMING / "decision-record.md")
+        self.assertEqual(resolver.asked, [])
 
 
 class TestTextHelpers(unittest.TestCase):
@@ -183,15 +243,12 @@ class TestTextHelpers(unittest.TestCase):
 
 class TestPhraseDrivenChecks(unittest.TestCase):
     def test_a_prohibited_word_is_reported_with_its_generated_entry(self) -> None:
-        import tempfile
-        from pathlib import Path
-
         handle = tempfile.NamedTemporaryFile(
             "w", suffix=".md", delete=False, encoding="utf-8"
         )
         handle.write(
-            "# T\n\nITWS version: 0.8.0-draft\nProfile: explanation\n"
-            "Conformance tier: core\n\n## Summary\n\n"
+            "# T\n\nITWS version: 0.10.0-draft\nProfile: explanation\n\n"
+            "## Summary\n\n"
             "The cache is a pivotal part of the tapestry.\n"
         )
         handle.close()
@@ -204,16 +261,13 @@ class TestPhraseDrivenChecks(unittest.TestCase):
         path.unlink()
 
     def test_stacked_connectives_need_two_consecutive_sentences(self) -> None:
-        import tempfile
-        from pathlib import Path
-
         def lint(body: str):
             handle = tempfile.NamedTemporaryFile(
                 "w", suffix=".md", delete=False, encoding="utf-8"
             )
             handle.write(
-                "# T\n\nITWS version: 0.8.0-draft\nProfile: explanation\n"
-                f"Conformance tier: core\n\n## Summary\n\n{body}\n"
+                "# T\n\nITWS version: 0.10.0-draft\nProfile: explanation\n\n"
+                f"## Summary\n\n{body}\n"
             )
             handle.close()
             path = Path(handle.name)

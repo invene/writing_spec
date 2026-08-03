@@ -254,7 +254,7 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 - A book citation carries page numbers.
 
 #### Rule 5.4.3 — Every citation resolves
-**Class:** mandatory · **Machine-checkable:** yes · **Source:** Wikipedia "Signs of AI writing" (citations)
+**Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing" (citations)
 **Constructs:** citation
 **Navigation:** target: citation · chunks: any · slots: any · layers: exact · context: document · rewrite: prohibited
 **Resources:** reads: citation-ledger · writes: none
@@ -262,7 +262,9 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 > Every citation **shall** pass every applicable citation-resolution check.
 
-**Rationale:** A valid-looking DOI that resolves elsewhere and a dead, unarchived link are hallucination signals, not ordinary link rot. Mechanical resolution checks run in §8.2. Serves P6.
+**Rationale:** A valid-looking DOI that resolves elsewhere and a dead, unarchived link are hallucination signals, not ordinary link rot. Serves P6.
+
+The rule is `partial` because its two halves need different inputs. Citation form — a placeholder access date, a malformed DOI — is decided from the document alone, and §8.2 reports it as a violation. Reaching a target needs the network access §8.2 denies the default lint run, so the linter performs it only when the run supplies a resolver, and otherwise reports each unreached target for a reader. A run never records a resolution it did not perform.
 
 **Compliant:** "RFC 9110, *HTTP Semantics*, https://www.rfc-editor.org/rfc/rfc9110.html." The URL resolves to that RFC.
 **Non-compliant:** A citation whose DOI resolves to an unrelated article, or whose URL does not resolve and has no archived copy.
@@ -278,12 +280,12 @@ The citation-integrity rules in this section apply in every profile. Fabricated-
 
 > The cited page or section **shall** state or directly support the claim it is cited for.
 
-**Rationale:** Resolution (Rule 5.4.3) is necessary but insufficient. A real source may not support the claim for which it is cited. An unsupported citation is the harder-to-catch half of citation fabrication. The subject-matter-owner review (§8.4) checks support where that review tier applies.
+**Rationale:** Resolution (Rule 5.4.3) is necessary but insufficient. A real source may not support the claim for which it is cited. An unsupported citation is the harder-to-catch half of citation fabrication. A reader or agent compares the claim with the cited support.
 
 **Compliant:** Citing API contract §3.2 for "clients may retry this operation safely" when §3.2 specifies idempotent retry behavior.
 **Non-compliant:** Citing an architecture overview for a retry guarantee it never states.
 
-**Cross-references:** Rule 5.4.3, §8.4
+**Cross-references:** Rule 5.4.3
 
 #### Rule 5.4.5 — Source counts are accurate
 **Class:** mandatory · **Machine-checkable:** partial · **Source:** Wikipedia "Signs of AI writing" (source-count inflation)
@@ -391,7 +393,7 @@ Lifecycle values describe an artifact or workflow state. Annex E or the document
 **Resources:** reads: chunk-text, claim-ledger · writes: chunk-text
 **Relations:** constrains 5.6.2; pairs-with 3.9.2
 
-> A governed document **shall** use only §5.6 table phrases to signal evidential strength or decision authority.
+> A governed unit **shall** use only §5.6 table phrases to signal evidential strength or decision authority.
 >
 > The document **shall not** use an unsupported modifier.
 
@@ -415,12 +417,12 @@ Lifecycle values describe an artifact or workflow state. Annex E or the document
 
 > Each calibrated statement **shall** have strength matching the calibration basis.
 
-**Rationale:** The table works only when the mapping is honest. "Verification confirms" backed by an unrun test violates calibration. "We decided" for an unapproved proposal also violates calibration. Both phrases belong to the permitted vocabulary. The subject-matter owner (§8.4) audits this mapping where that review tier applies. Serves P6.
+**Rationale:** The table works only when the mapping is honest. "Verification confirms" backed by an unrun test violates calibration. "We decided" for an unapproved proposal also violates calibration. Both phrases belong to the permitted vocabulary. A reader or agent audits the statement against its recorded basis. Serves P6.
 
 **Compliant:** "We observed the timeout on all five replay runs. The evidence indicates that the dependency limit is involved. We did not vary that limit."
 **Non-compliant:** "Verification confirms the dependency caused the timeout." Only correlation in five replay runs supports the claim.
 
-**Cross-references:** Rule 5.6.1, Rule 7.4.1, §8.4
+**Cross-references:** Rule 5.6.1, Rule 7.4.1
 
 ## 5.7 Statistical evidence for report profiles
 

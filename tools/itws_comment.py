@@ -5,12 +5,9 @@ The change set is declared by a JSON carrier (§0.2.1). Actions:
 
   index      extract and match the governed comments; print the manifest
   scan-path  print the Rule 4.13.9 scan path
-  lint       run the §4.13, §8.7, and shared text checks
+  lint       run the §4.13 and shared text checks
   stale      report every recorded hash that no longer matches its source
-  validate   report one §8.6.2 state: pass, fail, needs_review, or blocked
-
-Supply recorded human gates with ``--evidence <file.json>``, exactly as
-``tools/itws_validate.py`` does for a Markdown document.
+  validate   report machine pass or fail with explicit rule coverage
 """
 
 from __future__ import annotations
@@ -28,14 +25,11 @@ from itws.comments.changeset import (
 )
 from itws.jsonio import dumps
 from itws.lint.engine import run_lint
-from itws.lint.model import Evidence
 from itws.model import content_hash
 from itws.parser import SpecError, parse_specification
 from itws.validate import validate_comment_set
 
-load_evidence = Evidence.from_json_file
-
-EXIT_CODES = {"pass": 0, "needs_review": 0, "fail": 1, "blocked": 2}
+EXIT_CODES = {"pass": 0, "fail": 1}
 
 
 def parse_args() -> argparse.Namespace:
@@ -48,7 +42,6 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--carrier", type=Path, required=True)
     parser.add_argument("--spec-dir", type=Path, default=Path("spec"))
-    parser.add_argument("--evidence", type=Path)
     parser.add_argument("--network", action="store_true")
     parser.add_argument(
         "--skip-artifact-check",
@@ -80,10 +73,6 @@ def _stale_report(comment_set) -> dict[str, object]:
         entries.append(
             {"kind": "comment", "subject": record.comment_id, "detail": message}
         )
-    for record, message in comment_set.stale_proposals():
-        entries.append(
-            {"kind": "proposal", "subject": record.comment_id, "detail": message}
-        )
     for record, message in comment_set.anchor_problems():
         entries.append(
             {"kind": "anchor", "subject": record.comment_id, "detail": message}
@@ -107,7 +96,6 @@ def main() -> int:
             spec,
             args.carrier,
             spec_dir=args.spec_dir,
-            evidence=load_evidence(args.evidence),
             network=args.network,
             check_artifacts=not args.skip_artifact_check,
         )
@@ -117,15 +105,10 @@ def main() -> int:
             print(f"carrier : {report.path}")
             print(f"version : {report.itws_version}")
             print(f"profile : {report.profile or '(undeclared)'}")
-            print(f"tier    : {report.tier}")
-            print(f"state   : {report.state}")
+            print(f"result  : {report.result}")
             for reason in report.reasons:
                 print(f"  - {reason}")
-            if report.human_gates:
-                print("human gates:")
-                for name, state in report.human_gates.items():
-                    print(f"  {name}: {state}")
-        return EXIT_CODES[report.state]
+        return EXIT_CODES[report.result]
 
     comment_set = load_comment_set(args.carrier)
 
@@ -157,13 +140,10 @@ def main() -> int:
         return 2
     declarations = comment_set.declarations
     profile = declarations.profile if declarations else "maintenance-comment"
-    tier = declarations.tier if declarations and declarations.tier else "core"
     lint = run_lint(
         spec,
         structural_manifest(comment_set),
         profile=profile or "maintenance-comment",
-        tier=tier,
-        evidence=load_evidence(args.evidence),
         network=args.network,
         comment_set=comment_set,
     )
@@ -177,9 +157,10 @@ def main() -> int:
             )
         print(
             f"{len(lint.findings)} finding(s), {len(lint.errors)} error(s), "
-            f"{len(lint.blocked)} blocked"
+            f"{len(lint.candidates)} candidate(s), "
+            f"{len(lint.untested_rules)} untested rule(s)"
         )
-    return 1 if lint.errors else 0
+    return 1 if lint.result == "fail" else 0
 
 
 if __name__ == "__main__":

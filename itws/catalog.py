@@ -149,7 +149,7 @@ class Catalog:
     # -- profile ----------------------------------------------------------
 
     def get_profile(self, profile: str) -> dict:
-        """Return one profile's job, overlay, tier, load set, and envelope."""
+        """Return one profile's language contract, load set, and envelope."""
         if profile not in PROFILE_IDS:
             raise CatalogError(f"unknown profile ID: {profile}")
         if profile not in self._profiles:

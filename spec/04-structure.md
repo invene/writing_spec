@@ -2,7 +2,7 @@
 
 Part 4 is shared core. Part 4 governs everything above the sentence in every ITWS profile. A rule applies to all profiles unless `**Profiles:**` metadata narrows it.
 
-Sections 4.1–4.5 govern chunks, ordering, profile jobs, skeletons, and headings. Sections 4.6–4.10 govern detail, navigation, density, path-agnostic prose, and formatting. Section 4.11 governs the work-item hierarchy and keeps its rules in the overlay directories (§1.5). Section 4.12 defines the scan path.
+Sections 4.1–4.5 govern chunks, ordering, profile jobs, skeletons, and headings. Sections 4.6–4.10 govern detail, navigation, density, path-agnostic prose, and formatting. Section 4.11 governs the work-item hierarchy and keeps its rules in the overlay directories (§1.5). Section 4.12 defines the scan path for a Markdown document. Section 4.13 governs a hosted comment set and keeps its rules in the `maintenance-comment` overlay (§1.5); Rule 4.13.9 defines that surface's scan path.
 
 ASD-STE100 stops at the sentence. This part draws on Information Mapping, Diátaxis, IMRaD, and plain-language ordering guidance.
 
@@ -199,7 +199,7 @@ After: "The protocol keeps writes available when one replica fails. Each write g
 
 ## 4.3 Profiles: one job per document
 
-ITWS 0.8.0-draft defines twelve canonical profiles. A profile is a document job in the Diátaxis sense. The profile determines the governed unit's purpose, governed surface, applicable Annex E skeleton, and narrowed rules. Content with another job belongs in another document. Local, skippable content may use a bounded block.
+ITWS 0.10.0-draft defines twelve canonical profiles. A profile is a document job in the Diátaxis sense. The profile determines the governed unit's purpose, governed surface, applicable Annex E skeleton, and narrowed rules. Content with another job belongs in another document. Local, skippable content may use a bounded block.
 
 A `markdown-document` profile carries its declarations and Annex E slots in the document itself. A `hosted-comment-set` profile carries them in its declaration carrier (§0.2.1). The rules of this section read the same either way: the declaration and the skeleton live on the profile's declared surface.
 
@@ -214,13 +214,12 @@ Each profile states its job in the `README.md` of its overlay directory. Section
 
 > A governed unit **shall** declare exactly one canonical §0.2 profile ID on its profile's declaration surface: the front matter of a Markdown document, or the declaration carrier of a hosted comment set.
 
-**Rationale:** Skeleton selection, profile-scoped rules, review, and linting key off the declared profile. An inferred or noncanonical profile makes conformance unverifiable (P7).
+**Rationale:** Skeleton selection, profile-scoped rules, and machine checking key off the declared profile. An inferred or noncanonical profile makes conformance unverifiable (P7).
 
 **Compliant:**
 ```text
-ITWS version: 0.8.0-draft
+ITWS version: 0.10.0-draft
 Profile: decision-record
-Conformance tier: core
 ```
 **Non-compliant:** `type: ADR` with no canonical profile ID, or a profile inferred only from the filename.
 
@@ -235,7 +234,7 @@ Subordinate content remains within a profile when Annex E requires it or the dec
 **Resources:** reads: chunk-text, skeleton-order · writes: chunk-text
 **Relations:** requires 4.3.1
 
-> A governed document **shall not** independently perform another profile's primary job. Required subordinate content **shall** remain within the declared profile.
+> A governed unit **shall not** independently perform another profile's primary job. Required subordinate content **shall** remain within the declared profile.
 
 **Rationale:** Job mixing makes procedures become architecture essays, decision records reopen settled choices, and investigation logs present provisional hypotheses as report conclusions (P5, P7). Profile-required subordinate content is not mixing: a design RFC needs rollout planning, and an incident report needs remediation. The violation occurs when that subordinate content becomes an independent second purpose that should have its own governed document.
 
@@ -451,7 +450,7 @@ Sections locate themselves. References point by number. The document never depen
 
 ## 4.8 Length and density budgets
 
-The ladder makes rigor possible. Budgets make the ladder manageable. A document may satisfy §2.3 but still admit terms faster than the reader can absorb them. Both numeric values below are provisional draft calibrations. Section 8.3 reader-test outcomes may change them under §0.8.
+The ladder makes rigor possible. Budgets make the ladder manageable. A document may satisfy §2.3 but still admit terms faster than the reader can absorb them. Both numeric values below are provisional draft calibrations and may change under §0.8 when use evidence supports another value.
 
 For Rule 4.8.1, a page is a consecutive, non-overlapping 500-word window. Any remainder forms the document's final page.
 
@@ -462,14 +461,14 @@ For Rule 4.8.1, a page is a consecutive, non-overlapping 500-word window. Any re
 **Resources:** reads: chunk-text, term-ledger · writes: chunk-text
 **Relations:** requires 2.3.1; pairs-with 4.4.2
 
-> A governed document **shall not** admit more than three new terms or symbols per defined page.
+> A governed unit **shall not** admit more than three new terms or symbols per defined page.
 
-**Rationale:** Admission is the costliest thing a document asks of the reader. Three per page is a provisional draft value based on working-memory guidance. Section 8.3 calibration may change the value. The cap forces the writer to spread the ladder or reduce scope. Persistent overshoot signals missing structure, not a need for waiver.
+**Rationale:** Admission is the costliest thing a document asks of the reader. Three per page is a provisional draft value based on working-memory guidance. Use evidence may change the value. The cap forces the writer to spread the ladder or reduce scope. Persistent overshoot signals missing structure.
 
 **Compliant:** A context section admits "replica," "quorum," and "failover" across its first page, then builds on them.
 **Non-compliant:** A first page admits "replica," "quorum," "lease," "epoch," "consensus," and "linearizability"—six rungs in 500 words.
 
-**Cross-references:** §2.3, §4.4.2, §8.3
+**Cross-references:** §2.3, §4.4.2
 
 #### Rule 4.8.2 — Sections stay under the length ceiling
 **Class:** recommended · **Machine-checkable:** yes · **Source:** original
@@ -711,14 +710,14 @@ The heading and opening sentence have different jobs. The heading identifies the
 **Resources:** reads: heading, chunk-text, exact-item-ledger · writes: heading, chunk-text
 **Relations:** requires 4.12.1; requires 4.4.3; pairs-with 7.4.1
 
-> The scan path **shall** let the assumed reader produce the selected profile's scan-test outcome. That outcome **shall** preserve each applicable status, strength, and material boundary. The document title **shall not** frame a wider or stronger outcome.
+> The scan path **shall** let the assumed reader produce the selected profile's shallow-model outcome. That outcome **shall** preserve each applicable status, strength, and material boundary. The document title **shall not** frame a wider or stronger outcome.
 
 **Rationale:** Text processing distinguishes global gist from local detail. Titles and headings also guide whether a reader descends. A plausible but wider scan model can prevent the reader from reaching its later correction. The scan path therefore carries a correct shallow model, not a promotional summary (P3, P4, P6).
 
 **Compliant:** "Proposed single-region recovery design" frames a proposal. Its Summary says approval is pending and recovery covers one regional failure.
 **Non-compliant:** "Region-proof recovery design" frames an approved general solution. The body later limits an unapproved proposal to one failed region.
 
-**Cross-references:** Rules 4.4.3, 5.6.1, 7.1.2, 7.4.1; §8.1
+**Cross-references:** Rules 4.4.3, 5.6.1, 7.1.2, 7.4.1
 
 **Phrase list 4.12.3 — scan-qualification candidates (pattern):** "\b(?:not|no|never|without)\b" (candidate only; a canonical negative fact may be valid); "[,;]\s*(?:although|though|however|but)\b"; "\b(?:may|might|could)\b[^.!?]{0,80}\b(?:unverified|unknown|untested)\b".
 
@@ -759,6 +758,5 @@ The heading and opening sentence have different jobs. The heading identifies the
 Section 4.13 governs the hosted comment set of the `maintenance-comment` profile. Its rules apply to that profile only. Section 1.5 places them in the overlay directory:
 
 - Every §4.13 rule is in `spec/overlays/maintenance-comment/rules.md`.
-- The machine-proposal gate rules of §8.7 are in the same file.
 
-Annex C indexes every §4.13 rule with its profile applicability and its file. Section 0.6 defines the comment change set, host anchor, information delta, cognitive debt, removal condition, and comment proposal record that these rules use.
+Annex C indexes every §4.13 rule with its profile applicability and its file. Section 0.6 defines the comment change set, host anchor, information delta, cognitive debt, and removal condition that these rules use.

@@ -67,7 +67,8 @@ PROFILE_SURFACES: dict[str, str] = {
 }
 
 #: Host languages with a registered §4.13 adapter. The list is closed: a
-#: change set naming an unregistered adapter is `blocked`, never guessed at.
+#: change set naming an unregistered adapter is a structural failure, never
+#: guessed at.
 HOST_ADAPTERS: tuple[str, ...] = ("python",)
 
 #: Closed §4.13 comment purposes. A governed comment record declares one.
@@ -83,18 +84,6 @@ COMMENT_PURPOSES: tuple[str, ...] = (
 #: Closed §4.13 comment lifecycles.
 COMMENT_LIFECYCLES: tuple[str, ...] = ("durable", "temporary")
 
-#: Closed §8.7 comment provenance values. Tooling never infers these from
-#: prose style; a record states them or the comment is not governed.
-COMMENT_PROVENANCES: tuple[str, ...] = ("human-authored", "ai-proposed")
-
-#: Closed §8.7 human dispositions for one comment proposal record.
-PROPOSAL_DISPOSITIONS: tuple[str, ...] = (
-    "pending",
-    "accepted",
-    "revised",
-    "rejected",
-)
-
 #: Change classifications the extractor assigns to one governed comment.
 COMMENT_CHANGES: tuple[str, ...] = ("added", "modified", "removed")
 
@@ -103,23 +92,6 @@ COMMENT_CHANGES: tuple[str, ...] = ("added", "modified", "removed")
 PROFILE_FAMILIES: dict[str, tuple[str, ...]] = {
     "work-item": ("epic", "task", "subtask"),
     "report": ("technical-report", "research-paper"),
-}
-
-TIERS: tuple[str, ...] = ("core", "reviewed", "publication")
-
-MINIMUM_TIER: dict[str, str] = {
-    "design-rfc": "reviewed",
-    "decision-record": "core",
-    "procedure": "reviewed",
-    "explanation": "core",
-    "incident": "reviewed",
-    "technical-report": "reviewed",
-    "research-paper": "publication",
-    "investigation-log": "core",
-    "epic": "reviewed",
-    "task": "core",
-    "subtask": "core",
-    "maintenance-comment": "core",
 }
 
 RULE_CLASSES: tuple[str, ...] = ("mandatory", "recommended", "permitted")
@@ -228,7 +200,6 @@ CONSTRUCTS: tuple[str, ...] = (
     "procedure-step",
     "prohibited-phrase",
     "pronoun",
-    "proposal-record",
     "quantity",
     "removal-condition",
     "requirement",
@@ -242,7 +213,6 @@ CONSTRUCTS: tuple[str, ...] = (
     "tool-artifact",
     "user-journey",
     "verb",
-    "waiver",
     "warning",
     "word",
     "worked-example",
@@ -265,10 +235,8 @@ RESOURCES: tuple[str, ...] = (
     "figure-ledger",
     "citation-ledger",
     "conformance-record",
-    "waiver-record",
     "comment-text",
     "host-anchor-ledger",
-    "proposal-record",
 )
 
 #: Typed edges between rules. ``exemplified-by`` is generated from Annex D and
@@ -301,23 +269,6 @@ PRECEDENCE_LAYERS: tuple[tuple[int, str, str], ...] = (
     (6, "specific-over-general", "Specific over general."),
 )
 
-#: Self-check passes of §8.1, keyed by the part that owns the rule.
-CHECKLIST_PASSES: dict[str, str] = {
-    "2": "Vocabulary",
-    "3": "Sentences",
-    "4": "Structure and explanation",
-    "5": "Technical exactness and evidence",
-    "6": "Structure and explanation",
-    "7": "Technical exactness and evidence",
-}
-
-CHECKLIST_PASS_ORDER: tuple[str, ...] = (
-    "Vocabulary",
-    "Sentences",
-    "Structure and explanation",
-    "Technical exactness and evidence",
-)
-
 #: Severity that §8.2's map assigns to each rule class.
 SEVERITY_BY_CLASS: dict[str, str] = {
     "mandatory": "error",
@@ -335,9 +286,6 @@ JUDGMENT_STATES: tuple[str, ...] = (
     "disputed",
     "unresolved",
 )
-
-#: Four-state validation outcome of §8.6.
-VALIDATION_STATES: tuple[str, ...] = ("pass", "fail", "needs_review", "blocked")
 
 NORMATIVE_FIELDS: tuple[str, ...] = ("profiles", "constructs")
 
@@ -366,11 +314,6 @@ def profile_families(profile: str) -> tuple[str, ...]:
         for family, members in sorted(PROFILE_FAMILIES.items())
         if profile in members
     )
-
-
-def tier_at_least(tier: str, minimum: str) -> bool:
-    """Return whether ``tier`` satisfies ``minimum`` under §0.4.3."""
-    return TIERS.index(tier) >= TIERS.index(minimum)
 
 
 def rule_sort_key(number: str) -> tuple[int, int, int]:

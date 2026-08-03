@@ -19,10 +19,22 @@ from itws.lint.text import (
     strip_inline_markup,
 )
 
-#: Acronyms that Annex B assumes, so they need no expansion.
 def _assumed_acronyms(context: LintContext) -> set[str]:
+    """Acronyms Annex B assumes, so they need no expansion.
+
+    Only an assumed item contributes. An acronym named in §B.2's
+    not-in-baseline list or in §B.3 is named there to say the reader does
+    *not* know it, and reading it as assumed would exempt the very terms
+    §2.3 exists to admit.
+    """
     assumed: set[str] = set()
-    for item in context.spec.baseline:
+    overlay = context.spec.profile(context.profile)
+    items = list(context.spec.baseline)
+    if overlay is not None:
+        items.extend(overlay.reader_overlay)
+    for item in items:
+        if not item.is_assumed:
+            continue
         for match in re.finditer(r"\(([A-Z][A-Z0-9]{1,7})s?\)", item.text):
             assumed.add(match.group(1))
         for match in re.finditer(r"\b([A-Z][A-Z0-9]{1,7})\b", item.text):

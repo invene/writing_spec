@@ -1,6 +1,6 @@
 # Annex E §E.12 — `maintenance-comment` skeleton
 
-**ITWS version:** 0.8.0-draft · **Status:** normative
+**ITWS version:** 0.10.0-draft · **Status:** normative
 
 The README in this directory states the profile job. Annex E states the shared slot policy and the §E.0.1 rename and merge policy.
 
@@ -18,10 +18,16 @@ Change scope               (required) The change-set ID, host adapter, host file
                            one-sentence purpose.
 Comment record             (required, for each governed comment) One governed
                            comment's complete record.
+  Change kind              (required) Exactly one of "added", "modified", or
+                           "removed". The kind selects the source the Anchor
+                           resolves against (Rule 4.13.3).
   Anchor                   (required) The host file, line span, and enclosing
-                           named construct the comment attaches to.
+                           named construct the comment attaches to: in the
+                           proposed source for an added or modified comment, and
+                           in the base source for a removed one.
   Comment text             (required) The exact governed comment text, with
-                           comment markers stripped.
+                           comment markers stripped. A removed comment records the
+                           text as it stood in the base source.
   Purpose                  (required) Exactly one closed purpose from Rule 4.13.2.
   Information delta        (required) The knowledge deleting the comment would
                            lose, stated against the anchored code.
@@ -30,12 +36,8 @@ Comment record             (required, for each governed comment) One governed
                            "None" with a reason.
   Lifecycle                (required) "durable", or "temporary" with the
                            observable removal condition.
-  Provenance               (required) "human-authored", or "ai-proposed" with the
-                           §8.7 comment proposal record.
 Boundaries                 (required) The comments, files, and conditions the
                            change set does not cover.
-Conformance evidence       (required) The pinned lint run, self-check, and
-                           scan-test records for the declared tier.
 ```
 
 Permitted renames: none.

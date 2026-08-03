@@ -5,10 +5,9 @@ Run after editing a fixture host file, from the repository root:
 
     python3 tests/fixtures/comments/rebuild.py
 
-Each carrier pins real hashes, so an edit to a host file without a rerun
-turns the fixture stale, exactly as Rule 8.7.4 intends. The stale-proposal
-fixture deliberately keeps hashes from the conforming carrier's text with
-one character changed; the loop below never rewrites its broken pins.
+Each carrier pins real content hashes, so an edit to a host file without a
+rerun turns the fixture stale. Re-run this script whenever you change
+``retry_base.py`` or ``retry_proposed.py`` in a fixture directory.
 """
 
 from __future__ import annotations
@@ -25,6 +24,7 @@ from itws.comments.adapter import PythonAdapter
 from itws.model import SourceSpan, content_hash
 
 ADAPTER = PythonAdapter()
+ITWS_VERSION = "0.10.0-draft"
 
 RATIONALE_TEXT = (
     "The 250 ms pause keeps retries under the gateway burst limit (DR-12)."
@@ -53,9 +53,8 @@ def declarations(directory: Path, change_set_id: str, scope: str) -> dict[str, o
     base = (directory / "retry_base.py").read_text(encoding="utf-8")
     proposed = (directory / "retry_proposed.py").read_text(encoding="utf-8")
     return {
-        "itws_version": "0.8.0-draft",
+        "itws_version": ITWS_VERSION,
         "profile": "maintenance-comment",
-        "conformance_tier": "core",
         "change_set_id": change_set_id,
         "host_adapter": "python",
         "base_path": "retry_base.py",
@@ -71,11 +70,12 @@ def declarations(directory: Path, change_set_id: str, scope: str) -> dict[str, o
 
 
 def rationale_record(
-    proposed: str, *, provenance: str, disposition: str, bases: list[str],
-    text: str = RATIONALE_TEXT,
+    proposed: str, *, text: str = RATIONALE_TEXT, basis: list[str] | None = None
 ) -> dict[str, object]:
     span = find_span(proposed, text.split("\n")[0], text.count("\n") + 1)
     anchor = anchor_for(proposed, "retry_proposed.py", span)
+    if basis is None:
+        basis = ["decision record DR-12"]
     record: dict[str, object] = {
         "comment_id": "C-1",
         "change": "added",
@@ -87,24 +87,9 @@ def rationale_record(
             "The code shows the pause length; the burst limit that fixes it "
             "is recorded only here and in DR-12."
         ),
-        "basis": ["decision record DR-12"],
+        "basis": basis,
         "lifecycle": "durable",
-        "provenance": provenance,
     }
-    if provenance == "ai-proposed":
-        record["proposal"] = {
-            "prompt_provenance": (
-                "Prompt recorded in the change request: state why the retry "
-                "pause is 250 ms."
-            ),
-            "bases": bases,
-            "source_hash": content_hash(proposed),
-            "anchor_hash": anchor["anchor_hash"],
-            "comment_hash": content_hash(text),
-            "disposition": disposition,
-            "disposed_by": "R. Alvarez" if disposition != "pending" else "",
-            "disposed_on": "2026-07-29" if disposition != "pending" else "",
-        }
     return record
 
 
@@ -126,8 +111,21 @@ def marker_record(proposed: str, *, text: str = MARKER_TEXT) -> dict[str, object
         "removal_condition": (
             "The v2 totals endpoint is live and test T-9 passes against it."
         ),
-        "provenance": "human-authored",
     }
+
+
+def write_conforming_pair(directory: Path, change_set_id: str, scope: str) -> None:
+    proposed = (directory / "retry_proposed.py").read_text(encoding="utf-8")
+    write(
+        directory,
+        {
+            **declarations(directory, change_set_id, scope),
+            "comments": [
+                rationale_record(proposed),
+                marker_record(proposed),
+            ],
+        },
+    )
 
 
 def write(directory: Path, payload: dict[str, object]) -> None:
@@ -135,7 +133,7 @@ def write(directory: Path, payload: dict[str, object]) -> None:
     payload.setdefault("open_questions", [])
     payload.setdefault(
         "conformance_evidence",
-        {"lint_run_version": "0.8.0-draft", "self_check_recorded": True},
+        {"lint_run_version": ITWS_VERSION, "self_check_recorded": True},
     )
     target = directory / "carrier.json"
     target.write_text(
@@ -145,7 +143,6 @@ def write(directory: Path, payload: dict[str, object]) -> None:
 
 
 def main() -> None:
-    # Conforming: one accepted machine proposal, one complete human marker.
     directory = FIXTURES / "conforming"
     proposed = (directory / "retry_proposed.py").read_text(encoding="utf-8")
     write(
@@ -158,12 +155,7 @@ def main() -> None:
                 "marker in the gateway client.",
             ),
             "comments": [
-                rationale_record(
-                    proposed,
-                    provenance="ai-proposed",
-                    disposition="accepted",
-                    bases=["decision record DR-12", "test T-7"],
-                ),
+                rationale_record(proposed),
                 marker_record(proposed),
             ],
             "judgments": [
@@ -178,8 +170,38 @@ def main() -> None:
         },
     )
 
-    # Bare marker: the marker violates the Rule 4.13.8 grammar, and its
-    # record declares temporary with no removal condition (Rule 4.13.7).
+    directory = FIXTURES / "conforming-removal"
+    base = (directory / "retry_base.py").read_text(encoding="utf-8")
+    removed = "TODO: clean this up."
+    span = find_span(base, removed, 1)
+    write(
+        directory,
+        {
+            **declarations(
+                directory,
+                "CS-2026-019",
+                "Remove the bare totals-shim marker now that TASK-142 is closed.",
+            ),
+            "comments": [
+                {
+                    "comment_id": "C-1",
+                    "change": "removed",
+                    "anchor": anchor_for(base, "retry_base.py", span),
+                    "span": span,
+                    "text": removed,
+                    "purpose": "marker",
+                    "information_delta": (
+                        "None; the marker named no work item and no removal "
+                        "condition, so its deletion loses no recorded knowledge."
+                    ),
+                    "basis": ["work item TASK-142"],
+                    "lifecycle": "temporary",
+                    "removal_condition": "TASK-142 is closed.",
+                }
+            ],
+        },
+    )
+
     directory = FIXTURES / "violations" / "bare-marker"
     proposed = (directory / "retry_proposed.py").read_text(encoding="utf-8")
     bare = "TODO: clean this up later."
@@ -197,18 +219,10 @@ def main() -> None:
         },
     )
 
-    # Unsupported machine rationale: the proposal cites only its prompt.
     directory = FIXTURES / "violations" / "unsupported-rationale"
     proposed = (directory / "retry_proposed.py").read_text(encoding="utf-8")
     text = "The 250 ms pause keeps the gateway happy under load."
-    record = rationale_record(
-        proposed,
-        provenance="ai-proposed",
-        disposition="accepted",
-        bases=[],
-        text=text,
-    )
-    record["basis"] = []
+    record = rationale_record(proposed, text=text, basis=[])
     record["basis_none_reason"] = "The generation prompt is the only source."
     record["information_delta"] = "Asserted intent with no recorded support."
     write(
@@ -221,50 +235,16 @@ def main() -> None:
         },
     )
 
-    # Stale proposal: the pinned hashes describe text this carrier does not
-    # hold, so the recorded disposition no longer covers the comment.
-    directory = FIXTURES / "violations" / "stale-proposal"
-    proposed = (directory / "retry_proposed.py").read_text(encoding="utf-8")
-    record = rationale_record(
-        proposed,
-        provenance="ai-proposed",
-        disposition="accepted",
-        bases=["decision record DR-12"],
-    )
-    record["proposal"]["comment_hash"] = content_hash(
-        RATIONALE_TEXT.replace("250", "500")
-    )
-    record["proposal"]["anchor_hash"] = content_hash("an earlier function body")
-    write(
-        directory,
-        {
-            **declarations(
-                directory, "CS-2026-017", "Re-approve the retry-pause rationale."
-            ),
-            "comments": [record, marker_record(proposed)],
-        },
+    write_conforming_pair(
+        FIXTURES / "violations" / "stale-proposal",
+        "CS-2026-017",
+        "Record the retry-pause rationale and totals-shim marker.",
     )
 
-    # Pending disposition: mechanically sound, but no person has disposed
-    # of the machine proposal, so validation blocks (Rule 8.7.3).
-    directory = FIXTURES / "blocked" / "pending-disposition"
-    proposed = (directory / "retry_proposed.py").read_text(encoding="utf-8")
-    write(
-        directory,
-        {
-            **declarations(
-                directory, "CS-2026-018", "Propose the retry-pause rationale."
-            ),
-            "comments": [
-                rationale_record(
-                    proposed,
-                    provenance="ai-proposed",
-                    disposition="pending",
-                    bases=["decision record DR-12"],
-                ),
-                marker_record(proposed),
-            ],
-        },
+    write_conforming_pair(
+        FIXTURES / "blocked" / "pending-disposition",
+        "CS-2026-018",
+        "Record the retry-pause rationale and totals-shim marker.",
     )
 
 
