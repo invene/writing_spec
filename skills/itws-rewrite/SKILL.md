@@ -5,7 +5,7 @@ description: Write, review, or rewrite a document against the Invene Technical W
 
 # Write or rewrite a document against ITWS
 
-ITWS 1.0.0 is a markdown-only specification. There is no validator and no generated catalog. You read the rules, you apply them, and you report what you checked. There is no machine `pass` result to hide behind.
+ITWS 1.0.0 is a markdown-only specification. There is no validator and no generated catalog. You read the rules, you apply them, and you report what you checked.
 
 The specification lives at https://github.com/invene/writing_spec. Work from a checkout; if you are already inside one, the paths below are relative to its root.
 
