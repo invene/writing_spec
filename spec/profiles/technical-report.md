@@ -69,6 +69,8 @@ A verification statement identifies the artifact and version, inputs and environ
 
 The statement summarizes the check in the main document. An appendix may carry command-, configuration-, or instrument-level detail; it does not replace the statement.
 
+§5.8.1 is a **deliberate genre fork**, not shared wording: `research-paper`'s §5.8.1 promises reproducibility alone, and this one widens the same ID to reproducibility, verification, or both. §5.8.2 is shared with `research-paper` and its wording is identical there.
+
 ## Applicable core rules with profile scope
 
 §4.2.4 and §4.4.3 both apply. **§7.3 is mandatory for this profile** — observation and interpretation stay separate, and speculation stays in marked blocks.

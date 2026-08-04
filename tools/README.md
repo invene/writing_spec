@@ -34,9 +34,14 @@ python3 tools/itws_literal.py --self-test       # run the fixture
 ```
 
 It carries no copy of any rule string. Every phrase list, profile ID, disclosure
-value, and strength phrase is parsed out of `spec/phrases.md` and `spec/core.md`
-at run time, so the tool cannot drift from the specification it screens. Adding a
-phrase list to `spec/phrases.md` makes it screenable without touching the code.
+value, strength phrase, and `D` marker is parsed out of `spec/` at run time, so the
+tool cannot drift from the specification it screens. Adding a phrase list to
+`spec/phrases.md` makes it screenable without touching the code, and reclassifying
+a rule from `L` to `S` changes what the tool prints with no code change at all.
+
+What it does still hold is the *list* of rule IDs it evaluates. A rule whose ID
+moved to a profile file is found there; a rule whose ID was withdrawn stops the
+run with a message rather than screening silently against nothing.
 
 **What a run does not tell you.** It decides no conformance question — ITWS §0.5
 keeps that binary and textual, and §8 states what a checker may establish. Every
@@ -53,3 +58,8 @@ A deliberate violation corpus carrying at least one instance of every phrase lis
 the checker screens. `--self-test` fails when a list stops producing a finding,
 which catches a phrase list added to `spec/phrases.md` without a matching fixture
 line. The fixture carries no conformance claim.
+
+That guarantee is per rule ID, not per entry, so one broken entry inside a working
+list would stay green — which is how `"certainly!"` compiled to a pattern that
+could never match while §2.6.11 kept passing. `--self-test` therefore also asks
+every entry to match its own source string, and names any that cannot.

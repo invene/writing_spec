@@ -10,8 +10,9 @@ Load the full seven-file rule set first, always. This tool replaces *reading for
 the literal rules. It never replaces loading them.
 
 It carries no copy of any rule string. Every phrase list, profile ID, disclosure
-value, and strength phrase is parsed from `spec/` at run time, so the tool cannot
-drift from the specification it screens.
+value, strength phrase, and `D` marker is parsed from `spec/` at run time, so the
+tool cannot drift from the specification it screens. It does hold the list of rule
+IDs it evaluates; a rule whose ID no longer has a row in `spec/` stops the run.
 
 Usage:
     itws_literal.py FILE [FILE ...]        screen a corpus
@@ -32,17 +33,42 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 # Rules this tool evaluates. Everything else in the load set is NOT evaluated,
-# and `--coverage` says so. Keys are rule IDs; values are the D marker the
-# specification carries for them (spec/legend.md).
-EVALUATED = {
-    "0.5": "L", "4.3.1": "L", "4.3.4": "L",
-    "2.3.3": "L", "2.6.7": "L", "3.10.2": "L", "3.10.4": "L",
-    "4.6.2": "L", "4.8.2": "L", "4.8.3": "L", "4.10.5": "L", "7.3.3": "L",
-    "2.1.3": "S", "2.6.3": "S", "2.6.4": "S", "2.6.5": "S", "2.6.6": "S",
-    "2.6.8": "S", "2.6.9": "S", "2.6.10": "S", "2.6.11": "S",
-    "3.1.1": "S", "3.1.2": "S", "3.6.2": "S", "3.8.1": "S", "3.9.1": "S",
-    "3.10.6": "S", "4.12.3": "S", "5.6.1": "S",
-}
+# and `--coverage` says so. The D marker for each is read out of `spec/` at run
+# time rather than written here: a hardcoded copy is a second record of the
+# specification, and a second record drifts.
+EVALUATED_RULES = (
+    "4.3.1", "4.3.4", "4.3.5",
+    "2.3.3", "2.6.7", "3.10.2", "3.10.4",
+    "4.6.2", "4.8.2", "4.8.3", "4.10.5", "7.3.3",
+    "2.1.3", "2.6.3", "2.6.4", "2.6.5", "2.6.6",
+    "2.6.8", "2.6.9", "2.6.10", "2.6.11",
+    "3.1.1", "3.1.2", "3.6.2", "3.8.1", "3.9.1",
+    "3.10.6", "4.12.3", "5.6.1",
+)
+
+# Filled by parse_decidability() before any screening runs.
+EVALUATED: dict[str, str] = {}
+
+
+RULE_ROW_RE = re.compile(r"^\|\s*(\d+(?:\.\d+)+)\s*\|\s*[MRP]\s*\|\s*([LSJ])\s*\|", re.M)
+
+
+def parse_decidability(spec_dir: Path) -> dict[str, str]:
+    """Read each evaluated rule's `D` marker from its own row in `spec/`.
+
+    A rule reclassified from `L` to `S` in the specification must change what
+    this tool prints without anyone remembering to edit this file."""
+    found: dict[str, str] = {}
+    for path in [spec_dir / "core.md", *sorted((spec_dir / "profiles").glob("*.md"))]:
+        for rule, d in RULE_ROW_RE.findall(path.read_text(encoding="utf-8")):
+            found.setdefault(rule, d)
+    missing = [r for r in EVALUATED_RULES if r not in found]
+    if missing:
+        raise SystemExit(
+            "no rule row found in spec/ for: " + ", ".join(missing) +
+            ". A screened rule whose ID has moved must be re-pointed here."
+        )
+    return {r: found[r] for r in EVALUATED_RULES}
 
 SPEC_ROOT_MARKERS = ("spec/phrases.md", "spec/core.md")
 
@@ -201,14 +227,19 @@ def read_lines(text: str) -> list[Line]:
             in_speculation = False
 
         is_declaration = bool(DECLARATION_RE.match(stripped.lstrip("> ").lstrip("-* ")))
+        # An indented line opens a code block only after a blank line. Indented
+        # after prose it is a wrapped continuation or a list body, and dropping
+        # it silently removes real sentences from every check.
+        indented = (raw.startswith("    ") or raw.startswith("\t")) and not (
+            lines and lines[-1].is_prose
+        )
         is_prose = not (
             in_fence
             or not stripped
             or stripped.startswith("#")
             or stripped.startswith("|")
             or set(stripped) <= set("-=*_ |:")
-            or raw.startswith("    ")
-            or raw.startswith("\t")
+            or indented
             or is_declaration
         )
         lines.append(Line(number, raw, is_prose, in_speculation, is_declaration,
@@ -290,10 +321,12 @@ def scan_path_headings(lines: list[Line]) -> list[Paragraph]:
     return out
 
 
-# A sentence may also open with inline code, bold, or italics, so the lookahead
-# admits their markers. Missing them merges two sentences into one long count.
+# A sentence may also open with inline code, bold, italics, or a digit, so the
+# lookahead admits their markers. Missing one merges two sentences into a single
+# over-long count, which makes every §3.1 result on that paragraph wrong.
 SENTENCE_END = re.compile(
-    '(?<=[.!?])["\u2019\u201d\')\\]*_`]*\\s+(?=[`*_\u00a7\\[(\u201c"\\x00]*[A-Z`*_\u00a7\\x00])')
+    '(?<=[.!?])["\u2019\u201d\')\\]*_`]*\\s+'
+    '(?=[`*_\u00a7\\[(\u201c"\\x00]*[A-Z0-9`*_\u00a7\\x00])')
 CODE_SPAN = re.compile(r"`[^`]*`")
 
 
@@ -345,7 +378,7 @@ class Finding:
     detail: str
 
     def render(self) -> str:
-        mark = {"L": "decided", "S": "screened"}[self.decidability]
+        mark = {"L": "decided", "S": "screened", "J": "judgment"}[self.decidability]
         return f"{self.path}:{self.line}  ITWS §{self.rule} [{mark}]  {self.detail}"
 
 
@@ -361,9 +394,15 @@ def compile_matcher(pl: PhraseList, item: str) -> re.Pattern[str]:
     if pl.kind == "pattern":
         return re.compile(item, re.I)
     escaped = re.escape(item)
+    # `\b` asserts a word/non-word transition, so appending it to a phrase
+    # ending in punctuation ("certainly!") demands a word character after the
+    # `!` and the entry can never match. Anchor only against a word edge that
+    # actually exists.
+    lead = r"\b" if item[:1].isalnum() or item[:1] == "_" else ""
+    tail = r"\b" if item[-1:].isalnum() or item[-1:] == "_" else ""
     if pl.kind == "opener":
-        return re.compile(rf"^{escaped}\b", re.I)
-    return re.compile(rf"\b{escaped}\b", re.I)
+        return re.compile(rf"^{escaped}{tail}", re.I)
+    return re.compile(rf"{lead}{escaped}{tail}", re.I)
 
 
 def screen_text(text: str) -> str:
@@ -458,32 +497,32 @@ def check_declarations(path: Path, text: str, lines: list[Line],
     disclosure = re.search(r"AI disclosure:\**\s*([a-z]+)([^\n|]*)", head, re.I)
 
     if not version:
-        findings.append(Finding(str(path), 1, "0.5", "L",
+        findings.append(Finding(str(path), 1, "4.3.5", EVALUATED["4.3.5"],
                                 "no `ITWS version` declaration in the front matter"))
     if not profile:
-        findings.append(Finding(str(path), 1, "4.3.1", "L",
+        findings.append(Finding(str(path), 1, "4.3.1", EVALUATED["4.3.1"],
                                 "no `Profile` declaration in the front matter"))
     elif profile.group(1) not in profile_ids:
         findings.append(Finding(
-            str(path), 1, "4.3.1", "L",
+            str(path), 1, "4.3.1", EVALUATED["4.3.1"],
             f"`{profile.group(1)}` is not a §0.1 profile ID "
             f"({', '.join(sorted(profile_ids))})",
         ))
 
     if not disclosure:
-        findings.append(Finding(str(path), 1, "4.3.4", "L",
+        findings.append(Finding(str(path), 1, "4.3.4", EVALUATED["4.3.4"],
                                 "no `AI disclosure` declaration in the front matter"))
     else:
         value, note = disclosure.group(1).lower(), disclosure.group(2)
         if value not in disclosure_values:
             findings.append(Finding(
-                str(path), 1, "4.3.4", "L",
+                str(path), 1, "4.3.4", EVALUATED["4.3.4"],
                 f"`{value}` is not a §0.5 disclosure value "
                 f"({', '.join(sorted(disclosure_values))})",
             ))
         elif value != "none" and not note.strip().startswith("—"):
             findings.append(Finding(
-                str(path), 1, "4.3.4", "L",
+                str(path), 1, "4.3.4", EVALUATED["4.3.4"],
                 f"`{value}` carries no scope-and-review note "
                 "(`<value> — <what the tooling did>; reviewed by <who>`)",
             ))
@@ -508,9 +547,36 @@ def check_bounded_blocks(path: Path, lines: list[Line]) -> list[Finding]:
     return findings
 
 
+INFLECTION = {
+    "show": "shows|showed|shown", "shows": "show|showed|shown",
+    "confirms": "confirm|confirmed", "observed": "observe|observes",
+    "indicates": "indicate|indicated", "suggests": "suggest|suggested",
+    "decided": "decide|decides", "requires": "require|required",
+    "propose": "proposes|proposed", "find": "finds|found",
+    "hypothesize": "hypothesizes|hypothesized",
+    "speculate": "speculates|speculated",
+}
+
+
+def inflected(phrase: str) -> str:
+    """Core §5.6: grammatical inflection preserving the phrase is permitted.
+
+    Matching the table's citation form alone misses "the record showed" and
+    "we proposed", which are the same phrase carrying the same tier."""
+    parts = []
+    for word in phrase.split():
+        alt = INFLECTION.get(word.lower())
+        parts.append(f"(?:{re.escape(word)}|{alt})" if alt else re.escape(word))
+    return r"\b" + r"\s+".join(parts) + r"\b"
+
+
 def check_speculation_blocks(path: Path, paras: list[Paragraph],
                              tiers: dict[str, list[str]]) -> list[Finding]:
-    """§7.3.3 \u2014 a speculation block uses only speculative-tier phrases."""
+    """§7.3.3 — a speculation block uses only speculative-tier phrases.
+
+    "we find" also has non-strength readings ("we find the socket already
+    open"). §7.3.3 is `L` on the phrase itself, so the match stands as the
+    specification states it, and a reader separates the two."""
     banned = [(tier, phrase) for tier, phrases in tiers.items()
               if tier != "speculative" for phrase in phrases]
     findings = []
@@ -518,7 +584,7 @@ def check_speculation_blocks(path: Path, paras: list[Paragraph],
         if not para.in_speculation:
             continue
         for tier, phrase in banned:
-            if re.search(rf"\b{re.escape(phrase)}\b", para.text, re.I):
+            if re.search(inflected(phrase), para.text, re.I):
                 findings.append(Finding(
                     str(path), para.start, "7.3.3", "L",
                     f'speculation block carries the {tier}-tier phrase "{phrase}"',
@@ -526,8 +592,13 @@ def check_speculation_blocks(path: Path, paras: list[Paragraph],
     return findings
 
 
-def check_section_length(path: Path, text: str) -> list[Finding]:
-    """§4.8.2 section ≤ 1,500 words; §4.8.3 subsection ≤ 600."""
+def check_section_length(path: Path, lines: list[Line]) -> list[Finding]:
+    """§4.8.2 section ≤ 1,500 words; §4.8.3 subsection ≤ 600.
+
+    Runs off the classified lines rather than the raw text. A `## ` inside a
+    fenced example is not a heading, and fenced and tabular content is not
+    prose, so counting either attributes words to the wrong section or to no
+    section at all."""
     findings: list[Finding] = []
     heading, start, words = None, 0, 0
     level = 2
@@ -535,18 +606,18 @@ def check_section_length(path: Path, text: str) -> list[Finding]:
     def emit(name: str, line_no: int, count: int, lvl: int) -> None:
         cap, rule = (1500, "4.8.2") if lvl == 2 else (600, "4.8.3")
         if count > cap:
-            findings.append(Finding(str(path), line_no, rule, "L",
+            findings.append(Finding(str(path), line_no, rule, EVALUATED[rule],
                                     f'"{name}" runs {count} words, over the {cap}-word cap'))
 
-    for number, raw in enumerate(text.splitlines(), start=1):
-        match = re.match(r"^(#{2,3})\s+(.*)$", raw)
+    for line in lines:
+        match = None if line.in_fence else re.match(r"^(#{2,3})\s+(.*)$", line.text)
         if match:
             if heading is not None:
                 emit(heading, start, words, level)
-            heading, start, words = match.group(2), number, 0
+            heading, start, words = match.group(2), line.number, 0
             level = len(match.group(1))
-        elif heading is not None:
-            words += len(raw.split())
+        elif heading is not None and line.is_prose:
+            words += len(prose_text(line).split())
     if heading is not None:
         emit(heading, start, words, level)
     return findings
@@ -570,7 +641,7 @@ def screen_file(path: Path, lists: list[PhraseList], profile_ids: set[str],
         *check_semicolons(path, paras),
         *check_bounded_blocks(path, lines),
         *check_speculation_blocks(path, paras, tiers),
-        *check_section_length(path, text),
+        *check_section_length(path, lines),
     ]
     return sorted(findings, key=lambda f: (f.line, _key(f.rule)))
 
@@ -605,6 +676,28 @@ def _key(rule: str) -> tuple[int, ...]:
     return tuple(int(part) for part in rule.split("."))
 
 
+def unmatchable_items(lists: list[PhraseList]) -> list[tuple[str, str, str]]:
+    """Every list entry that cannot match its own source string.
+
+    The fixture guarantee is per rule ID, so one broken entry inside a working
+    list stays invisible: `\\bcertainly!\\b` demanded a word character after the
+    `!` and could never fire, while the rest of §2.6.11 kept the rule green.
+    This asks each compiled matcher to find the string it was built from."""
+    broken = []
+    for pl in lists:
+        for item in pl.items:
+            probe = item if pl.kind != "pattern" else None
+            if probe is None:
+                try:
+                    re.compile(item)
+                except re.error as exc:
+                    broken.append((pl.rule, item, f"will not compile: {exc}"))
+                continue
+            if not compile_matcher(pl, item).search(probe):
+                broken.append((pl.rule, item, "matcher cannot match its own string"))
+    return broken
+
+
 def self_test(spec_dir: Path, fixture: Path) -> int:
     lists = parse_phrase_lists(spec_dir / "phrases.md")
     findings = screen_file(
@@ -616,14 +709,21 @@ def self_test(spec_dir: Path, fixture: Path) -> int:
     hit = {f.rule for f in findings}
     expected = {pl.rule for pl in lists if pl.rule in EVALUATED}
     missed = sorted(expected - hit, key=_key)
+    broken = unmatchable_items(lists)
+    total_items = sum(len(pl.items) for pl in lists)
     print(f"fixture: {fixture}")
     print(f"phrase lists parsed from spec/phrases.md: {len(lists)}")
     print(f"screened rules exercised by the fixture: {len(expected - set(missed))}"
           f"/{len(expected)}")
+    print(f"list entries that can match their own string: "
+          f"{total_items - len(broken)}/{total_items}")
     if missed:
         print("FAIL — no finding for: " + ", ".join("§" + r for r in missed))
+    for rule, item, why in broken:
+        print(f"FAIL — §{rule} entry {item!r}: {why}")
+    if missed or broken:
         return 1
-    print("OK — every screened phrase list produced at least one finding.")
+    print("OK — every screened list produced a finding, and every entry can match.")
     return 0
 
 
@@ -638,6 +738,7 @@ def main(argv: list[str]) -> int:
 
     here = Path(__file__).resolve().parent
     spec_dir = find_spec_dir(here)
+    EVALUATED.update(parse_decidability(spec_dir))
 
     if args.self_test:
         return self_test(spec_dir, here / "fixtures" / "phrase-list-fixture.md")

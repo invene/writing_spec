@@ -12,7 +12,7 @@ A `subtask` is **not** independently acceptable. It may carry local implementati
 
 ## Shallow-model outcome (core §4.12.2)
 
-The scan path lets the assumed reader **identify the parent condition, bounded contribution, inherited invariant, and evidence status.**
+The scan path lets the assumed reader **identify the parent condition, bounded contribution, inherited invariant, and the evidence recorded for it.**
 
 ## Reader overlay (genre knowledge only)
 
@@ -34,7 +34,7 @@ Dependency order: seed the parent condition and inherited invariants before cont
 | Parent task | yes | exactly one authoritative parent task reference |
 | Named completion condition | yes | exactly one stable completion-condition ID from the parent task, with its exact meaning and scope preserved |
 | Contribution | yes | the implementation, test, documentation, data, or operational contribution supplied |
-| Boundaries and invariants | yes | local scope, applicable inherited invariant IDs, every inherited term this subtask relies on with its admitting `epic` (core §2.3.6), relevant failure limits, excluded work |
+| Boundaries and invariants | yes | local scope, applicable inherited invariant IDs, every inherited term this subtask relies on with its admitting `epic` (§2.3.6), relevant failure limits, excluded work |
 | Delegated path details | yes | detail for each sad path delegated by the parent, or `None` with a reason; the detail preserves the parent's user-visible outcome |
 | Definition of done | yes | one local closure contract verifying the named parent completion condition |
 | Verification evidence | yes | artifact, environment, inputs, method, observable result, and link back to the parent condition |
@@ -54,6 +54,18 @@ Optional: `Technical hints`, holding only non-normative implementation informati
 ## Evidence-record additions (core §5.4)
 
 The parent task, named parent condition, inherited invariants, bounded contribution, delegated path detail, and verification evidence.
+
+## §2.3 + §4.8 Scoped rules — epic-scoped admission
+
+Shared with `epic`, `task`, `subtask`. Core §2.3 and §4.8 carry the unscoped rules; these three apply only inside a work-item family.
+
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.3.5 | P | J | a child work item may use a term its ancestor `epic` admits, without re-admitting it — **epic-scoped admission** |
+| 2.3.6 | M | S | a child using an inherited term names the term and the admitting `epic` in the slot carrying its parent reference or its boundaries |
+| 4.8.4 | M | J | a term admitted under §2.3.5 counts against the admitting `epic`'s §4.8.1 budget, ! against any child's |
+
+The per-document ladder does not compose across a *family* sharing one domain vocabulary: a 500-word `task` depending on eight family terms must duplicate ~200 words of verbatim definition (§6.5.1), or fail §2.3.1. ITWS already grants a family vocabulary twice — §0.6 meta-vocabulary, and the work-item block in these three profiles — and §2.3.5 extends it from the *genre's* vocabulary to the *subject's*. Admission is unchanged: an `epic` `Shared vocabulary` entry satisfies §2.3.1–§2.4.5 as an in-document definition does. A child expected to circulate alone may instead recall an inherited definition verbatim under §6.5.3, trading length for independence.
 
 ## §4.11 Scoped rules — work-item hierarchy
 

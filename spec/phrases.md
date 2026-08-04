@@ -106,7 +106,7 @@ Prohibited as a bare sentence opener. Permitted when followed by the noun naming
 
 ## §4.10.5 — emoji code points (pattern) · `M`
 
-`[\U0001F300-\U0001FAFF]` · `[\U00002600-\U000027BF]` · `[\U0001F000-\U0001F0FF]` · `[\U0001FE0F-\U0001FE0F]`
+`[\U0001F300-\U0001FAFF]` · `[\U00002600-\U000027BF]` · `[\U0001F000-\U0001F0FF]` · `[\U0001F1E6-\U0001F1FF]` · `[\uFE0F]`
 
 ## §4.12.3 — scan-qualification candidates (pattern) · `M`
 

@@ -73,6 +73,8 @@ The statement identifies what another person needs to repeat the work: data or m
 | 5.8.1 | M | S | the paper includes its reproducibility statement, containing every element listed above |
 | 5.8.2 | M | J | the statement uses only assumed or previously admitted terms, and ! delegate required statement content entirely to a technical appendix or external artifact |
 
+§5.8.1 is a **deliberate genre fork**, not shared wording: a `research-paper` promises reproducibility, and `technical-report`'s §5.8.1 widens the same ID to reproducibility, verification, or both. §5.8.2 is shared with `technical-report` and its wording is identical there.
+
 ## Applicable core rules with profile scope
 
 §4.2.4 and §4.4.3 both apply. **§7.3 is mandatory for this profile.** §7.4 (bounded generalization) does the most work in `Discussion`: name the extrapolation target and drop to interpretive, proposed, or speculative strength beyond established evidence.

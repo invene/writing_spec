@@ -30,7 +30,7 @@ Dependency order: seed the product problem, users, scope, and terms before succe
 
 | Slot | Required | Job |
 |---|---|---|
-| Summary | yes | the strategic change, affected users, current state |
+| Summary | yes | the strategic change, affected users, and the state of the thing being changed. ! the epic's own workflow position (core §0.5) |
 | Strategic outcome | yes | one product-level outcome requiring several independently acceptable tactical outcomes |
 | Problem and evidence | yes | the current problem, its observed effects, and the evidence supporting strategic work |
 | Users and journeys | yes | affected actors and the user journeys included or excluded |
@@ -42,7 +42,7 @@ Dependency order: seed the product problem, users, scope, and terms before succe
 | Relations | yes | governing design, decision, research, or policy documents, and any superseded epic |
 | Definition of done | yes | one authoritative closure contract verifying the strategic outcome and every technical invariant |
 
-Optional: `Shared vocabulary`, holding the domain terms this epic's child work items may use without re-admitting them (core §2.3.5). Each entry satisfies core §2.3 and §2.4 as an in-document definition does, and counts against **this** document's §4.8.1 budget, never a child's (core §4.8.4). Place it before `Scope and non-goals`, so the terms precede the exact detail depending on them (core §4.4.2).
+Optional: `Shared vocabulary`, holding the domain terms this epic's child work items may use without re-admitting them (§2.3.5). Each entry satisfies core §2.3 and §2.4 as an in-document definition does, and counts against **this** document's §4.8.1 budget, never a child's (§4.8.4). Place it before `Scope and non-goals`, so the terms precede the exact detail depending on them (core §4.4.2).
 
 **Renames:** `Strategic outcome` → `Outcome` · `Problem and evidence` → `Problem` · `Users and journeys` → `Users` · `Technical invariants` → `Invariants` · `Task map` → `Child tasks` · `Cross-task risks` → `Risks`.
 
@@ -58,6 +58,18 @@ Optional: `Shared vocabulary`, holding the domain terms this epic's child work i
 ## Evidence-record additions (core §5.4)
 
 The strategic outcome, problem evidence, success measures, technical-invariant IDs, child-task boundaries, cross-task risks, and DoD verification.
+
+## §2.3 + §4.8 Scoped rules — epic-scoped admission
+
+Shared with `epic`, `task`, `subtask`. Core §2.3 and §4.8 carry the unscoped rules; these three apply only inside a work-item family.
+
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.3.5 | P | J | a child work item may use a term its ancestor `epic` admits, without re-admitting it — **epic-scoped admission** |
+| 2.3.6 | M | S | a child using an inherited term names the term and the admitting `epic` in the slot carrying its parent reference or its boundaries |
+| 4.8.4 | M | J | a term admitted under §2.3.5 counts against the admitting `epic`'s §4.8.1 budget, ! against any child's |
+
+The per-document ladder does not compose across a *family* sharing one domain vocabulary: a 500-word `task` depending on eight family terms must duplicate ~200 words of verbatim definition (§6.5.1), or fail §2.3.1. ITWS already grants a family vocabulary twice — §0.6 meta-vocabulary, and the work-item block in these three profiles — and §2.3.5 extends it from the *genre's* vocabulary to the *subject's*. Admission is unchanged: an `epic` `Shared vocabulary` entry satisfies §2.3.1–§2.4.5 as an in-document definition does. A child expected to circulate alone may instead recall an inherited definition verbatim under §6.5.3, trading length for independence.
 
 ## §4.11 Scoped rules — work-item hierarchy
 

@@ -12,7 +12,7 @@ A `task` normally contains one user journey. An engineering-only `task` uses a n
 
 ## Shallow-model outcome (core §4.12.2)
 
-The scan path lets the assumed reader state **the tactical outcome, classification, critical boundary, and integrated-acceptance status.**
+The scan path lets the assumed reader state **the tactical outcome, classification, critical boundary, and integrated acceptance condition.**
 
 ## Reader overlay (genre knowledge only)
 
@@ -45,7 +45,7 @@ Dependency order: seed parent context, classification, and terms before paths, c
 |---|---|---|
 | Summary | yes | the tactical outcome, affected product or technical boundary |
 | Classification | yes | one Outcome class and one Change reason, no additional values |
-| Parent and invariants | yes | one parent epic or `None` with a reason, every applicable inherited invariant ID, and every inherited term this task relies on, each named with its admitting `epic` (core §2.3.6) |
+| Parent and invariants | yes | one parent epic or `None` with a reason, every applicable inherited invariant ID, and every inherited term this task relies on, each named with its admitting `epic` (§2.3.6) |
 | Context and boundaries | yes | current state, included and excluded conditions, environment, version, dependencies, relevant limits |
 | Contract and deviation evidence | yes | for `defect-correction`, the accepted behavior contract and observed deviation evidence; otherwise `Not applicable` with a reason |
 | Journey or engineering outcome | yes | exactly one user journey, or one engineering-only outcome with its technical boundary and supported journey or epic invariant |
@@ -70,6 +70,18 @@ Optional: `Technical hints`, holding only non-normative implementation informati
 ## Evidence-record additions (core §5.4)
 
 Both classifications, parent and invariant links, journey or technical boundary, path records, completion-condition IDs, and integrated-acceptance evidence. A defect correction also carries its accepted behavior contract and deviation evidence.
+
+## §2.3 + §4.8 Scoped rules — epic-scoped admission
+
+Shared with `epic`, `task`, `subtask`. Core §2.3 and §4.8 carry the unscoped rules; these three apply only inside a work-item family.
+
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.3.5 | P | J | a child work item may use a term its ancestor `epic` admits, without re-admitting it — **epic-scoped admission** |
+| 2.3.6 | M | S | a child using an inherited term names the term and the admitting `epic` in the slot carrying its parent reference or its boundaries |
+| 4.8.4 | M | J | a term admitted under §2.3.5 counts against the admitting `epic`'s §4.8.1 budget, ! against any child's |
+
+The per-document ladder does not compose across a *family* sharing one domain vocabulary: a 500-word `task` depending on eight family terms must duplicate ~200 words of verbatim definition (§6.5.1), or fail §2.3.1. ITWS already grants a family vocabulary twice — §0.6 meta-vocabulary, and the work-item block in these three profiles — and §2.3.5 extends it from the *genre's* vocabulary to the *subject's*. Admission is unchanged: an `epic` `Shared vocabulary` entry satisfies §2.3.1–§2.4.5 as an in-document definition does. A child expected to circulate alone may instead recall an inherited definition verbatim under §6.5.3, trading length for independence.
 
 ## §4.11 Scoped rules — work-item hierarchy
 
