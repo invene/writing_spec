@@ -1,2 +1,6 @@
 # Cursor editor planning state
 .cursor/
+
+# Python cache artifacts
+__pycache__/
+*.py[cod]
