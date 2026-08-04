@@ -2,6 +2,137 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] — amended 2026-08-04
+
+**1.0.0 is pre-release.** The amendments below land in 1.0.0 in place, with no version bump, because 1.0.0 has not been declared stable. Core §9's semantic-versioning rules start binding at that declaration. Under §9 as written, several of these changes would be **major**: §5.4.6 adds a mandatory rule, §4.13.3 tightens one, and §5.9.6 and §5.9.8 are withdrawn.
+
+Each amendment comes from a field report filed against 1.0.0 by a real consumer session, tracked as [STY-71](https://linear.app/inveneprod/issue/STY-71) and its children.
+
+### Amended — text is governed, process is not (STY-81, closing STY-68 and STY-70)
+
+ITWS is agnostic of process. The §0.5 declaration block is now stated to be the **only** process artifact the specification defines. Nothing else records review state, approval state, or lifecycle position, and no rule conditions conformance on an event outside the text.
+
+The observed failure: a session convened to fix prose ended up litigating what was approved, what could close, and whether the owner's own review counted — with the specification as its citation. An opt-in partition would have left that failure available, so the content is removed rather than reclassified.
+
+- **New in core §0.5** — the *Text, not process* boundary, with its subject-versus-passage test. A process state that is the document's own subject stays exact content: a `decision-record`'s `Status`, an `incident`'s resolution state, an `investigation-log`'s hypothesis state, a `data-table` status column. All four are unchanged.
+- **Withdrawn: §5.9.6, §5.9.8.** Acceptance procedure and closing gates. Both IDs stay reserved and are never reassigned (core §9). §5.9.8 leaves `epic`, `task`, and `subtask`; §5.9.6 leaves `task`. §5.9.5 already carries §5.9.6's textual content — a task whose acceptance would follow from its subtasks alone has written no integrated-acceptance check.
+- **Amended: §5.6.2.** Strength now matches "the evidence the document carries for it". The coupling to approval status is gone; the decision semantics already live inside the `adopted` and `proposed` tier definitions, which are unchanged.
+- **Amended: core §5.4 evidence record — field 6 removed.** The **open question STY-81 left to this session is decided by removal.** "Lifecycle or authority status" was the last place process state was mandatory document content outside the stamp. STY-68's reader-protection argument is answered inside the text instead: §5.6 now states that the tier carries the settled/unsettled distinction, so an unsettled item takes the `proposed` or `interpretive` tier and reads correctly from the tier alone. The record is now **five** shared fields.
+- **Amended slots.** `epic` `Summary` drops "approval or alignment requested"; `epic` `Task map` and `task` `Subtask map` drop "current ownership or status"; `task` `Summary` drops "current lifecycle state". A document may state any of these where it genuinely has them; no slot requires them. *The two `map` slots are not named in STY-81's enumeration; they are removed under its definition of done, which reaches any slot requiring workflow state as document content.*
+- **Amended shallow-model outcomes.** `epic` and `design-rfc` no longer put approval status on the scan path; both now carry the §5.6 strength instead. An unapproved design read as settled — `design-rfc`'s sharpest hazard — is protected by the `proposed` tier.
+- **`AGENTS.md` and `skills/itws-rewrite/SKILL.md`** both state the process fence: the agent governs the text, records the owner's account of their own review without overruling it, and never invents a reviewer.
+
+Reader assumptions: unchanged. No baseline or genre-knowledge item is added or removed.
+
+### Added — locators on external references (STY-75)
+
+- **New rule §5.4.6 (`M`).** A first reference to an external source or artifact carries a resolvable locator: a URL, a DOI, or a path valid at the declared scope. Later references use the established short name (§2.1.2). Where no locator exists, the reference says so; §8 obligation 2 bars inventing one.
+
+§2.6.8 required naming a source, §2.7.4 a version pin, and §5.4.3 that a citation resolve — so `see CLP-123` satisfied all three while leaving the finding step to the reader. Locator and pin are distinct obligations: a link without a pin drifts, a pin without a link cannot be followed. §5.4.3 now tests the locator §5.4.6 requires.
+
+Affects: core §5.4 (new rule and prose). §2.6.8, §2.7.4, and §5.4.3 are unchanged in wording and now compose with §5.4.6. Every profile inherits the rule. No reader assumption changes.
+
+### Added — epic-scoped vocabulary (STY-62)
+
+The term ladder admits per document (§2.3.1) and caps admissions per page (§4.8.1). Neither composes across a *family* of work items sharing one domain vocabulary: a 500-word `task` depending on eight family terms had to duplicate roughly 200 words of verbatim definition (§6.5.1) or fail §2.3.1.
+
+- **New rule §2.3.5 (`P`).** A child work item may use a term its ancestor `epic` admits, without re-admitting it.
+- **New rule §2.3.6 (`M`).** The child names each inherited term and the admitting `epic` in the slot carrying its parent reference. The pointer is explicit and resolvable, never assumed.
+- **New rule §4.8.4 (`M`).** An inherited term counts against the admitting `epic`'s §4.8.1 budget, never a child's.
+- **New optional `epic` slot: `Shared vocabulary`.** Entries satisfy §2.3 and §2.4 exactly as in-document definitions do.
+- **Amended slots.** `task` `Parent and invariants` and `subtask` `Boundaries and invariants` now carry the inherited-term list.
+
+The unbounded-inheritance cap STY-62 raised as an option is **not** adopted — no defensible number exists yet. A child expected to circulate alone may recall an inherited definition verbatim under §6.5.3, which is already permitted and needs no new rule.
+
+Affects: core §2.3, §4.8; `epic`, `task`, `subtask`. §2.3.1 through §2.3.4 and §4.8.1 are unchanged in wording. No reader assumption changes.
+
+### Changed — the maintenance-comment anchor is content-addressed (STY-63)
+
+At one point 165 of 660 recorded spans — a quarter of a corpus — pointed at lines that did not carry the comment they claimed, and every one satisfied the only available check, because a span that fits inside the file proves nothing.
+
+- **Amended §4.13.3 (`M`).** An anchor is now the host file, the enclosing named construct, and a **comment hash** of the comment's own text with markers stripped. The line span is no longer part of it. This tightens a mandatory rule.
+- **New rule §4.13.10 (`M`).** An anchor resolves when exactly one comment in the named source matches its hash. Zero matches means the comment is gone or edited; two is the ambiguity §4.13.3 already forbade but could not detect.
+- **New rule §4.13.11 (`P`).** A carrier may cache a `line span` for navigation, marked derived. A cached span disagreeing with the hash is a finding against **the carrier**, never against the host file.
+- **New optional carrier field `Line span`**; `Anchor` amended. `enclosing named construct` stays mandatory as the stable human pointer.
+
+**Migration for a carrier written against the 1.0.0 skeleton:** add a comment hash to every `Anchor`, and re-mark the existing `line span` as the derived `Line span` field. A carrier whose spans have drifted resolves correctly once the hashes are added; the drifted spans become carrier findings rather than silent misdirection.
+
+### Added — the first conversion has a home (STY-65)
+
+The profile governed "a comment change set, not a corpus at rest", which left the one change every adopting repository must make unspecified — and three readings of it differ by two orders of magnitude in cost.
+
+- **New `Change kind` value `converted`**, alongside `added`, `modified`, `removed`.
+- **New rule §4.13.12 (`M`).** A `converted` record's base is the boundary's pre-conversion state, and `Change kind` carries no editorial signal in a conversion.
+- **New rule §4.13.13 (`M`).** **The question STY-65 left open is decided: a conversion does not compel removal.** A `converted` record for a comment with no information delta states the empty delta and records it as a §4.13.6 finding. The owner decides what happens next. §4.13.6's discipline — report the conflict, never silently edit either side — extends to the corpus case, and deleting comments at scale is an editorial act the profile never asked for.
+- **New rule §4.13.14 (`R`).** Audit before converting: a read-only pass recording §4.13.1 gaps and §4.13.6 conflicts, editing nothing.
+- **Stated plainly:** a conversion is optional. A repository that adopts the profile for future changes alone conforms.
+
+### Changed — a carrier may cover a boundary, not only a file (STY-69)
+
+218 per-file carriers totalled 2.9 MB against 215 KB of tracked prose documentation — the conformance apparatus outweighed the documentation it protected by more than thirteen to one, and nothing read it.
+
+- **Amended core §0.2.** The `hosted-comment-set` surface now covers one change set in one host file **or** one **declaration boundary** — a repository, package, or directory tree — holding a corpus at rest.
+- **New rule §4.13.15 (`P`).** One carrier's declarations may cover a declaration boundary rather than one host file.
+- **New rule §4.13.16 (`M`).** A `change-set` carrier carries one `Comment record` per governed comment. A `corpus-at-rest` carrier may omit the records, and conformance then rests on the comment text alone — which core §0.5 already makes the test.
+- **Amended slots.** `Change scope` declares the carrier shape and what it covers; `Comment record` is required for a change set and optional for a corpus at rest; `Boundaries` now bounds the carrier rather than the change set.
+
+STY-69's counter-argument is honoured by keeping the record mandatory exactly where it does its work — a change set beside a diff — and optional only where the field report showed it produced a liability instead.
+
+### Added — every rule states whether a machine can decide it (STY-64)
+
+1.0.0 removed the per-rule `Machine-checkable` metadata along with the tooling. The reason was sound and the conclusion took the useful half with the useless one: a closed list of nineteen prohibited words is not something prose review catches, and every consumer now rebuilds the same checker and gets the same edge cases wrong.
+
+- **New `D` column on every rule table**, in `core.md` and all thirteen profile files — 216 rows. Values, defined in `spec/legend.md`:
+  - `L` **literal** — a match, a count, or a closed-set test settles it.
+  - `S` **screened** — a match or count finds every candidate; a reader decides each one.
+  - `J` **judgment** — nothing mechanical narrows the candidates.
+
+  The three-value scale is finer than STY-64 proposed, and it earns the extra value: most phrase-list rules are `S` rather than `L`, because the lists carry exceptions the lists themselves state. Marking them `L` would tell a reader to stop looking, which is how the two false positives in the field report arose.
+
+  `D` changes **no rule's force**. An `L` rule and a `J` rule marked `M` are equally mandatory. This is not a reclassification: no rule's `C` value changed.
+
+- **Amended core §8.** Part 8 now states what a checker may and may not establish, and adds **obligation 6** — decide `L` rules by match or count, treat an `S` list as a finder, and spend the attention saved on the `J` rules. Three constraints keep a checker from becoming an authority: it names what it did not evaluate, no rule refers to it, and it replaces *reading for* the literal rules rather than loading them.
+
+- **New, and outside the specification: `tools/itws_literal.py`** with `tools/fixtures/phrase-list-fixture.md` and `tools/README.md`. It screens a corpus for the `L` and `S` rules and ends every run with its own coverage statement. It carries **no copy of any rule string**: every phrase list, profile ID, disclosure value, and strength phrase is parsed out of `spec/` at run time, so it cannot drift. It points at the corpus being edited and never at `spec/` as a query surface — the failure that cost 1.0.0 its tooling. No rule refers to it; deleting `tools/` changes no obligation.
+
+  `--self-test` fails when a phrase list stops producing a fixture finding, which catches a list added to `spec/phrases.md` without a matching fixture line.
+
+### Added — corpus and fan-out guidance (STY-66, STY-67)
+
+Both surfaces are **non-normative**. Neither adds a rule, a slot, or a reader assumption.
+
+- **`AGENTS.md` gains "When the unit of work is a corpus"** (consumer session, step 6): verify each session's output rather than its report, aggregate coverage so §8 obligation 5 composes, bound the repair loop and stop when a round stops reducing findings, and state what the disclosure records when several tools contribute.
+- **`skills/itws-rewrite/SKILL.md` gains four sections** — deciding the literal rules mechanically (with the four traps: a period inside a closing quote, non-prose lines and wrapped sentences, phrase-list exceptions, and matching the rule rather than the resemblance); working on a corpus; working in the `maintenance-comment` profile; and the failure modes a self-check misses. Four additions to "What you must not do".
+
+  STY-67's proposed section 8 is applied in its **reduced** form, because STY-64 shipped in the same change: the `D` marker carries the rule list, and the skill keeps the traps, which a decidability marker does not address.
+
+- **Moved, not cut:** the core §7.3 worked observation/interpretation split now lives in `SKILL.md` §5, and the §4.4 section-map example is compressed to one line. Both are micro-examples under the `AGENTS.md` budget policy; §7.3's rules are unchanged.
+
+### Fixed
+
+- `spec/ontology.md` said "all 12 profiles". There are thirteen.
+- **Self-application pass over every line this change adds to `spec/`** (core §8: "its own prose follows core rules where meaningful"). `spec/profiles/task.md` carried "§5.9.5 is what §5.9.6 used to enforce procedurally" — a §4.9.1 residual-history aside about a rule this same change withdraws, which passes delete-or-promote by deleting. Core §0.2 used "corpus at rest" before its admission (§2.3.1), which lives in the `maintenance-comment` vocabulary block. The epic-scoped-admission chunk opened on the problem rather than its point (§4.2.2). Nine semicolons joining independent clauses became sentences (§3.8.1), two bare "This is" openers named their referent (§3.6.2), seven over-cap sentences were split (§3.1.1, §3.1.2), and parenthetical em dashes in core §0.2 became parentheses (§3.10.3).
+
+  Left as they are, with reasons: `·` enumerations and vocabulary-block definition entries are the file's fixture forms, and §2.4.4 governs a definition rather than §3.1. The remaining over-cap lines are pre-existing text this change only reflowed.
+
+### Known defect — the load set exceeds its band
+
+`AGENTS.md` fixes the load set at 15,000–25,000 tokens and calls anything over 25,000 a defect to fix in the same change. After compression, three profiles are over:
+
+| Load set | Tokens | Over |
+|---|---|---|
+| base + `maintenance-comment` | 26,150 | +1,150 |
+| base + `task` | 25,652 | +652 |
+| base + `data-table` | 25,308 | +308 |
+
+Base is 23,247, up from 22,121. 1.0.0 shipped with about 800 tokens of headroom, and this change set adds eleven rules (§2.3.5, §2.3.6, §4.8.4, §4.13.10–§4.13.16, §5.4.6), withdraws two, adds three ITWS-original mechanisms, and adds a column across 216 rows.
+
+Everything the budget policy names as cuttable — restated source material and micro-examples — has been cut. Closing the remaining gap means deleting a normative statement, a closed list, or an ITWS-original mechanism, which the same policy forbids. The two instructions now conflict, and resolving it is a maintainer decision rather than a drafting one.
+
+**Recommended resolution:** drop `spec/ontology.md` (1,690 tokens) from the consumer load set, keeping it as maintainer reading. By its own front matter it adds no obligation — "every ITWS obligation is stated in `core.md`, `phrases.md`, and the profile file" — and removing it brings every profile to roughly 24,500 with headroom restored. This is not applied here: it changes the load set every other file names, and that is the maintainer's call.
+
+---
+
 ## [1.0.0] — 2026-08-03
 
 The first stable release. ITWS becomes a markdown-only specification read directly by a person or an agent.

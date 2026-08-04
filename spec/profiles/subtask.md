@@ -34,7 +34,7 @@ Dependency order: seed the parent condition and inherited invariants before cont
 | Parent task | yes | exactly one authoritative parent task reference |
 | Named completion condition | yes | exactly one stable completion-condition ID from the parent task, with its exact meaning and scope preserved |
 | Contribution | yes | the implementation, test, documentation, data, or operational contribution supplied |
-| Boundaries and invariants | yes | local scope, applicable inherited invariant IDs, relevant failure limits, excluded work |
+| Boundaries and invariants | yes | local scope, applicable inherited invariant IDs, every inherited term this subtask relies on with its admitting `epic` (core §2.3.6), relevant failure limits, excluded work |
 | Delegated path details | yes | detail for each sad path delegated by the parent, or `None` with a reason; the detail preserves the parent's user-visible outcome |
 | Definition of done | yes | one local closure contract verifying the named parent completion condition |
 | Verification evidence | yes | artifact, environment, inputs, method, observable result, and link back to the parent condition |
@@ -59,35 +59,34 @@ The parent task, named parent condition, inherited invariants, bounded contribut
 
 Scoped to `subtask`:
 
-| ID | C | Rule |
-|---|---|---|
-| 4.11.4 | M | a `subtask` title states the contribution it verifies |
-| 4.11.12 | M | a `subtask` identifies exactly one parent `task` |
-| 4.11.13 | M | a `subtask` identifies exactly one completion-condition ID from its parent `task` |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.11.4 | M | J | a `subtask` title states the contribution it verifies |
+| 4.11.12 | M | L | a `subtask` identifies exactly one parent `task` |
+| 4.11.13 | M | L | a `subtask` identifies exactly one completion-condition ID from its parent `task` |
 
 Shared with `task`:
 
-| ID | C | Rule |
-|---|---|---|
-| 4.11.9 | M | a child work item ! weaken an applicable inherited technical invariant |
-| 4.11.14 | M | work with an independently acceptable outcome uses `task`, not `subtask` |
-| 4.11.17 | M | a technical hint ! contain a requirement, technical invariant, or completion condition |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.11.9 | M | J | a child work item ! weaken an applicable inherited technical invariant |
+| 4.11.14 | M | J | work with an independently acceptable outcome uses `task`, not `subtask` |
+| 4.11.17 | M | J | a technical hint ! contain a requirement, technical invariant, or completion condition |
 
 ## §5.9 Scoped rules — definition-of-done composition
 
 Shared with `epic` and `task`:
 
-| ID | C | Rule |
-|---|---|---|
-| 5.9.1 | M | exactly one authoritative `Definition of done` slot per work item |
-| 5.9.2 | M | each completion condition identifies an observable pass condition and its verification method |
-| 5.9.8 | M | a work item closes only after every applicable completion condition passes |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.9.1 | M | L | exactly one authoritative `Definition of done` slot per work item |
+| 5.9.2 | M | S | each completion condition identifies an observable pass condition and its verification method |
 
 Scoped to `subtask`:
 
-| ID | C | Rule |
-|---|---|---|
-| 5.9.4 | M | a `subtask` DoD states how its evidence verifies the named parent completion condition |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.9.4 | M | J | a `subtask` DoD states how its evidence verifies the named parent completion condition |
 
 ## Applicable core rules with profile scope
 

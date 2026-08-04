@@ -43,9 +43,9 @@ Dependency order: seed parent context, classification, and terms before paths, c
 
 | Slot | Required | Job |
 |---|---|---|
-| Summary | yes | the tactical outcome, affected product or technical boundary, current lifecycle state |
+| Summary | yes | the tactical outcome, affected product or technical boundary |
 | Classification | yes | one Outcome class and one Change reason, no additional values |
-| Parent and invariants | yes | one parent epic or `None` with a reason, plus every applicable inherited invariant ID |
+| Parent and invariants | yes | one parent epic or `None` with a reason, every applicable inherited invariant ID, and every inherited term this task relies on, each named with its admitting `epic` (core §2.3.6) |
 | Context and boundaries | yes | current state, included and excluded conditions, environment, version, dependencies, relevant limits |
 | Contract and deviation evidence | yes | for `defect-correction`, the accepted behavior contract and observed deviation evidence; otherwise `Not applicable` with a reason |
 | Journey or engineering outcome | yes | exactly one user journey, or one engineering-only outcome with its technical boundary and supported journey or epic invariant |
@@ -53,7 +53,7 @@ Dependency order: seed parent context, classification, and terms before paths, c
 | Sad or technical failure paths | yes | material sad paths or technical failure and recovery paths; `None identified` with a reason when none is known |
 | Definition of done | yes | one authoritative closure contract whose named completion conditions state pass tests and methods |
 | Integrated acceptance | yes | checks for behavior appearing only when several completion conditions work together, or `Not applicable` with a reason |
-| Subtask map | yes | each child subtask, its parent completion-condition ID, current ownership or status; `None` with a reason when there are none |
+| Subtask map | yes | each child subtask and its parent completion-condition ID; `None` with a reason when there are none |
 
 Optional: `Technical hints`, holding only non-normative implementation information. An unverified hypothesis uses a Speculation block.
 
@@ -75,46 +75,46 @@ Both classifications, parent and invariant links, journey or technical boundary,
 
 Scoped to `task`:
 
-| ID | C | Rule |
-|---|---|---|
-| 4.11.2 | M | a user-journey `task` title names its actor, trigger, and observable outcome |
-| 4.11.3 | M | an engineering-only `task` title states its observable technical outcome |
-| 4.11.5 | M | a `task` declares one permitted Outcome class and one permitted Change reason |
-| 4.11.6 | M | a `defect-correction` task identifies its accepted behavior contract and observed deviation evidence |
-| 4.11.7 | M | an engineering-only `task` identifies its technical boundary and supported journey or `epic` invariant |
-| 4.11.11 | M | a `task` defines an outcome accepted independently of sibling `task` documents |
-| 4.11.15 | M | a `task` summarizes each delegated sad path with every delegated sad-path field |
-| 4.11.16 | M | an aggregate sad path stays specified and verified in its parent `task` |
-| 4.11.18 | M | a user-journey `task` states every happy-path field |
-| 4.11.19 | M | each sad path in a user-journey `task` states every sad-path field |
-| 4.11.20 | M | an engineering-only `task` states every technical-success field |
-| 4.11.21 | M | each material failure path in an engineering-only `task` states every technical-failure field |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.11.2 | M | J | a user-journey `task` title names its actor, trigger, and observable outcome |
+| 4.11.3 | M | J | an engineering-only `task` title states its observable technical outcome |
+| 4.11.5 | M | L | a `task` declares one permitted Outcome class and one permitted Change reason |
+| 4.11.6 | M | S | a `defect-correction` task identifies its accepted behavior contract and observed deviation evidence |
+| 4.11.7 | M | S | an engineering-only `task` identifies its technical boundary and supported journey or `epic` invariant |
+| 4.11.11 | M | J | a `task` defines an outcome accepted independently of sibling `task` documents |
+| 4.11.15 | M | S | a `task` summarizes each delegated sad path with every delegated sad-path field |
+| 4.11.16 | M | J | an aggregate sad path stays specified and verified in its parent `task` |
+| 4.11.18 | M | S | a user-journey `task` states every happy-path field |
+| 4.11.19 | M | S | each sad path in a user-journey `task` states every sad-path field |
+| 4.11.20 | M | S | an engineering-only `task` states every technical-success field |
+| 4.11.21 | M | S | each material failure path in an engineering-only `task` states every technical-failure field |
 
 Shared with `subtask`:
 
-| ID | C | Rule |
-|---|---|---|
-| 4.11.9 | M | a child work item ! weaken an applicable inherited technical invariant |
-| 4.11.14 | M | work with an independently acceptable outcome uses `task`, not `subtask` |
-| 4.11.17 | M | a technical hint ! contain a requirement, technical invariant, or completion condition |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.11.9 | M | J | a child work item ! weaken an applicable inherited technical invariant |
+| 4.11.14 | M | J | work with an independently acceptable outcome uses `task`, not `subtask` |
+| 4.11.17 | M | J | a technical hint ! contain a requirement, technical invariant, or completion condition |
 
 ## §5.9 Scoped rules — definition-of-done composition
 
 Shared with `epic` and `subtask`:
 
-| ID | C | Rule |
-|---|---|---|
-| 5.9.1 | M | exactly one authoritative `Definition of done` slot per work item |
-| 5.9.2 | M | each completion condition identifies an observable pass condition and its verification method |
-| 5.9.8 | M | a work item closes only after every applicable completion condition passes |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.9.1 | M | L | exactly one authoritative `Definition of done` slot per work item |
+| 5.9.2 | M | S | each completion condition identifies an observable pass condition and its verification method |
 
 Scoped to `task`:
 
-| ID | C | Rule |
-|---|---|---|
-| 5.9.3 | M | each completion condition in a `task` has a unique stable identifier |
-| 5.9.5 | M | a `task` defines integrated-acceptance checks for behavior depending on several completion conditions |
-| 5.9.6 | M | a `task` ! be accepted solely because its child `subtask` documents are closed |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.9.3 | M | L | each completion condition in a `task` has a unique stable identifier |
+| 5.9.5 | M | J | a `task` defines integrated-acceptance checks for behavior depending on several completion conditions |
+
+A `task` whose acceptance would follow from its subtasks alone has written no integrated-acceptance check — a §5.9.5 finding against the text. Whether the task was accepted, by whom, and when = workflow facts outside ITWS (core §0.5, *Text, not process*). A `task` may record lifecycle state or ownership where it has them. No slot requires them.
 
 ## Applicable core rules with profile scope
 

@@ -49,29 +49,29 @@ An empty required Title field states `None` or `Not applicable` with a reason (c
 
 ## §4.14 Scoped rules — tabular documents
 
-| ID | C | Rule |
-|---|---|---|
-| 4.14.1 | M | the three core §0.5 declarations live on the Title sheet |
-| 4.14.2 | M | Title sheet ! carry data facts |
-| 4.14.3 | M | Title sheet carries the table's coverage and boundary statement (core §7.1) |
-| 4.14.4 | M | every column of every data sheet has exactly one registry `Columns` entry stating what its cells hold and how to read them, including closed value sets, key conventions, and units |
-| 4.14.5 | M | each registry `Columns` entry declares its column's §7.3 role: observation, interpretation, or metadata |
-| 4.14.6 | M | **registry replaces ladder** — named exception to §2.3.1 and §2.3.3: a table has no linear reading order, so define-before-first-use is unsatisfiable; instead every non-baseline term used in any cell has a registry `Terms` entry |
-| 4.14.7 | M | a registry `Terms` entry meets the §2.4 definition-quality rules |
-| 4.14.8 | M | a registry `Terms` entry satisfies the §2.1.4 first-use expansion obligation |
-| 4.14.9 | M | named exception to §4.8.1: the per-page admission budget does not apply; the bound is registry completeness — a term used in a cell with no registry entry is a violation |
-| 4.14.10 | R | a cell uses ≤ 3 non-baseline terms — the per-cell reader-effort bound replacing §4.8.1's per-page bound |
-| 4.14.11 | M | one column = one meaning across the whole workbook |
-| 4.14.12 | M | a cell carries only its column's declared content |
-| 4.14.13 | M | a cell holding prose is a §4.1 chunk; §2, §3, §5, and §7 apply to it unchanged |
-| 4.14.14 | M | a cell holding a row ID, a column header, or a value from a declared closed value set is metadata, ! governed prose; §3 sentence rules do not apply to it |
-| 4.14.15 | M | each row carries a stable row ID in its own column |
-| 4.14.16 | M | cross-row dependence uses the row ID; ! adjacency, row order, or sheet order |
-| 4.14.17 | M | a required column with no value for a row states `None` or `Not applicable` with a reason; ! silent blank. A systematic absence states its reason once in that column's registry entry |
-| 4.14.18 | M | **scan surface replaces scan path** — named exception to §4.12.1: scan surface = the Title sheet, then the sheet names in workbook order, then each data sheet's header row, then the registry `Columns` section. **§4.12.2–§4.12.4 still govern it unchanged.** |
-| 4.14.19 | M | a material claim in a cell carries the §5.4 evidence record; a source shared by many rows may live once in the Title sheet provenance field, with each row's deviation recorded in that row |
-| 4.14.20 | M | a caveat qualifying one row lives in that row (§7.2.1); ! only in the registry or on the Title sheet |
-| 4.14.21 | R | a data sheet groups rows by a category column rather than by sub-sheets, so one header row governs every row |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.14.1 | M | L | the three core §0.5 declarations live on the Title sheet |
+| 4.14.2 | M | J | Title sheet ! carry data facts |
+| 4.14.3 | M | S | Title sheet carries the table's coverage and boundary statement (core §7.1) |
+| 4.14.4 | M | L | every column of every data sheet has exactly one registry `Columns` entry stating what its cells hold and how to read them, including closed value sets, key conventions, and units |
+| 4.14.5 | M | L | each registry `Columns` entry declares its column's §7.3 role: observation, interpretation, or metadata |
+| 4.14.6 | M | J | **registry replaces ladder** — named exception to §2.3.1 and §2.3.3: a table has no linear reading order, so define-before-first-use is unsatisfiable; instead every non-baseline term used in any cell has a registry `Terms` entry |
+| 4.14.7 | M | J | a registry `Terms` entry meets the §2.4 definition-quality rules |
+| 4.14.8 | M | S | a registry `Terms` entry satisfies the §2.1.4 first-use expansion obligation |
+| 4.14.9 | M | J | named exception to §4.8.1: the per-page admission budget does not apply; the bound is registry completeness — a term used in a cell with no registry entry is a violation |
+| 4.14.10 | R | J | a cell uses ≤ 3 non-baseline terms — the per-cell reader-effort bound replacing §4.8.1's per-page bound |
+| 4.14.11 | M | J | one column = one meaning across the whole workbook |
+| 4.14.12 | M | J | a cell carries only its column's declared content |
+| 4.14.13 | M | J | a cell holding prose is a §4.1 chunk; §2, §3, §5, and §7 apply to it unchanged |
+| 4.14.14 | M | L | a cell holding a row ID, a column header, or a value from a declared closed value set is metadata, ! governed prose; §3 sentence rules do not apply to it |
+| 4.14.15 | M | L | each row carries a stable row ID in its own column |
+| 4.14.16 | M | S | cross-row dependence uses the row ID; ! adjacency, row order, or sheet order |
+| 4.14.17 | M | L | a required column with no value for a row states `None` or `Not applicable` with a reason; ! silent blank. A systematic absence states its reason once in that column's registry entry |
+| 4.14.18 | M | L | **scan surface replaces scan path** — named exception to §4.12.1: scan surface = the Title sheet, then the sheet names in workbook order, then each data sheet's header row, then the registry `Columns` section. **§4.12.2–§4.12.4 still govern it unchanged.** |
+| 4.14.19 | M | J | a material claim in a cell carries the §5.4 evidence record; a source shared by many rows may live once in the Title sheet provenance field, with each row's deviation recorded in that row |
+| 4.14.20 | M | J | a caveat qualifying one row lives in that row (§7.2.1); ! only in the registry or on the Title sheet |
+| 4.14.21 | R | S | a data sheet groups rows by a category column rather than by sub-sheets, so one header row governs every row |
 
 §4.14.5 and §4.14.14 are the two rules that most often bite: a column's role is declared once rather than inferred per row, and a status value is not judged as prose.
 

@@ -12,7 +12,7 @@ An `epic` is a concise product requirements document. It states product strategy
 
 ## Shallow-model outcome (core §4.12.2)
 
-The scan path lets the assumed reader state **the strategic outcome, approval status, scope boundary, and success-measure boundary.**
+The scan path lets the assumed reader state **the strategic outcome, its §5.6 strength, the scope boundary, and the success-measure boundary.**
 
 ## Work-item vocabulary
 
@@ -30,17 +30,19 @@ Dependency order: seed the product problem, users, scope, and terms before succe
 
 | Slot | Required | Job |
 |---|---|---|
-| Summary | yes | the strategic change, affected users, current state, approval or alignment requested |
+| Summary | yes | the strategic change, affected users, current state |
 | Strategic outcome | yes | one product-level outcome requiring several independently acceptable tactical outcomes |
 | Problem and evidence | yes | the current problem, its observed effects, and the evidence supporting strategic work |
 | Users and journeys | yes | affected actors and the user journeys included or excluded |
 | Scope and non-goals | yes | included product boundaries, excluded outcomes, applicable environments, release boundaries |
 | Success measures | yes | observable product-level measures, comparison points, thresholds, evaluation window |
 | Technical invariants | yes | stable identified properties every applicable child task must preserve |
-| Task map | yes | child task outcomes, dependencies, sequencing constraints, current ownership or status |
+| Task map | yes | child task outcomes, dependencies, sequencing constraints |
 | Cross-task risks | yes | failure modes, unknowns, mitigations depending on more than one child task |
 | Relations | yes | governing design, decision, research, or policy documents, and any superseded epic |
 | Definition of done | yes | one authoritative closure contract verifying the strategic outcome and every technical invariant |
+
+Optional: `Shared vocabulary`, holding the domain terms this epic's child work items may use without re-admitting them (core §2.3.5). Each entry satisfies core §2.3 and §2.4 as an in-document definition does, and counts against **this** document's §4.8.1 budget, never a child's (core §4.8.4). Place it before `Scope and non-goals`, so the terms precede the exact detail depending on them (core §4.4.2).
 
 **Renames:** `Strategic outcome` → `Outcome` · `Problem and evidence` → `Problem` · `Users and journeys` → `Users` · `Technical invariants` → `Invariants` · `Task map` → `Child tasks` · `Cross-task risks` → `Risks`.
 
@@ -59,27 +61,28 @@ The strategic outcome, problem evidence, success measures, technical-invariant I
 
 ## §4.11 Scoped rules — work-item hierarchy
 
-| ID | C | Rule |
-|---|---|---|
-| 4.11.1 | M | an `epic` title states its strategic product outcome |
-| 4.11.8 | M | each technical invariant in an `epic` has a unique stable identifier |
-| 4.11.10 | M | an `epic` ! contain acceptance detail that independently performs a child `task` or `subtask` job |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.11.1 | M | J | an `epic` title states its strategic product outcome |
+| 4.11.8 | M | L | each technical invariant in an `epic` has a unique stable identifier |
+| 4.11.10 | M | J | an `epic` ! contain acceptance detail that independently performs a child `task` or `subtask` job |
 
 ## §5.9 Scoped rules — definition-of-done composition
 
 Shared with `task` and `subtask`:
 
-| ID | C | Rule |
-|---|---|---|
-| 5.9.1 | M | exactly one authoritative `Definition of done` slot per work item |
-| 5.9.2 | M | each completion condition identifies an observable pass condition and its verification method |
-| 5.9.8 | M | a work item closes only after every applicable completion condition passes |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.9.1 | M | L | exactly one authoritative `Definition of done` slot per work item |
+| 5.9.2 | M | S | each completion condition identifies an observable pass condition and its verification method |
 
 Scoped to `epic`:
 
-| ID | C | Rule |
-|---|---|---|
-| 5.9.7 | M | an `epic` DoD verifies its strategic outcome **and** every technical invariant |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.9.7 | M | S | an `epic` DoD verifies its strategic outcome **and** every technical invariant |
+
+A DoD states what closure would require. Whether the item has closed, who owns it now, and whether anyone approved it = workflow facts outside ITWS (core §0.5, *Text, not process*). An `epic` may record ownership, status, or a requested alignment in any slot where it has them. No slot requires them.
 
 ## Applicable core rules with profile scope
 

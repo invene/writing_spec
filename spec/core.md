@@ -37,7 +37,7 @@ One ID per unit. Never combine. Companion documents > hybrid. A collection may h
 ### 0.2 Governed surfaces
 
 - `markdown-document` — prose Markdown. First 11 profiles. "governed document" = this alone.
-- `hosted-comment-set` — comment change set inside a host source file, declared by a JSON carrier. Only `maintenance-comment`. Host file itself = outside conformance; governed comments carry no ITWS boilerplate.
+- `hosted-comment-set` — governed comments inside host source files, declared by a JSON carrier. Carrier covers **one change set in one host file**, or **one declaration boundary** (a repository, package, or directory tree) whose comments are already present. Only `maintenance-comment`. Host files themselves = outside conformance; governed comments carry no ITWS boilerplate.
 - `tabular-document` — workbook of named sheets: one Title sheet, one Glossary sheet, 1+ data grids of homogeneous rows. Only `data-table`. Cells hold governed prose. Rendering (fill, font, frozen panes, merged cells, column width) = outside conformance, as Markdown rendering is. File format (`.xlsx`, CSV set, hosted sheet) = carrier, ! conformance surface.
 
 **governed unit** = any surface. A rule naming the *governed unit* reaches all three. A rule naming the *governed document* is bounded to Markdown. A rule naming a document element (heading, section, figure, equation) is inapplicable where that construct is absent.
@@ -65,6 +65,12 @@ Profile overlays grant **genre knowledge only** — how to read the document typ
 ### 0.5 Conformance
 
 **Binary.** A governed unit conforms, or does not, for **one declared version + one declared profile**. It conforms when it satisfies every applicable mandatory (`M`) rule and every required profile slot. Reviews, approvals, reader tests, and accepted deviations do not change this result.
+
+**Text, not process (ITWS-original boundary).** The declaration block below is the **only** process artifact ITWS defines. No other rule requires a governed unit to record its own review, approval, or lifecycle state. None conditions conformance on an event outside the text.
+
+Where a process state is the document's **subject** it is exact content under §5.4. So: the decision a `decision-record` records · an `incident`'s resolution state · an `investigation-log`'s hypothesis state · a `data-table` status column. Test: does the state belong to the thing the document is about, or to the document's own passage through a workflow? First = content. Second = outside ITWS.
+
+An agent applying ITWS governs the text. It ! decide whether a review sufficed, whether a work item may close, or what a team must retain. It reports. The owner judges.
 
 **Applicability.** A core rule applies to all thirteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
 
@@ -172,30 +178,32 @@ ITWS replaces the ASD-STE100 closed dictionary with an **open but gated** vocabu
 
 ### 2.1 General word rules
 
-| ID | C | Rule |
-|---|---|---|
-| 2.1.1 | M | word/term carries exactly one meaning throughout a document |
-| 2.1.2 | M | later reference to a named concept uses the established term; ! synonym swap for variety |
-| 2.1.3 | R | use the plain-verb replacements in [phrases.md](phrases.md) §2.1.3 |
-| 2.1.4 | M | acronym/initialism not in [reader.md](reader.md) → first use gives expansion + parenthesized short form |
-| 2.1.5 | M | after introduction, use short form **or** expanded form consistently, ! both interchangeably |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.1.1 | M | J | word/term carries exactly one meaning throughout a document |
+| 2.1.2 | M | J | later reference to a named concept uses the established term; ! synonym swap for variety |
+| 2.1.3 | R | S | use the plain-verb replacements in [phrases.md](phrases.md) §2.1.3 |
+| 2.1.4 | M | S | acronym/initialism not in [reader.md](reader.md) → first use gives expansion + parenthesized short form |
+| 2.1.5 | M | S | after introduction, use short form **or** expanded form consistently, ! both interchangeably |
 
 ### 2.2 Permitted general vocabulary
 
-| ID | C | Rule |
-|---|---|---|
-| 2.2.1 | M | every specialized term or sense is assumed under [reader.md](reader.md) **or** admitted under §2.3 before first use |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.2.1 | M | J | every specialized term or sense is assumed under [reader.md](reader.md) **or** admitted under §2.3 before first use |
 
 ### 2.3 Term ladder (ITWS-original core mechanism)
 
 Document builds vocabulary as a program builds state: nothing referenced before initialization. Each admitted term becomes a rung for the next definition. §5.2 applies it to symbols; §4.9 applies it to context.
 
-| ID | C | Rule |
-|---|---|---|
-| 2.3.1 | M | term outside §2.2.1 permitted vocabulary → defined before first body use (glossary terms included) |
-| 2.3.2 | M | a definition uses only assumed vocabulary + terms already admitted in this document |
-| 2.3.3 | M | ! use a term on a promise to define it later — see [phrases.md](phrases.md) §2.3.3 |
-| 2.3.4 | M | definition states what the thing **is or does** — inputs, outputs, distinguishing properties; ! merely relate it to other terms |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.3.1 | M | J | term outside §2.2.1 permitted vocabulary → defined before first body use (glossary terms included) |
+| 2.3.2 | M | J | a definition uses only assumed vocabulary + terms already admitted in this document |
+| 2.3.3 | M | L | ! use a term on a promise to define it later — see [phrases.md](phrases.md) §2.3.3 |
+| 2.3.4 | M | J | definition states what the thing **is or does** — inputs, outputs, distinguishing properties; ! merely relate it to other terms |
+| 2.3.5 | P | J | *(`epic`, `task`, `subtask`)* a child work item may use a term its ancestor `epic` admits, without re-admitting it — **epic-scoped admission** |
+| 2.3.6 | M | S | *(`epic`, `task`, `subtask`)* a child using an inherited term names the term and the admitting `epic` in the slot carrying its parent reference |
 
 Valid chain, worked — each rung stands on assumed vocabulary or an earlier rung:
 
@@ -207,25 +215,35 @@ Broken chain — no rung reaches the ground:
 
 *Raft*, *leader election*, *quorum*, *linearizability* unadmitted; *consensus* forward-referenced.
 
+**Epic-scoped admission (§2.3.5, §2.3.6, §4.8.4).** A child work item uses its ancestor `epic`'s admissions instead of repeating them. The per-document ladder does not compose across a *family* sharing one domain vocabulary. A 500-word `task` depending on eight family terms must duplicate ~200 words of verbatim definition (§6.5.1), or fail §2.3.1. ITWS already grants a family vocabulary twice: §0.6 meta-vocabulary, and the work-item block in `epic`/`task`/`subtask`. §2.3.5 extends it from the *genre's* vocabulary to the *subject's*. Admission itself is unchanged — an `epic` `Shared vocabulary` entry satisfies §2.3.1–§2.4.5 as an in-document definition does.
+
+Worked — epic admits, child relies:
+
+> **Epic, `Shared vocabulary`:** A *running log* is a single record field holding many dated observations as one continuous body of text.
+>
+> **Task, `Parent and invariants`:** Parent: EPIC-4 (https://example.invalid/epic-4). Inherited terms: *running log*, admitted in EPIC-4.
+
+A child expected to circulate alone may instead recall an inherited definition verbatim under §6.5.3, trading length for independence.
+
 ### 2.4 Definition quality
 
-| ID | C | Rule |
-|---|---|---|
-| 2.4.1 | M | definition substitutes for the term in every sentence of the document without changing meaning |
-| 2.4.2 | M | ! circular — definition uses neither the term, its derivative, nor anything depending on it |
-| 2.4.3 | R | genus + differentia: name the nearest familiar category, then what distinguishes it |
-| 2.4.4 | M | definition ≤ 2 sentences **and** ≤ 40 words; further explanation goes in separate prose |
-| 2.4.5 | M | ! definition by synonym alone, by other jargon, or by citation alone |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.4.1 | M | J | definition substitutes for the term in every sentence of the document without changing meaning |
+| 2.4.2 | M | S | ! circular — definition uses neither the term, its derivative, nor anything depending on it |
+| 2.4.3 | R | J | genus + differentia: name the nearest familiar category, then what distinguishes it |
+| 2.4.4 | M | L | definition ≤ 2 sentences **and** ≤ 40 words; further explanation goes in separate prose |
+| 2.4.5 | M | J | ! definition by synonym alone, by other jargon, or by citation alone |
 
 ### 2.5 Glossary governance
 
 Two levels: per-document definitions (§2.3–2.4) and canonical entries in [glossary.md](glossary.md).
 
-| ID | C | Rule |
-|---|---|---|
-| 2.5.1 | M | governed unit ! contradict a glossary term's meaning, in definition or in use |
-| 2.5.2 | R | at definitional first use, quote the glossary wording verbatim |
-| 2.5.3 | R | second writer to define a term proposes it for the glossary |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.5.1 | M | J | governed unit ! contradict a glossary term's meaning, in definition or in use |
+| 2.5.2 | R | S | at definitional first use, quote the glossary wording verbatim |
+| 2.5.3 | R | J | second writer to define a term proposes it for the glossary |
 
 Flow: **draft** (define in-document; nothing else required) → **propose** (recurring term, with drafted entry + ladder prerequisites) → **admit** (maintainer checks against §2.3–2.4, records prerequisites and version) → **revise/deprecate** (never delete; deprecate and retain).
 
@@ -233,30 +251,30 @@ Flow: **draft** (define in-document; nothing else required) → **propose** (rec
 
 Most of these are P5 failures: generic prose displacing specific prose. Literal strings for every "listed" rule are in [phrases.md](phrases.md).
 
-| ID | C | Rule |
-|---|---|---|
-| 2.6.1 | M | ! field jargon as a compression device when permitted vocabulary states the same thing |
-| 2.6.2 | M | named technology, model, method, tool, standard, or system → plain-language introduction before bare use |
-| 2.6.3 | M | listed superlative appears only if the same sentence states the measurement earning it |
-| 2.6.4 | M | ! listed prohibited word, except in quotation or discussion of the word |
-| 2.6.5 | M | ! listed agency verb for software/models/automated systems before its operational definition |
-| 2.6.6 | M | ! listed warpath marker or equivalent (structural parent: §4.9) |
-| 2.6.7 | M | ! listed editorializing aside |
-| 2.6.8 | M | claims name and cite their sources; ! listed vague-authority phrase; plural attribution ! imply more sources than the citations provide |
-| 2.6.9 | M | ! replace absent evidence with speculation — report the absence; ! listed gap-speculation phrase |
-| 2.6.10 | M | ! stack listed connectives as padding; each connective marks a §3.8 relation |
-| 2.6.11 | M | ! listed chat phrase, unfilled placeholder, or tool-leakage artifact |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.6.1 | M | J | ! field jargon as a compression device when permitted vocabulary states the same thing |
+| 2.6.2 | M | J | named technology, model, method, tool, standard, or system → plain-language introduction before bare use |
+| 2.6.3 | M | S | listed superlative appears only if the same sentence states the measurement earning it |
+| 2.6.4 | M | S | ! listed prohibited word, except in quotation or discussion of the word |
+| 2.6.5 | M | S | ! listed agency verb for software/models/automated systems before its operational definition |
+| 2.6.6 | M | S | ! listed warpath marker or equivalent (structural parent: §4.9) |
+| 2.6.7 | M | L | ! listed editorializing aside |
+| 2.6.8 | M | S | claims name and cite their sources; ! listed vague-authority phrase; plural attribution ! imply more sources than the citations provide |
+| 2.6.9 | M | S | ! replace absent evidence with speculation — report the absence; ! listed gap-speculation phrase |
+| 2.6.10 | M | S | ! stack listed connectives as padding; each connective marks a §3.8 relation |
+| 2.6.11 | M | S | ! listed chat phrase, unfilled placeholder, or tool-leakage artifact |
 
 ### 2.7 Naming
 
 Covers organization-coined names for artifacts, components, services, experiments, datasets, methods.
 
-| ID | C | Rule |
-|---|---|---|
-| 2.7.1 | M | coined name gets the §2.3 plain-language introduction before bare use |
-| 2.7.2 | R | descriptive name > allusive name |
-| 2.7.3 | M | exactly one name per artifact throughout; ! nicknames, shortenings, or renaming mid-document |
-| 2.7.4 | M | reference to an external artifact carries a version pin |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.7.1 | M | J | coined name gets the §2.3 plain-language introduction before bare use |
+| 2.7.2 | R | J | descriptive name > allusive name |
+| 2.7.3 | M | J | exactly one name per artifact throughout; ! nicknames, shortenings, or renaming mid-document |
+| 2.7.4 | M | S | reference to an external artifact carries a version pin |
 
 ---
 
@@ -268,35 +286,35 @@ Covers organization-coined names for artifacts, components, services, experiment
 
 **load-bearing sentence** = admits a term, or states a claim, requirement, decision, instruction, warning, or operational outcome. **descriptive sentence** = any other.
 
-| ID | C | Rule |
-|---|---|---|
-| 3.1.1 | M | descriptive sentence ≤ 25 words |
-| 3.1.2 | M | load-bearing sentence ≤ 20 words |
-| 3.1.3 | M | counting: one math symbol = 1 word; an inline expression containing any operator = 3 words |
-| 3.1.4 | M | over cap → split, or move non-action-critical detail to display math or a bounded block; ! drop precision to fit |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.1.1 | M | S | descriptive sentence ≤ 25 words |
+| 3.1.2 | M | S | load-bearing sentence ≤ 20 words |
+| 3.1.3 | M | L | counting: one math symbol = 1 word; an inline expression containing any operator = 3 words |
+| 3.1.4 | M | J | over cap → split, or move non-action-critical detail to display math or a bounded block; ! drop precision to fit |
 
 ### 3.2 One idea
 
-| ID | C | Rule |
-|---|---|---|
-| 3.2.1 | M | one idea per sentence |
-| 3.2.2 | M | ≤ 1 independently reviewable claim, requirement, decision, instruction, risk, or outcome per sentence |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.2.1 | M | J | one idea per sentence |
+| 3.2.2 | M | J | ≤ 1 independently reviewable claim, requirement, decision, instruction, risk, or outcome per sentence |
 
 ### 3.3 Voice
 
-| ID | C | Rule |
-|---|---|---|
-| 3.3.1 | M | active voice, unless a listed exception applies |
-| 3.3.2 | M | "we" = the document's authors or named reporting team only; ! include the reader |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.3.1 | M | S | active voice, unless a listed exception applies |
+| 3.3.2 | M | S | "we" = the document's authors or named reporting team only; ! include the reader |
 
 Passive permitted only when: (a) actor unknown or genuinely irrelevant; (b) the object is the chunk's established topic and fronting it preserves continuity; (c) the previous sentence named the actor and the passive stays unambiguous.
 
 ### 3.4 Tense and mood
 
-| ID | C | Rule |
-|---|---|---|
-| 3.4.1 | M | tense follows the table below |
-| 3.4.2 | M | listed conditional forms appear only in allowed contexts; ! report an observation, requirement, decision, or committed plan |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.4.1 | M | J | tense follows the table below |
+| 3.4.2 | M | S | listed conditional forms appear only in allowed contexts; ! report an observation, requirement, decision, or committed plan |
 
 | Context | Tense |
 |---|---|
@@ -311,34 +329,34 @@ Passive permitted only when: (a) actor unknown or genuinely irrelevant; (b) the 
 
 ### 3.5 Noun clusters
 
-| ID | C | Rule |
-|---|---|---|
-| 3.5.1 | M | ≤ 3 nouns per cluster; longer stacks use prepositions or clauses |
-| 3.5.2 | P | an admitted multiword term may count as one noun under 3.5.1 |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.5.1 | M | S | ≤ 3 nouns per cluster; longer stacks use prepositions or clauses |
+| 3.5.2 | P | J | an admitted multiword term may count as one noun under 3.5.1 |
 
 ### 3.6 Reference
 
-| ID | C | Rule |
-|---|---|---|
-| 3.6.1 | M | every pronoun has exactly one grammatically plausible antecedent, in the same sentence or the one before |
-| 3.6.2 | M | ! open a sentence with bare "this / that / these / those / it" — name the referent with a following noun |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.6.1 | M | J | every pronoun has exactly one grammatically plausible antecedent, in the same sentence or the one before |
+| 3.6.2 | M | S | ! open a sentence with bare "this / that / these / those / it" — name the referent with a following noun |
 
 ### 3.7 Ambiguity controls
 
-| ID | C | Rule |
-|---|---|---|
-| 3.7.1 | M | "only" immediately precedes what it modifies |
-| 3.7.2 | M | "respectively" pairs ≤ 2 items; 3+ → direct or tabular |
-| 3.7.3 | M | ≤ 1 negation per clause, counting negative affixes ("un-", "non-") that interact with "not" |
-| 3.7.4 | M | two quantifiers in one sentence → scope order unambiguous; use per-item statements when needed |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.7.1 | M | S | "only" immediately precedes what it modifies |
+| 3.7.2 | M | S | "respectively" pairs ≤ 2 items; 3+ → direct or tabular |
+| 3.7.3 | M | S | ≤ 1 negation per clause, counting negative affixes ("un-", "non-") that interact with "not" |
+| 3.7.4 | M | J | two quantifiers in one sentence → scope order unambiguous; use per-item statements when needed |
 
 ### 3.8 Punctuation and connectives
 
-| ID | C | Rule |
-|---|---|---|
-| 3.8.1 | M | ! semicolon joining independent clauses — use two sentences |
-| 3.8.2 | M | serial comma before the final conjunction in a list of 3+ |
-| 3.8.3 | M | each connective expresses only its reserved relation; "since" and "while" = **time only** |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.8.1 | M | S | ! semicolon joining independent clauses — use two sentences |
+| 3.8.2 | M | S | serial comma before the final conjunction in a list of 3+ |
+| 3.8.3 | M | S | each connective expresses only its reserved relation; "since" and "while" = **time only** |
 
 | Relation | Permitted connectives |
 |---|---|
@@ -353,23 +371,23 @@ Passive permitted only when: (a) actor unknown or genuinely irrelevant; (b) the 
 
 Certainty language has exactly one source: §5.6.
 
-| ID | C | Rule |
-|---|---|---|
-| 3.9.1 | M | ! listed vague hedge modifying a claim, risk, prediction, or reported outcome |
-| 3.9.2 | M | every expression of confidence or claim strength uses a §5.6 phrase; no other certainty phrasing permitted |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.9.1 | M | S | ! listed vague hedge modifying a claim, risk, prediction, or reported outcome |
+| 3.9.2 | M | S | every expression of confidence or claim strength uses a §5.6 phrase; no other certainty phrasing permitted |
 
 ### 3.10 Formulaic constructions
 
 Prohibited on their merits: each adds filler, inflates significance, or blurs a claim, regardless of author. Vocabulary-level signs → §2.5. Formatting-level → §4.10. Hollow summaries → §6.5.
 
-| ID | C | Rule |
-|---|---|---|
-| 3.10.1 | M | ! pad a list or series to three for rhythm; each item carries distinct information |
-| 3.10.2 | M | ! listed contrast-reframe template ("not just X but Y") — state the positive content directly |
-| 3.10.3 | M | em dash marks only a genuine interruption or reversal; ! replace an equivalent comma, colon, or parenthesis |
-| 3.10.4 | M | ! listed trailing present-participle clause asserting significance |
-| 3.10.5 | M | "ranges from X to Y" describes only endpoints of a measured or defined range; ! spread rhetorical examples |
-| 3.10.6 | M | ! listed inflated copula substitute where a plain verb states the fact; ! open a definition with "refers to" |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 3.10.1 | M | J | ! pad a list or series to three for rhythm; each item carries distinct information |
+| 3.10.2 | M | L | ! listed contrast-reframe template ("not just X but Y") — state the positive content directly |
+| 3.10.3 | M | S | em dash marks only a genuine interruption or reversal; ! replace an equivalent comma, colon, or parenthesis |
+| 3.10.4 | M | L | ! listed trailing present-participle clause asserting significance |
+| 3.10.5 | M | S | "ranges from X to Y" describes only endpoints of a measured or defined range; ! spread rhetorical examples |
+| 3.10.6 | M | S | ! listed inflated copula substitute where a plain verb states the fact; ! open a definition with "refers to" |
 
 ---
 
@@ -377,9 +395,9 @@ Prohibited on their merits: each adds filler, inflates significance, or blurs a 
 
 ### 4.1 Chunk model — one purpose per chunk
 
-| ID | C | Rule |
-|---|---|---|
-| 4.1.1 | M | each chunk serves exactly one purpose from the taxonomy below |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.1.1 | M | J | each chunk serves exactly one purpose from the taxonomy below |
 
 A reviewer who cannot classify a paragraph has found mixed or missing purpose. Profiles need not use every type.
 
@@ -401,50 +419,43 @@ Deciding which type a passage carries is a **reader's judgment**. It is never de
 
 ### 4.2 Main point first, at four levels
 
-| ID | C | Rule |
-|---|---|---|
-| 4.2.1 | R | sentence states its main point in the main clause, before subordinate qualification |
-| 4.2.2 | M | chunk states its point in its first sentence; remaining sentences support, elaborate, or bound it |
-| 4.2.3 | M | section states its takeaway or operational purpose in its opening chunk, before supporting material |
-| 4.2.4 | M | *(all profiles except `investigation-log`, `subtask`, `maintenance-comment`, `data-table`)* document states its profile-specific main point in the earliest applicable slot, before supporting detail |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.2.1 | R | J | sentence states its main point in the main clause, before subordinate qualification |
+| 4.2.2 | M | J | chunk states its point in its first sentence; remaining sentences support, elaborate, or bound it |
+| 4.2.3 | M | J | section states its takeaway or operational purpose in its opening chunk, before supporting material |
+| 4.2.4 | M | J | *(all profiles except `investigation-log`, `subtask`, `maintenance-comment`, `data-table`)* document states its profile-specific main point in the earliest applicable slot, before supporting detail |
 
 Main point may be a requirement, proposal, decision, instruction goal, explanatory takeaway, incident outcome, or evidential claim. The reader should never hold unexplained machinery while waiting to learn why it matters.
 
 ### 4.3 One job per document
 
-| ID | C | Rule |
-|---|---|---|
-| 4.3.1 | M | governed unit declares exactly one canonical §0.1 profile ID on its declaration surface (front matter, or the carrier) |
-| 4.3.2 | M | ! independently perform another profile's primary job; required subordinate content stays inside the declared profile |
-| 4.3.3 | M | every required slot for the profile is present, in the profile's stated order |
-| 4.3.4 | M | a governed unit declares one `AI disclosure` value from the §0.5 closed set, on the same surface as its other declarations; any value other than `none` carries the scope-and-review note |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.3.1 | M | L | governed unit declares exactly one canonical §0.1 profile ID on its declaration surface (front matter, or the carrier) |
+| 4.3.2 | M | J | ! independently perform another profile's primary job; required subordinate content stays inside the declared profile |
+| 4.3.3 | M | L | every required slot for the profile is present, in the profile's stated order |
+| 4.3.4 | M | L | a governed unit declares one `AI disclosure` value from the §0.5 closed set, on the same surface as its other declarations; any value other than `none` carries the scope-and-review note |
 
 ### 4.4 Applying the skeleton
 
-| ID | C | Rule |
-|---|---|---|
-| 4.4.1 | M | apply the declared profile's skeleton, on its declared surface |
-| 4.4.2 | M | introduce each prerequisite before the first load-bearing detail depending on it |
-| 4.4.3 | M | *(`design-rfc`, `decision-record`, `procedure`, `incident`, `technical-report`, `research-paper`, `epic`, `task`)* state the main outcome early in assumed-reader vocabulary, restate it precisely after admitting all dependencies, and link both under §5.1.2 |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.4.1 | M | S | apply the declared profile's skeleton, on its declared surface |
+| 4.4.2 | M | J | introduce each prerequisite before the first load-bearing detail depending on it |
+| 4.4.3 | M | J | *(`design-rfc`, `decision-record`, `procedure`, `incident`, `technical-report`, `research-paper`, `epic`, `task`)* state the main outcome early in assumed-reader vocabulary, restate it precisely after admitting all dependencies, and link both under §5.1.2 |
 
 **Empty slots.** A required job with no content stays present as `None` or `Not applicable` **with a reason**. Never omit the slot. Optional bounded blocks and appendices may be omitted.
 
 **Renames and merges.** Exact skeleton headings need nothing. A profile file lists its permitted renames and merges; any other rename needs a front-matter section map. A merged section keeps separately labeled subsections for each canonical job, in canonical order. A rename or merge changes presentation only — no required job disappears. Sections without express merge permission stay separate. Observation/evidence may share a section with analysis/interpretation only where the profile expressly permits it, and then only with the two jobs separately labeled.
 
-**Section map** (optional; only for a rename the profile file does not list). Fenced block in the front matter, tagged `itws-section-map`, one heading → one canonical slot per line:
-
-```text
-"Why we are doing this" -> Context
-"What must hold" -> Requirements
-```
-
-Invalid if a heading repeats, a slot repeats, a named slot is absent from the profile, a named slot belongs to another profile, or a mapped heading is absent from the document. **front-matter region** = first line through the last line before the first `##` heading.
+**Section map** (optional; only for a rename the profile file does not list). Fenced block in the front matter, tagged `itws-section-map`, one `"heading" -> Canonical slot` per line. Invalid if a heading repeats, a slot repeats, a named slot is absent from the profile, a named slot belongs to another profile, or a mapped heading is absent from the document. **front-matter region** = first line through the last line before the first `##` heading.
 
 ### 4.5 Headings
 
-| ID | C | Rule |
-|---|---|---|
-| 4.5.1 | M | below required top-level slot names, a heading states its section's point or operational purpose; ! merely name the topic |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.5.1 | M | J | below required top-level slot names, a heading states its section's point or operational purpose; ! merely name the topic |
 
 Required slot names are navigational landmarks and are exempt. Lower-level headings are not. "Two replicas preserve write availability" > "Design details".
 
@@ -452,52 +463,53 @@ Required slot names are navigational landmarks and are exempt. Lower-level headi
 
 Three layers: plain main text → bounded blocks → appendix formalism. Each deeper layer adds resolution and does not restate a shallower one without a recall or verification purpose (§6.5).
 
-| ID | C | Rule |
-|---|---|---|
-| 4.6.1 | M | exact detail unnecessary to the assumed reader's main line goes in a bounded block or appendix, ! in main text |
-| 4.6.2 | M | bounded block = blockquote whose first line carries exactly one bold bracketed label: **[Detail — &lt;topic&gt;]**, **[Intuition — &lt;topic&gt;]**, or **[Speculation — &lt;topic&gt;]**; block ends where the quotation ends |
-| 4.6.3 | M | **skip test**: main text stays coherent with every bounded block removed — no dangling reference, no broken argument |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.6.1 | M | J | exact detail unnecessary to the assumed reader's main line goes in a bounded block or appendix, ! in main text |
+| 4.6.2 | M | L | bounded block = blockquote whose first line carries exactly one bold bracketed label: **[Detail — &lt;topic&gt;]**, **[Intuition — &lt;topic&gt;]**, or **[Speculation — &lt;topic&gt;]**; block ends where the quotation ends |
+| 4.6.3 | M | J | **skip test**: main text stays coherent with every bounded block removed — no dangling reference, no broken argument |
 
 ### 4.7 Transitions and navigation
 
-| ID | C | Rule |
-|---|---|---|
-| 4.7.1 | M | a section's first chunk states its function and its connection to preceding content |
-| 4.7.2 | R | ≤ 2 forward pointers per section; each names a numbered section and does not depend on unread content |
-| 4.7.3 | M | cross-references cite a numbered section, figure, or table; ! "above", "below", "as previously discussed" |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.7.1 | M | J | a section's first chunk states its function and its connection to preceding content |
+| 4.7.2 | R | S | ≤ 2 forward pointers per section; each names a numbered section and does not depend on unread content |
+| 4.7.3 | M | S | cross-references cite a numbered section, figure, or table; ! "above", "below", "as previously discussed" |
 
 ### 4.8 Density budgets
 
 Ladder makes rigor possible; budgets make it manageable.
 
-| ID | C | Rule |
-|---|---|---|
-| 4.8.1 | M | ≤ 3 new terms or symbols admitted per page (page = consecutive non-overlapping 500-word window; remainder = final page) |
-| 4.8.2 | R | section ≤ 1,500 words |
-| 4.8.3 | R | subsection ≤ 600 words |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.8.1 | M | S | ≤ 3 new terms or symbols admitted per page (page = consecutive non-overlapping 500-word window; remainder = final page) |
+| 4.8.2 | R | L | section ≤ 1,500 words |
+| 4.8.3 | R | L | subsection ≤ 600 words |
+| 4.8.4 | M | J | *(`epic`, `task`, `subtask`)* a term admitted under §2.3.5 counts against the admitting `epic`'s §4.8.1 budget, ! against any child's |
 
 ### 4.9 Path-agnostic prose (no warpath)
 
 Prose states current facts without relying on the decision path that produced them. "...instead of the old approach", "previously we tried X and it failed, so..." force the reader to infer a history they do not share. Extends Google's timeless-documentation rule from time-relativity to **path**-relativity. Lintable marker strings live at §2.6.6.
 
-| ID | C | Rule |
-|---|---|---|
-| 4.9.1 | M | ! residual-history aside referring to superseded approaches, prior drafts, or abandoned states, outside a §4.9.2 framed prior or an identified chronological event |
-| 4.9.2 | M | necessary path information appears as a **prior** in the concept's framing chunk, in path-agnostic terms |
-| 4.9.3 | M | every clause about a superseded state or abandoned approach passes **delete-or-promote**: it deletes cleanly, or it takes §4.9.2 promotion |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.9.1 | M | S | ! residual-history aside referring to superseded approaches, prior drafts, or abandoned states, outside a §4.9.2 framed prior or an identified chronological event |
+| 4.9.2 | M | J | necessary path information appears as a **prior** in the concept's framing chunk, in path-agnostic terms |
+| 4.9.3 | M | J | every clause about a superseded state or abandoned approach passes **delete-or-promote**: it deletes cleanly, or it takes §4.9.2 promotion |
 
 Investigation logs and incident timelines legitimately record history — as identified dated events, not path-relative phrasing.
 
 ### 4.10 Formatting
 
-| ID | C | Rule |
-|---|---|---|
-| 4.10.1 | M | headings use sentence case |
-| 4.10.2 | M | body boldface only for term admissions (§2.3) and template-required labels; ! emphasize selected running words |
-| 4.10.3 | M | prose content uses prose; ! a vertical "**Term**: description" list substituting for prose |
-| 4.10.4 | R | ! table where a sentence states 2–4 facts equally well; tables hold genuinely tabular data (§5.5) |
-| 4.10.5 | M | ! emoji |
-| 4.10.6 | M | ! a section that could apply unchanged to another subject; ! listed boilerplate outline |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.10.1 | M | S | headings use sentence case |
+| 4.10.2 | M | S | body boldface only for term admissions (§2.3) and template-required labels; ! emphasize selected running words |
+| 4.10.3 | M | S | prose content uses prose; ! a vertical "**Term**: description" list substituting for prose |
+| 4.10.4 | R | J | ! table where a sentence states 2–4 facts equally well; tables hold genuinely tabular data (§5.5) |
+| 4.10.5 | M | L | ! emoji |
+| 4.10.6 | M | S | ! a section that could apply unchanged to another subject; ! listed boilerplate outline |
 
 ### 4.11 Work items
 
@@ -507,12 +519,12 @@ Investigation logs and incident timelines legitimately record history — as ide
 
 Scan path = the governed unit's cheapest correct reading. Access and orientation, not comprehension.
 
-| ID | C | Rule |
-|---|---|---|
-| 4.12.1 | M | Markdown scan path = document title, then in document order each main-text heading + the first sentence of that section's opening chunk; excludes bounded blocks and appendix content. *(`maintenance-comment` and `data-table` each replace this path — see their profile files.)* |
-| 4.12.2 | M | scan path lets the assumed reader produce the declared profile's shallow-model outcome, preserving each applicable status, strength, and material boundary; the title ! frame a wider or stronger outcome |
-| 4.12.3 | M | a material assertion on the scan path carries every truth-preserving qualification **in its own sentence**, using affirmative content words wherever a bare negation or trailing hedge could leave a stronger reading |
-| 4.12.4 | M | each scan-path element states its subject without depending on adjacent prose or reading order; a dependency uses a local noun or an explicit numbered reference |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.12.1 | M | L | Markdown scan path = document title, then in document order each main-text heading + the first sentence of that section's opening chunk; excludes bounded blocks and appendix content. *(`maintenance-comment` and `data-table` each replace this path — see their profile files.)* |
+| 4.12.2 | M | J | scan path lets the assumed reader produce the declared profile's shallow-model outcome, preserving each applicable status, strength, and material boundary; the title ! frame a wider or stronger outcome |
+| 4.12.3 | M | S | a material assertion on the scan path carries every truth-preserving qualification **in its own sentence**, using affirmative content words wherever a bare negation or trailing hedge could leave a stronger reading |
+| 4.12.4 | M | J | each scan-path element states its subject without depending on adjacent prose or reading order; a dependency uses a local noun or an explicit numbered reference |
 
 **main-text section** = headed section outside a bounded block or appendix. **opening chunk** = first chunk under a heading, before any child heading. **material boundary** = a §7.1 boundary whose omission would widen or strengthen the scan path's main point. **truth-preserving qualification** = an applicable status, strength, condition, or material boundary needed to keep a scan assertion true.
 
@@ -534,20 +546,20 @@ By §1.3 these override §2, §3, §4, §6 wherever they collide.
 
 ### 5.1 Exactness principle
 
-| ID | C | Rule |
-|---|---|---|
-| 5.1.1 | M | a plain rendering ! change the scope, status, strength, conditions, or required behavior of the exact statement it renders |
-| 5.1.2 | M | every simplified rendering of a claim, decision, requirement, condition, or outcome explicitly references the exact statement it renders |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.1.1 | M | J | a plain rendering ! change the scope, status, strength, conditions, or required behavior of the exact statement it renders |
+| 5.1.2 | M | S | every simplified rendering of a claim, decision, requirement, condition, or outcome explicitly references the exact statement it renders |
 
 ### 5.2 Notation
 
 Notation is vocabulary — the §2.3 ladder applies to symbols unchanged.
 
-| ID | C | Rule |
-|---|---|---|
-| 5.2.1 | M | symbol outside the baseline set is defined in prose at or before first use, using only baseline notation, admitted symbols, and admitted terms |
-| 5.2.2 | M | one symbol = one meaning within a document; one meaning = one symbol |
-| 5.2.3 | M | > 6 non-baseline symbols defined → notation table listing every defined symbol, its meaning, and its admission section |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.2.1 | M | J | symbol outside the baseline set is defined in prose at or before first use, using only baseline notation, admitted symbols, and admitted terms |
+| 5.2.2 | M | J | one symbol = one meaning within a document; one meaning = one symbol |
+| 5.2.3 | M | S | > 6 non-baseline symbols defined → notation table listing every defined symbol, its meaning, and its admission section |
 
 Baseline (free): arithmetic `+ − × /` and parentheses · `=` `≠` `<` `≤` `>` `≥` · percent and plain ratios (`3:1`) · plain numeric ranges (`1–5`). **Everything else requires admission**, including any letter naming a quantity. Full list: [reader.md](reader.md).
 
@@ -555,52 +567,54 @@ Baseline (free): arithmetic `+ − × /` and parentheses · `=` `≠` `<` `≤` 
 
 An equation the reader cannot read aloud is an image, not a statement.
 
-| ID | C | Rule |
-|---|---|---|
-| 5.3.1 | M | every displayed equation carries an adjacent plain-language reading stating what it computes and why it appears there |
-| 5.3.2 | M | inline math stays atomic — single symbols, function applications, single binary relations; anything containing a summation, product, fraction, or nested subexpression is displayed |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.3.1 | M | S | every displayed equation carries an adjacent plain-language reading stating what it computes and why it appears there |
+| 5.3.2 | M | S | inline math stays atomic — single symbols, function applications, single binary relations; anything containing a summation, product, fraction, or nested subexpression is displayed |
 
 ### 5.4 Reporting claims, decisions, and outcomes
 
 A statement is **material** when changing or omitting it could change an implementation, action, approval decision, risk judgment, conclusion, or evaluation of the profile job. Supporting color and non-load-bearing examples are not material.
 
-| ID | C | Rule |
-|---|---|---|
-| 5.4.1 | M | every material exact item carries the complete evidence record — from the item, its immediate context, or an explicit link |
-| 5.4.2 | M | ! naked percentage or improvement figure — state base values and an absolute-or-relative marker |
-| 5.4.3 | M | every citation resolves: DOI resolves to the referenced publication, URL is live or archived, book citation carries page numbers |
-| 5.4.4 | M | the cited page or section states or directly supports the claim it is cited for |
-| 5.4.5 | M | plural attribution ("several studies") is backed by at least that many distinct cited sources |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.4.1 | M | J | every material exact item carries the complete evidence record — from the item, its immediate context, or an explicit link |
+| 5.4.2 | M | S | ! naked percentage or improvement figure — state base values and an absolute-or-relative marker |
+| 5.4.3 | M | S | every citation resolves: DOI resolves to the referenced publication, URL is live or archived, book citation carries page numbers |
+| 5.4.4 | M | J | the cited page or section states or directly supports the claim it is cited for |
+| 5.4.5 | M | S | plural attribution ("several studies") is backed by at least that many distinct cited sources |
+| 5.4.6 | M | S | first reference to an external source or artifact — publication, standard, ticket, document, repository, change request — carries a resolvable **locator**: a URL, a DOI, or a path valid at the declared scope. Later references use the established short name (§2.1.2). Where no locator exists, the reference states that; ! invent one. |
 
-**Complete evidence record** = these six shared fields + every profile-specific field the profile file lists:
+**Complete evidence record** = these five shared fields + every profile-specific field the profile file lists:
 
 1. **exact item** — the claim, decision, requirement, interface, invariant, procedure control, observation, measurement, or outcome.
 2. **context** — environment, version, dependency state, data, population, operating condition, time window: where the statement holds.
 3. **baseline or alternatives** — previous state, expected state, comparison point, rejected options, or an explicit statement that no meaningful baseline exists.
 4. **evidence** — measurements, tests, logs, traces, sources, proofs, or decision rationale.
-5. **evidential strength and uncertainty** — the applicable §5.6 strength, plus quantified or bounded uncertainty when evidence is sampled, variable, incomplete, or inferential; otherwise state that none applies.
-6. **lifecycle or authority status** — the applicable approval, verification, adoption, release, or investigation state, so an unsettled item does not read as settled; otherwise state that none applies.
+5. **evidential strength and uncertainty** — the applicable §5.6 strength, plus quantified or bounded uncertainty when evidence is sampled, variable, incomplete, or inferential; otherwise state that none applies. An unsettled item does not read as settled because its **tier** says so (§5.6, closing) — ITWS requires no separate status field.
 
 Fields take the form the item needs. A field need not appear in every sentence — an item may link to one section- or document-level record supplying it.
 
 Citation-integrity rules apply in **every** profile: fabricated-but-plausible references are a realistic failure mode in any machine-drafted text.
 
+**Locator and pin are distinct (§5.4.6, §2.7.4).** A link without a pin drifts. A pin without a link cannot be followed. §5.4.3 then tests the locator §5.4.6 requires, so the three compose rather than overlap. Writer pays once. Without it every reader reconstructs the locator by search, on every surface the reference is copied to. A search lands on the wrong artifact of the same name. Bare tracker ID = the sharpest case: unambiguous in one workspace, useless outside it.
+
 ### 5.5 Figures and tables
 
-| ID | C | Rule |
-|---|---|---|
-| 5.5.1 | M | every quantitative figure labels quantity + unit for each axis, every plotted series, and any nonlinear scale |
-| 5.5.2 | M | caption states the claim, decision, or outcome the artifact supports; ! only what it depicts |
-| 5.5.3 | M | every term and symbol in a figure, its caption, or its legend is assumed or previously admitted, with admission **preceding** the figure |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.5.1 | M | S | every quantitative figure labels quantity + unit for each axis, every plotted series, and any nonlinear scale |
+| 5.5.2 | M | J | caption states the claim, decision, or outcome the artifact supports; ! only what it depicts |
+| 5.5.3 | M | J | every term and symbol in a figure, its caption, or its legend is assumed or previously admitted, with admission **preceding** the figure |
 
 ### 5.6 Evidential strength and authority (closed vocabulary)
 
 Single source of phrasing for evidential strength and decision authority. §3.9 and §7.3–§7.4 defer to it. Grammatical inflection that preserves the phrase is fine. **These strings are exact — do not paraphrase them.**
 
-| ID | C | Rule |
-|---|---|---|
-| 5.6.1 | M | signal strength or authority using **only** a phrase from the table below; ! unsupported modifier |
-| 5.6.2 | M | each calibrated statement's strength matches the document's evidence and approval status |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.6.1 | M | S | signal strength or authority using **only** a phrase from the table below; ! unsupported modifier |
+| 5.6.2 | M | J | each calibrated statement's strength matches the evidence the document carries for it |
 
 | Tier | Phrases | Standard |
 |---|---|---|
@@ -615,7 +629,9 @@ Single source of phrasing for evidential strength and decision authority. §3.9 
 
 An **unmarked declarative material claim carries verified-tier force** — and must meet the verified-tier standard under 5.6.2.
 
-**Lifecycle values** (`proposed`, `accepted`, `superseded`, `mitigated`, `resolved`, `open`, `closed`) describe artifact or workflow state. They are **not** strength.
+**The tier carries the settled/unsettled distinction.** An unsettled material item takes the `proposed` or `interpretive` tier. So: a requirement awaiting a decision · an interface not yet built · a result not yet reproduced. Hence §5.4 carries no status field: the protection lives in the text, not in a stamp about workflow position (§0.5).
+
+**Lifecycle values** (`proposed`, `accepted`, `superseded`, `mitigated`, `resolved`, `open`, `closed`) describe artifact or workflow state. They are **not** strength. A document states one where the state is its subject (§0.5). No core rule requires one.
 
 ### 5.7–5.9 Profile-scoped exactness
 
@@ -629,51 +645,51 @@ These carry the plain layer. They never carry the exact layer: an analogy, intui
 
 ### 6.1 Analogies
 
-| ID | C | Rule |
-|---|---|---|
-| 6.1.1 | M | every analogy maps its concept onto an anchor from the assumed-reader baseline or a previously admitted term |
-| 6.1.2 | M | every analogy states its **breaking point** — the first anchor property that does not transfer |
-| 6.1.3 | M | ≤ 1 analogy per concept per document, and exactly one anchor per analogy |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 6.1.1 | M | J | every analogy maps its concept onto an anchor from the assumed-reader baseline or a previously admitted term |
+| 6.1.2 | M | J | every analogy states its **breaking point** — the first anchor property that does not transfer |
+| 6.1.3 | M | J | ≤ 1 analogy per concept per document, and exactly one anchor per analogy |
 
 ### 6.2 Worked examples
 
-| ID | C | Rule |
-|---|---|---|
-| 6.2.1 | M | every **central mechanism** (one the document's primary outcome depends on) gets one worked example tracing concrete inputs through the mechanism to concrete outputs, states, or decisions |
-| 6.2.2 | M | worked example ! carry detail the point being shown does not need |
-| 6.2.3 | R | example values drawn from the reported task, data, or system, even when simplified in scale |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 6.2.1 | M | J | every **central mechanism** (one the document's primary outcome depends on) gets one worked example tracing concrete inputs through the mechanism to concrete outputs, states, or decisions |
+| 6.2.2 | M | J | worked example ! carry detail the point being shown does not need |
+| 6.2.3 | R | J | example values drawn from the reported task, data, or system, even when simplified in scale |
 
 ### 6.3 Intuition blocks
 
 The sanctioned place for "roughly speaking". Notes inform; no requirement lives in a note.
 
-| ID | C | Rule |
-|---|---|---|
-| 6.3.1 | M | informal explanation appears only as a **[Intuition — &lt;topic&gt;]** bounded block (§4.6.2) |
-| 6.3.2 | M | an intuition block ! be the only location of a requirement, decision, precondition, verification, rollback condition, finding, measurement, comparison, or other exact statement |
-| 6.3.3 | M | main text stays coherent and complete with every intuition block removed |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 6.3.1 | M | J | informal explanation appears only as a **[Intuition — &lt;topic&gt;]** bounded block (§4.6.2) |
+| 6.3.2 | M | J | an intuition block ! be the only location of a requirement, decision, precondition, verification, rollback condition, finding, measurement, comparison, or other exact statement |
+| 6.3.3 | M | J | main text stays coherent and complete with every intuition block removed |
 
 ### 6.4 Diagrams
 
 §5.5 governs figures presenting evidence; §6.4 governs diagrams explaining structure, sequence, state, or causality. Both apply when a diagram does both.
 
-| ID | C | Rule |
-|---|---|---|
-| 6.4.1 | R | 3+ interacting components the primary outcome depends on → show as a diagram, ! prose alone |
-| 6.4.2 | M | every diagram is referenced from main text by number, at the point the reader needs it |
-| 6.4.3 | M | diagram labels, node names, edge annotations, and legend entries use only assumed or previously admitted terms, admitted **before** the diagram's first reference |
-| 6.4.4 | R | every diagram carries alt text stating what it shows, in the same admitted terms as its labels |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 6.4.1 | R | J | 3+ interacting components the primary outcome depends on → show as a diagram, ! prose alone |
+| 6.4.2 | M | S | every diagram is referenced from main text by number, at the point the reader needs it |
+| 6.4.3 | M | J | diagram labels, node names, edge annotations, and legend entries use only assumed or previously admitted terms, admitted **before** the diagram's first reference |
+| 6.4.4 | R | L | every diagram carries alt text stating what it shows, in the same admitted terms as its labels |
 
 ### 6.5 Repetition
 
 Elegant variation is prohibited (P2). Repetition that restores distant information is permitted. Moving from scan path to main text does not by itself justify repetition.
 
-| ID | C | Rule |
-|---|---|---|
-| 6.5.1 | M | repeated definitions, claims, and admitted terms use wording **identical** to the original in every load-bearing element |
-| 6.5.2 | R | an admitted term reused after more than 2,500 intervening words gets a verbatim definition recall or a section reference |
-| 6.5.3 | P | a major section may open with a "Recall:" boundary recap giving each depended-on admitted term and its verbatim definition |
-| 6.5.4 | M | ! end a section with a paragraph restating content without adding information — end on the last substantive point |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 6.5.1 | M | S | repeated definitions, claims, and admitted terms use wording **identical** to the original in every load-bearing element |
+| 6.5.2 | R | S | an admitted term reused after more than 2,500 intervening words gets a verbatim definition recall or a section reference |
+| 6.5.3 | P | J | a major section may open with a "Recall:" boundary recap giving each depended-on admitted term and its verbatim definition |
+| 6.5.4 | M | J | ! end a section with a paragraph restating content without adding information — end on the last substantive point |
 
 ---
 
@@ -693,60 +709,50 @@ Boundary dimensions (shared inventory):
 
 Not every dimension applies to every document. Each profile file names which slots carry which dimensions.
 
-| ID | C | Rule |
-|---|---|---|
-| 7.1.1 | M | every governed unit carries clearly identified boundary material in every boundary location its profile lists |
-| 7.1.2 | M | boundary material states each applicable dimension within which the primary outcome is valid |
-| 7.1.3 | M | boundary material describes known failure modes + their operational, security, privacy, data-integrity, or safety effects |
-| 7.1.4 | M | boundary material identifies the untested or unverified conditions a reader would most plausibly assume are covered |
-| 7.1.5 | M | central reliance on collected, generated, sampled, or logged data → state provenance, collection conditions, coverage gaps, transformations, retention limits, and known quality errors |
-| 7.1.6 | M | each plausibly relevant dimension that is unknown, untested, unverified, or not applicable is **named as such**, not silently omitted |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 7.1.1 | M | J | every governed unit carries clearly identified boundary material in every boundary location its profile lists |
+| 7.1.2 | M | J | boundary material states each applicable dimension within which the primary outcome is valid |
+| 7.1.3 | M | J | boundary material describes known failure modes + their operational, security, privacy, data-integrity, or safety effects |
+| 7.1.4 | M | J | boundary material identifies the untested or unverified conditions a reader would most plausibly assume are covered |
+| 7.1.5 | M | J | central reliance on collected, generated, sampled, or logged data → state provenance, collection conditions, coverage gaps, transformations, retention limits, and known quality errors |
+| 7.1.6 | M | J | each plausibly relevant dimension that is unknown, untested, unverified, or not applicable is **named as such**, not silently omitted |
 
 ### 7.2 Caveat placement
 
 Warning goes at the hazard, not only in a general chapter. Here the hazard is a reader acting on an exact statement without its boundary.
 
-| ID | C | Rule |
-|---|---|---|
-| 7.2.1 | M | every caveat shares a chunk with the material claim, decision, requirement, procedure step, or outcome it qualifies, at **every** load-bearing statement of that content |
-| 7.2.2 | M | boundary material **aggregates** the document's caveats; it ! be the only place a caveat appears |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 7.2.1 | M | J | every caveat shares a chunk with the material claim, decision, requirement, procedure step, or outcome it qualifies, at **every** load-bearing statement of that content |
+| 7.2.2 | M | J | boundary material **aggregates** the document's caveats; it ! be the only place a caveat appears |
 
 ### 7.3 Interpretation discipline
 
 *(Mandatory for `incident`, `technical-report`, `research-paper`, `investigation-log`, `task`, `subtask`. Other profiles may use the split.)*
 
-| ID | C | Rule |
-|---|---|---|
-| 7.3.1 | M | a chunk recording an observation or measurement ! include an interpretive addition (cause, meaning, recommendation, broader conclusion) |
-| 7.3.2 | M | every statement exceeding interpretive-tier support appears only inside a **[Speculation — &lt;topic&gt;]** bounded block that stays removable under §4.6.3 |
-| 7.3.3 | M | a speculation block uses only speculative-tier phrases ("we hypothesize", "we speculate"); ! a verified, observed, interpretive, adopted, or proposed phrase |
-
-Worked split — one fused paragraph at three strengths:
-
-> Connection use reached 100% at 09:14 UTC, demonstrating that the client upgrade leaked connections, and a credential refresh probably triggered the first leak.
-
-becomes:
-
-> We observed connection use reach the configured maximum of 800 at 09:14:22 UTC on all three affected hosts. Trace links and clock bounds are in Timeline events I-17 through I-20.
->
-> The evidence indicates that connection exhaustion caused request failures: failures begin after the pool reaches 800 and stop after capacity is restored. The evidence does not establish what began the connection growth.
->
-> > **[Speculation — first connection failure]** We speculate that a credential refresh began the growth, but authentication logs for that interval had expired.
+| ID | C | D | Rule |
+|---|---|---|---|
+| 7.3.1 | M | J | a chunk recording an observation or measurement ! include an interpretive addition (cause, meaning, recommendation, broader conclusion) |
+| 7.3.2 | M | J | every statement exceeding interpretive-tier support appears only inside a **[Speculation — &lt;topic&gt;]** bounded block that stays removable under §4.6.3 |
+| 7.3.3 | M | L | a speculation block uses only speculative-tier phrases ("we hypothesize", "we speculate"); ! a verified, observed, interpretive, adopted, or proposed phrase |
 
 ### 7.4 Beyond established boundaries
 
 A statement beyond an established boundary is a different, weaker statement.
 
-| ID | C | Rule |
-|---|---|---|
-| 7.4.1 | M | every statement extending a claim, decision rationale, verified procedure, incident conclusion, or result beyond its established boundary names its extrapolation target — environment, version, dependency, capacity, population, data source, or time period |
-| 7.4.2 | M | a statement about a setting the document's evidence does not establish uses the interpretive tier, the proposed tier, or a marked speculation block; ! a verified or observed phrase |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 7.4.1 | M | J | every statement extending a claim, decision rationale, verified procedure, incident conclusion, or result beyond its established boundary names its extrapolation target — environment, version, dependency, capacity, population, data source, or time period |
+| 7.4.2 | M | S | a statement about a setting the document's evidence does not establish uses the interpretive tier, the proposed tier, or a marked speculation block; ! a verified or observed phrase |
 
 ---
 
 ## 8. Checking conformance
 
-ITWS 1.0.0 has **no linter and no validator**. A reader or agent checks the text against the rules above.
+**No machine decides conformance.** ITWS has no validator. A reader or agent checks the text against the rules above and states what it checked. There is no `pass` result.
+
+**What a checker may establish.** The `D` column marks how much of a rule a machine settles ([legend.md](legend.md)). A tool may decide an `L` rule and locate every candidate for an `S` rule. It establishes nothing about a `J` rule, and nothing about conformance at any decidability — §0.5 keeps that binary and textual. A clean run is a **coverage statement**, not a result. Three constraints keep a checker from becoming an authority. Its output names the rules it did **not** evaluate. No rule refers to a tool, so deleting it changes no obligation. It replaces **reading for** the literal rules, never loading them.
 
 **Self-check obligations.** After writing or rewriting a governed unit:
 
@@ -755,6 +761,7 @@ ITWS 1.0.0 has **no linter and no validator**. A reader or agent checks the text
 3. **Continue around blocks.** An unresolved span does not stop work on independent spans. Return the best safe draft plus an explicit missing-fact list.
 4. **Check the scan path last.** Read title + headings + opening sentences alone (§4.12). Confirm the profile's shallow-model outcome survives, with its status, strength, and material boundaries intact.
 5. **State coverage honestly.** Say which rules you checked and which you did not. There is no `pass` result to report — a clean self-check is a disclosed-coverage statement, not a certification.
+6. **Spend judgment where judgment is needed.** Decide `L` rules by match or count, not by reading. Treat an `S` list as a finder, not a verdict. Attention saved goes to the `J` rules — the ones a reader most needs help with, and the ones no tool reaches.
 
 **Precedence when repairing.** §1.3 governs. Exact content is never edited to satisfy a style rule; repair the surrounding text and report the local limitation instead.
 
