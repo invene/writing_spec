@@ -24,16 +24,22 @@ Bad output: "gateway → reject bad-sig token. see §4 for response."
 
 Rules appear in tables:
 
-| ID | C | Rule |
-|---|---|---|
-| 2.1.1 | M | word = one meaning, whole doc |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 2.1.1 | M | J | word = one meaning, whole doc |
 
 - **ID** — permanent rule identifier. Cite this in every finding: "ITWS §2.1.1". IDs are never reused or renumbered.
 - **C** — class, and the rule's normative force:
   - `M` — **mandatory**. Reads as *shall* / *shall not*. Violation = non-conformance.
   - `R` — **recommended**. Reads as *should* / *should not*. Deviation is not non-conformance.
   - `P` — **permitted**. Reads as *may*. Creates no requirement.
+- **D** — decidability: how much of the rule a machine settles without reading for meaning.
+  - `L` — **literal**. A match, a count, or a closed-set test settles it. Reading for an `L` rule is unreliable: a closed list of nineteen prohibited words is not something prose review catches.
+  - `S` — **screened**. A match or count finds every candidate; a reader decides each one. Most phrase-list rules are `S`, because the list carries exceptions the list itself states.
+  - `J` — **judgment**. Nothing mechanical narrows the candidates. Spend attention here.
 - **Rule** — the normative statement, compressed. The class column carries the modality; where a rule statement still spells out *shall*, *should*, or *may*, that word governs that clause.
+
+`D` allocates attention. It changes no rule's force — an `L` and a `J` rule marked `M` are equally mandatory — and a tool decides no conformance question (core §8).
 
 A rule with a trigger applies only when the trigger is present: "if equation: ..." is inapplicable to a document with no equation. A rule with no trigger applies to every governed unit of every profile it is listed under.
 

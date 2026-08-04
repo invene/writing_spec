@@ -6,9 +6,14 @@ Load set: [legend](../legend.md) + [ontology](../ontology.md) + [core](../core.m
 
 ## Job
 
-Preserve durable code knowledge by governing the comments one maintenance change adds, modifies, or removes.
+Preserve durable code knowledge by governing the comments one maintenance change adds, modifies, or removes — and the comments a repository brings under ITWS the first time.
 
-**This profile governs a comment change set, not a Markdown document.** The host source file stays outside ITWS conformance. Governed comments carry no ITWS boilerplate. Declarations and slots live in a JSON **declaration carrier**, not in headings.
+**This profile governs comments, not a Markdown document.** The host source file stays outside ITWS conformance. Governed comments carry no ITWS boilerplate. Declarations and slots live in a JSON **declaration carrier**, not in headings.
+
+Two carrier shapes, and a carrier is one or the other:
+
+- **change set** — the comments one maintenance change adds, modifies, or removes in one host file. This is the profile's primary unit: the reviewer of a diff needs each comment decision beside it.
+- **corpus at rest** — the comments already present across a **declaration boundary**, brought under the profile in a first conversion. One declaration covers the whole boundary.
 
 A core rule naming a document element — heading, section, figure, equation — is inapplicable here, because the construct is absent (core §0.2).
 
@@ -20,11 +25,11 @@ The scan path lets the assumed reader state **what knowledge each governed comme
 
 Available without definition in this profile.
 
-**comment change set** — the governed comments changed between one recorded base version and one recorded proposed version of a host source file, identified by one change-set ID and one declaration carrier. **declaration carrier** — the JSON record holding a change set's declarations and comment records. **host adapter** — the language-specific component that extracts comment units and host anchors and applies the exclusion policy for one host language. **host anchor** — the host file, line span, and enclosing named construct a governed comment attaches to. **information delta** — the knowledge a comment adds beyond what its anchored code states to a reader with the declared host-language supplement. **cognitive debt** — the future reader effort created when recorded knowledge is missing, stale, or misplaced. **removal condition** — the observable fact whose occurrence ends a temporary comment's or marker's life.
+**comment change set** — the governed comments changed between one recorded base version and one recorded proposed version of a host source file, identified by one change-set ID and one declaration carrier. **declaration carrier** — the JSON record holding one carrier's declarations and any comment records. **declaration boundary** — a named repository, package, or directory tree one carrier's declarations cover. **corpus at rest** — the governed comments already present across a declaration boundary, changed by no pending edit. **conversion** — the first pass bringing a corpus at rest under this profile, whose base is the boundary's pre-conversion state. **host adapter** — the language-specific component that extracts comment units and host anchors and applies the exclusion policy for one host language. **host anchor** — the host file, enclosing named construct, and comment hash a governed comment attaches to. **comment hash** — a hash of one governed comment's own text, comment markers stripped, that identifies the comment independently of its position in the host file. **information delta** — the knowledge a comment adds beyond what its anchored code states to a reader with the declared host-language supplement. **cognitive debt** — the future reader effort created when recorded knowledge is missing, stale, or misplaced. **removal condition** — the observable fact whose occurrence ends a temporary comment's or marker's life.
 
 ## Reader overlay (genre knowledge only)
 
-The reader recognizes one comment change set with its change scope, repeated comment records, and boundaries.
+The reader recognizes one carrier with its change scope, its repeated comment records where it has them, and its boundaries.
 
 ### Host-language supplement (conditional)
 
@@ -61,38 +66,50 @@ Field names are **fixed**. No rename, no merge, no section map. An empty require
 
 | Slot | Required | Job |
 |---|---|---|
-| Change scope | yes | change-set ID, host adapter, host file, base and proposed hashes, the change set's one-sentence purpose, and the three core §0.5 declarations including `AI disclosure` |
-| Comment record | yes, per governed comment | one governed comment's complete record — fields below |
-| → Change kind | yes | exactly one of `added`, `modified`, `removed`; selects the source the Anchor resolves against |
-| → Anchor | yes | host file, line span, enclosing named construct: in the **proposed** source for `added`/`modified`, in the **base** source for `removed` |
+| Change scope | yes | the carrier shape — `change-set` or `corpus-at-rest` — the host adapter, the carrier's one-sentence purpose, and the three core §0.5 declarations including `AI disclosure`. A `change-set` adds its change-set ID, host file, and base and proposed hashes. A `corpus-at-rest` adds its declaration boundary and the boundary's pre-conversion state. |
+| Comment record | `change-set`: yes, per governed comment · `corpus-at-rest`: optional (§4.13.16) | one governed comment's complete record — fields below |
+| → Change kind | yes | exactly one of `added`, `modified`, `removed`, `converted`; selects the source the Anchor resolves against |
+| → Anchor | yes | host file, enclosing named construct, and comment hash: in the **proposed** source for `added`, `modified`, and `converted`, in the **base** source for `removed` |
+| → Line span | no | a cached position for navigation, marked derived (§4.13.11) |
 | → Comment text | yes | the exact governed comment text, comment markers stripped; a removed comment records the text as it stood in the base source |
 | → Purpose | yes | exactly one purpose from the closed list above |
 | → Information delta | yes | the knowledge deleting the comment would lose, stated against the anchored code |
 | → Basis | yes | the durable code, test, contract, work-item, or decision references supporting the comment, or `None` with a reason |
 | → Lifecycle | yes | `durable`, or `temporary` with its observable removal condition |
-| Boundaries | yes | the comments, files, and conditions the change set does not cover |
+| Boundaries | yes | the comments, files, and conditions the carrier does not cover |
 
 ## Boundary locations (core §7.1)
 
-- **Boundaries** — the comments, files, and conditions the change set does not cover, plus the environment, version, and dependency bounds within which each governed comment stays true.
+- **Boundaries** — the comments, files, and conditions the carrier does not cover, plus the environment, version, and dependency bounds within which each governed comment stays true.
 - Each record's **Lifecycle** — the removal condition of a temporary comment (§4.13.7).
 - Each record's **Basis** — the evidence limits of a comment whose basis is `None`.
 
 ## §4.13 Scoped rules — maintenance comments
 
-| ID | C | Rule |
-|---|---|---|
-| 4.13.1 | M | a governed comment adds information its anchored code does not state to a reader with the declared host-language supplement |
-| 4.13.2 | M | a governed comment record declares exactly one purpose from the closed list |
-| 4.13.3 | M | a governed comment attaches to exactly one host anchor resolving to one construct span in the source its change kind names |
-| 4.13.4 | M | a comment whose purpose is `rationale`, `invariant`, or `history` names a durable basis, or records `None` with the reason no durable basis exists |
-| 4.13.5 | M | a governed comment ! present an intent, purpose, or requirement claim whose only support is the current implementation's behavior |
-| 4.13.6 | M | a writer or agent finding a governed comment that contradicts its anchored code **records the conflict as a finding** and ! silently edit either side into agreement |
-| 4.13.7 | M | a comment with lifecycle `temporary` records an observable removal condition |
-| 4.13.8 | M | a `TODO` or `FIXME` marker the change set adds or modifies contains the marker keyword, one durable work-item or issue reference, and a removal condition |
-| 4.13.9 | M | the scan path of a comment change set = the change-set ID, then in host order each host anchor and its complete governed comment. **This replaces the core §4.12.1 title-and-headings path.** §4.12.2–§4.12.4 still govern it unchanged. |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 4.13.1 | M | J | a governed comment adds information its anchored code does not state to a reader with the declared host-language supplement |
+| 4.13.2 | M | L | a governed comment record declares exactly one purpose from the closed list |
+| 4.13.3 | M | L | a governed comment attaches to exactly one host anchor — host file, enclosing named construct, and comment hash — in the source its change kind names |
+| 4.13.4 | M | S | a comment whose purpose is `rationale`, `invariant`, or `history` names a durable basis, or records `None` with the reason no durable basis exists |
+| 4.13.5 | M | J | a governed comment ! present an intent, purpose, or requirement claim whose only support is the current implementation's behavior |
+| 4.13.6 | M | J | a writer or agent finding a governed comment that contradicts its anchored code **records the conflict as a finding** and ! silently edit either side into agreement |
+| 4.13.7 | M | S | a comment with lifecycle `temporary` records an observable removal condition |
+| 4.13.8 | M | L | a `TODO` or `FIXME` marker the change set adds or modifies contains the marker keyword, one durable work-item or issue reference, and a removal condition |
+| 4.13.9 | M | L | the scan path of a carrier = its change-set ID or declaration boundary, then in host order each host anchor and its complete governed comment. **This replaces the core §4.12.1 title-and-headings path.** §4.12.2–§4.12.4 still govern it unchanged. |
+| 4.13.10 | M | L | an anchor **resolves** when exactly one comment in the named source matches its comment hash. Zero matches = the comment is gone or edited and the record needs a second reading. Two matches = the ambiguity §4.13.3 forbids. |
+| 4.13.11 | P | L | a carrier may cache a `line span` for navigation, marked derived. It is derived data: nothing resolves an anchor through it, and a cached span whose text does not match the comment hash is a finding **against the carrier**, ! against the host file. |
+| 4.13.12 | M | S | a `converted` record's base = the boundary's pre-conversion state. In a conversion `Change kind` is constant and carries no editorial signal; the base is a version boundary rather than a maintenance edit. |
+| 4.13.13 | M | J | a `converted` record for a comment with no information delta states the empty delta and records it as a §4.13.6 finding. Conversion ! compel the comment's removal — the finding goes to the owner. |
+| 4.13.14 | R | J | audit before converting: a read-only pass recording §4.13.1 gaps and §4.13.6 conflicts, editing nothing |
+| 4.13.15 | P | J | one carrier's declarations may cover a **declaration boundary** — a repository, package, or directory tree — rather than one host file |
+| 4.13.16 | M | L | a `change-set` carrier carries one `Comment record` per governed comment. A `corpus-at-rest` carrier may omit the records; conformance then rests on the comment text alone, which core §0.5 already makes the test. |
 
 §4.13.5 and §4.13.6 are the two rules that most often bite: a comment may not infer intent from the code alone, and a code/comment disagreement is reported, never quietly reconciled.
+
+**Why the anchor is content-addressed (§4.13.3, §4.13.10, §4.13.11).** A line span moves when the carrier's own edits change a comment above it, when a formatter reflows the file, and when a repair round runs — and a drifted span satisfies every check a span can satisfy, because fitting inside the file proves nothing. The hash ties the anchor to its own text, so a stale anchor announces itself instead of pointing a reader at unrelated code. `enclosing named construct` stays mandatory as the stable human pointer; one construct often carries several governed comments.
+
+**Adopting the profile is not adopting a conversion (§4.13.14, §4.13.16).** A repository governing only its future changes conforms. Where a conversion is worth doing, the read-only audit delivers most of its value first.
 
 ## Applicable core rules with profile scope
 

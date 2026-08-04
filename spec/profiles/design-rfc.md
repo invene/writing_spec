@@ -10,7 +10,7 @@ Propose or specify a technical design: requirements, interfaces, invariants, alt
 
 ## Shallow-model outcome (core §4.12.2)
 
-The scan path lets the assumed reader state **what the design proposes, its approval status, and where the proposal stops.**
+The scan path lets the assumed reader state **what the design proposes, at what §5.6 strength, and where the proposal stops.**
 
 ## Reader overlay (genre knowledge only)
 
@@ -22,7 +22,7 @@ Dependency order: seed the problem, constraints, and specialized vocabulary befo
 
 | Slot | Required | Job |
 |---|---|---|
-| Summary | yes | the proposed change, who or what it affects, and the decision reviewers are asked to make |
+| Summary | yes | the proposed change, who or what it affects, and the decision this document asks for |
 | Context | yes | current condition, problem, relevant constraints — no decision-path history (§4.9) |
 | Requirements | yes | verifiable outcomes and constraints; mandatory requirements distinguished from preferences |
 | Proposal | yes | the design and mechanism, ordered from assumed-reader view to exact detail |
@@ -54,3 +54,5 @@ Affected interfaces and invariants. Interfaces cover inputs, outputs, errors, co
 ## Scoped rules
 
 None. Every obligation comes from core.
+
+An unapproved design read as settled is the hazard this profile most invites. Core §5.6's `proposed` tier carries that protection inside the text; no slot records the document's own approval state (core §0.5, *Text, not process*).

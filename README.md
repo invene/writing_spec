@@ -27,9 +27,14 @@ spec/glossary.md        canonical admitted terms
 spec/reader.md          what the assumed reader knows
 spec/profiles/*.md      one file per profile
 skills/itws-rewrite/    Claude skill for a consumer session
+tools/                  optional, non-normative; outside the load set
 AGENTS.md               working instructions for agent sessions
 CHANGELOG.md            version history
 ```
+
+Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidability (`D`) saying whether a machine settles it — `L` literal, `S` screened, `J` judgment. `D` allocates attention; it changes no rule's force.
+
+`tools/itws_literal.py` screens a corpus for the `L` and `S` rules and reports what it did not evaluate. It decides no conformance question, no rule refers to it, and deleting it changes no obligation.
 
 ## Profiles
 
@@ -50,6 +55,8 @@ AI disclosure: assisted — drafted the rollout section; reviewed by the platfor
 The `AI disclosure` field is `none`, `assisted`, or `generated`. It records provenance for transparency; it never affects whether the document conforms.
 
 Three obligations carry across every review: cite a rule ID for every finding, report a missing fact instead of generating one, and continue around unresolved spans — returning the best safe draft plus a missing-fact list.
+
+**ITWS governs text, not process.** The declaration block above is the only process artifact the specification defines. No rule records review state, approval state, or lifecycle position, and none turns on an event outside the document.
 
 [AGENTS.md](AGENTS.md) has the full sequence.
 

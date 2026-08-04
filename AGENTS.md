@@ -1,6 +1,8 @@
 # Agent instructions
 
-**ITWS 1.0.0.** This repository is markdown only. There is no Python package, no linter, no validator, and no generated catalog. Everything is read, applied, and checked by you.
+**ITWS 1.0.0.** The specification is markdown only. There is no Python package, no validator, and no generated catalog. Every rule is read, applied, and checked by you.
+
+One optional, non-normative checker lives at `tools/itws_literal.py`. It screens a corpus for the rules marked `D = L` and `D = S` and reports what it did not evaluate. It is outside the load set, no rule refers to it, and it decides no conformance question. Use it to stop *reading for* the literal rules; never let it stand in for loading them. See `tools/README.md`.
 
 Decide which session you are in before changing anything. Getting this wrong is the most expensive mistake available here.
 
@@ -32,6 +34,23 @@ The specification is written in compressed notation. **Nothing you produce is.**
 | findings, commit messages, replies to the user | normal professional English |
 
 Reading compressed input biases output. Check your draft against this before returning it. A rewritten document that reads like `spec/core.md` has failed §3 and §4.
+
+---
+
+## The process fence (both session types)
+
+**You govern the text. You do not arbitrate your user's process.**
+
+ITWS defines exactly one process artifact: the §0.5 declaration block — ITWS version, profile, AI disclosure. Nothing else in the specification records review state, approval state, or lifecycle position, and no rule turns on an event outside the document (core §0.5, *Text, not process*).
+
+So, in any session:
+
+- Do not judge whether a review was sufficient, whether a work item may close, or what a team must retain.
+- Do not add an approval, sign-off, or lifecycle field a profile does not ask for.
+- Where the user states that a review happened, record their statement and attribute it to them. You may not overrule an owner's account of their own review, and you may not invent a reviewer to fill the slot (core §8, obligation 2).
+- Where a process state is the document's **subject** — the decision a `decision-record` records, the resolution state an `incident` reports — it is exact content. Govern it as content.
+
+Report what you did. The owner judges it.
 
 ---
 
@@ -87,6 +106,20 @@ There is no `pass` result to report. Before returning:
 
 The rewritten document, the missing-fact list, and the findings with rule IDs. Say plainly what you could not resolve.
 
+### 6. When the unit of work is a corpus
+
+Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone is about 22,000 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
+
+**Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its own diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
+
+**Aggregate the coverage.** §8 obligation 5 asks each session what it checked, and nothing composes those answers automatically. State the corpus-level answer: which rules were checked across every unit, and which were not. A corpus with 136 local coverage claims and no combined one cannot answer the question a reader actually asks.
+
+**Bound the repair loop.** Repairs introduce findings — shortening a sentence produces §3.10.2 contrast reframes and §3.6.2 bare openers that were not there before. A healthy loop drops sharply and converges. A round that trades one violation for another is not progress: stop, and finish by hand.
+
+**Say what the disclosure records when several tools contribute.** Where one model drafted, a second repaired, and a person accepted the result, the §0.5 note lists each contribution in order and ends with the human review status. Where that person accepted the work without reading it line by line, say that — §0.5 bars recording a review that did not happen, and it does not bar recording a qualified one.
+
+Before converting a corpus, consider auditing it first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing at all (ITWS §4.13.14).
+
 ---
 
 ## Maintainer session
@@ -135,11 +168,12 @@ Rough proxy: characters ÷ 4. Treat anything over 25,000 as a defect to fix in t
 A rule is one row in a core or profile table:
 
 ```text
-| 2.1.1 | M | word/term carries exactly one meaning throughout a document |
+| 2.1.1 | M | J | word/term carries exactly one meaning throughout a document |
 ```
 
 - **ID** — permanent. Assigned once, never reused, never renumbered, including across profiles. Changed wording does not earn a new ID. A withdrawn ID stays reserved.
 - **C** — `M` mandatory (*shall*), `R` recommended (*should*), `P` permitted (*may*).
+- **D** — decidability: `L` literal (a match, a count, or a closed-set test settles it), `S` screened (a match finds every candidate, a reader decides each one), `J` judgment (nothing mechanical narrows it). `spec/legend.md` defines the values. Every new rule carries one; when in doubt, `J`, because a wrong `L` tells a reader to stop looking.
 - **Rule** — one independently testable outcome. Clauses that can pass or fail independently are separate rules with separate IDs.
 
 New rule → append within its section, next free number.

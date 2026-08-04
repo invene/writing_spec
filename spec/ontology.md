@@ -15,7 +15,7 @@ Rule of thumb: **never block on a fetch.** Every ITWS obligation is stated in [c
 
 These standards change on multi-year cycles. A recalled version some years stale is acceptable background.
 
-## Anchors — general (all 12 profiles)
+## Anchors — general (all 13 profiles)
 
 | Source | ITWS borrows | Recall | Where |
 |---|---|---|---|

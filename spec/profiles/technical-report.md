@@ -51,10 +51,10 @@ The reader has only [reader.md](../reader.md) §1 basic quantitative knowledge u
 
 **Ladder-required** — admit under core §2.3 before use: mode and percentiles (including p50, p99) · standard deviation, variance, standard error · confidence interval, p-value, statistical significance · any named distribution, including "normal" and "power law" · correlation, regression, effect size · formal probability, expected value, sampling error, statistical power · every hypothesis-testing concept.
 
-| ID | C | Rule |
-|---|---|---|
-| 5.7.1 | M | a ladder-required concept, or "significant" in its statistical sense, ! appear before §2.3 admission; admitting "significant" includes its underlying test |
-| 5.7.2 | M | every headline statistical result includes a statement using **only bare concepts**; a ladder-required formulation may accompany it but ! replace it |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.7.1 | M | S | a ladder-required concept, or "significant" in its statistical sense, ! appear before §2.3 admission; admitting "significant" includes its underlying test |
+| 5.7.2 | M | J | every headline statistical result includes a statement using **only bare concepts**; a ladder-required formulation may accompany it but ! replace it |
 
 ## §5.8 Checkability statement
 
@@ -62,10 +62,10 @@ A `technical-report` uses **reproducibility** when another reader can repeat the
 
 A verification statement identifies the artifact and version, inputs and environment, checks or procedure, and pass criteria, plus any unavailable input or access needed to run those checks.
 
-| ID | C | Rule |
-|---|---|---|
-| 5.8.1 | M | the report includes its applicable checkability statement, containing every element listed above for its subject and selected form |
-| 5.8.2 | M | the statement uses only assumed or previously admitted terms, and ! delegate required statement content entirely to a technical appendix or external artifact |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.8.1 | M | S | the report includes its applicable checkability statement, containing every element listed above for its subject and selected form |
+| 5.8.2 | M | J | the statement uses only assumed or previously admitted terms, and ! delegate required statement content entirely to a technical appendix or external artifact |
 
 The statement summarizes the check in the main document. An appendix may carry command-, configuration-, or instrument-level detail; it does not replace the statement.
 

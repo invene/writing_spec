@@ -59,19 +59,19 @@ The reader has only [reader.md](../reader.md) §1 basic quantitative knowledge u
 
 **Ladder-required** — admit under core §2.3 before use: mode and percentiles (including p50, p99) · standard deviation, variance, standard error · confidence interval, p-value, statistical significance · any named distribution, including "normal" and "power law" · correlation, regression, effect size · formal probability, expected value, sampling error, statistical power · every hypothesis-testing concept.
 
-| ID | C | Rule |
-|---|---|---|
-| 5.7.1 | M | a ladder-required concept, or "significant" in its statistical sense, ! appear before §2.3 admission; admitting "significant" includes its underlying test |
-| 5.7.2 | M | every headline statistical result includes a statement using **only bare concepts**; a ladder-required formulation may accompany it but ! replace it |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.7.1 | M | S | a ladder-required concept, or "significant" in its statistical sense, ! appear before §2.3 admission; admitting "significant" includes its underlying test |
+| 5.7.2 | M | J | every headline statistical result includes a statement using **only bare concepts**; a ladder-required formulation may accompany it but ! replace it |
 
 ## §5.8 Reproducibility statement
 
 The statement identifies what another person needs to repeat the work: data or materials, code or procedure, compute or other resources, and key settings. It also identifies any unavailable input or component.
 
-| ID | C | Rule |
-|---|---|---|
-| 5.8.1 | M | the paper includes its reproducibility statement, containing every element listed above |
-| 5.8.2 | M | the statement uses only assumed or previously admitted terms, and ! delegate required statement content entirely to a technical appendix or external artifact |
+| ID | C | D | Rule |
+|---|---|---|---|
+| 5.8.1 | M | S | the paper includes its reproducibility statement, containing every element listed above |
+| 5.8.2 | M | J | the statement uses only assumed or previously admitted terms, and ! delegate required statement content entirely to a technical appendix or external artifact |
 
 ## Applicable core rules with profile scope
 
