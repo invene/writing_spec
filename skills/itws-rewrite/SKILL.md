@@ -23,7 +23,7 @@ spec/reader.md          what the assumed reader knows
 spec/profiles/<id>.md   exactly one file from spec/profiles/
 ```
 
-That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs about 22,000 tokens, so it fits alongside the document you are working on.
+That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 22,900–26,000 tokens depending on the profile, so it fits alongside the document you are working on.
 
 Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notation, and it states the voice fence described below.
 
@@ -71,6 +71,14 @@ becomes:
 >
 > > **[Speculation — first connection failure]** We speculate that a credential refresh began the growth, but authentication logs for that interval had expired.
 
+In `epic`, `task`, and `subtask`, the other rule that gets missed is §2.3.6. A child may use a term its ancestor epic admits (§2.3.5), but only if it names both the term and the admitting epic:
+
+> **Epic, `Shared vocabulary`:** A *running log* is a single record field holding many dated observations as one continuous body of text.
+>
+> **Task, `Parent and invariants`:** Parent: EPIC-4 (https://example.invalid/epic-4). Inherited terms: *running log*, admitted in EPIC-4.
+
+A child that uses the term without the pointer has not inherited it. It has used an undefined term, and §2.3.1 fails.
+
 ## 6. Self-check before returning
 
 Core §8 sets these obligations. All of them apply every time.
@@ -103,11 +111,11 @@ Four traps, all of which have produced wrong results in practice:
 - **The phrase lists carry exceptions, and the exceptions matter.** `underscore` is permitted for a physical mark, `landscape` for physical terrain, and `significant` and `robust` in the statistical sense once §5.7 admits them. `rather than` is a comparative, not the §3.9.1 hedge `rather`. This is what the `S` marker means.
 - **Match what a rule states, not what it resembles.** A phrase close to a listed one is judged under the rule's statement (`spec/phrases.md`, front matter).
 
-Spend the attention you save on the `J` rules: §4.13.1, §4.13.4, §4.13.6, §5.1.1, and the §4.12 scan path.
+Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §5.1.1, and the §4.12 scan path. §4.13.4 is `S` — a match finds the `Basis` field, and you decide whether what it names is durable.
 
 ## 9. Working on a corpus rather than one document
 
-Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone is about 22,000 tokens — so the work becomes many sessions, and four things change.
+Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 22,900–26,000 tokens — so the work becomes many sessions, and four things change.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -115,9 +123,9 @@ Sections 1 through 7 describe one document. A corpus does not fit in one context
 
 **Expect the repair loop to converge, and watch that it does.** Repairs introduce findings. A healthy loop drops sharply — sixty, then thirteen, then two. A round that trades one violation for another is not progress; stop and finish by hand.
 
-**Aggregate the coverage.** Obligation 6 below asks each session what it checked. Nothing composes those answers, so state the corpus-level one yourself: which rules were checked across every unit, and which were not.
+**Aggregate the coverage.** Core §8 obligation 6 asks each session what it checked. Nothing composes those answers, so state the corpus-level one yourself: which rules were checked across every unit, and which were not.
 
-Before converting a corpus, audit it first (§4.13.14). A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing.
+Before converting a corpus, audit it first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing. No rule requires it: whether an audit happened is an event outside the document.
 
 ## 10. Working in the `maintenance-comment` profile
 

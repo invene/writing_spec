@@ -64,13 +64,13 @@ Profile overlays grant **genre knowledge only** — how to read the document typ
 
 ### 0.5 Conformance
 
-**Binary.** A governed unit conforms, or does not, for **one declared version + one declared profile**. It conforms when it satisfies every applicable mandatory (`M`) rule and every required profile slot. Reviews, approvals, reader tests, and accepted deviations do not change this result.
+**Binary.** A governed unit conforms, or does not, for **one declared version + one declared profile**. That unit conforms when it satisfies every applicable mandatory (`M`) rule and every required profile slot. Reviews, approvals, reader tests, and accepted deviations do not change this result.
 
 **Text, not process (ITWS-original boundary).** The declaration block below is the **only** process artifact ITWS defines. No other rule requires a governed unit to record its own review, approval, or lifecycle state. None conditions conformance on an event outside the text.
 
 Where a process state is the document's **subject** it is exact content under §5.4. So: the decision a `decision-record` records · an `incident`'s resolution state · an `investigation-log`'s hypothesis state · a `data-table` status column. Test: does the state belong to the thing the document is about, or to the document's own passage through a workflow? First = content. Second = outside ITWS.
 
-An agent applying ITWS governs the text. It ! decide whether a review sufficed, whether a work item may close, or what a team must retain. It reports. The owner judges.
+An agent applying ITWS governs the text. That agent ! decide whether a review sufficed, whether a work item may close, or what a team must retain. The agent reports. The owner judges.
 
 **Applicability.** A core rule applies to all thirteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
 
@@ -200,10 +200,10 @@ Document builds vocabulary as a program builds state: nothing referenced before 
 |---|---|---|---|
 | 2.3.1 | M | J | term outside §2.2.1 permitted vocabulary → defined before first body use (glossary terms included) |
 | 2.3.2 | M | J | a definition uses only assumed vocabulary + terms already admitted in this document |
-| 2.3.3 | M | L | ! use a term on a promise to define it later — see [phrases.md](phrases.md) §2.3.3 |
+| 2.3.3 | M | S | ! use a term on a promise to define it later — [phrases.md](phrases.md) §2.3.3 names the settled instances; a near miss ("we return to this in §5") is judged against this statement |
 | 2.3.4 | M | J | definition states what the thing **is or does** — inputs, outputs, distinguishing properties; ! merely relate it to other terms |
-| 2.3.5 | P | J | *(`epic`, `task`, `subtask`)* a child work item may use a term its ancestor `epic` admits, without re-admitting it — **epic-scoped admission** |
-| 2.3.6 | M | S | *(`epic`, `task`, `subtask`)* a child using an inherited term names the term and the admitting `epic` in the slot carrying its parent reference |
+
+§2.3.5 + §2.3.6 (epic-scoped admission) and §4.8.4 are scoped to `epic` | `task` | `subtask` and live in those three profile files.
 
 Valid chain, worked — each rung stands on assumed vocabulary or an earlier rung:
 
@@ -214,16 +214,6 @@ Broken chain — no rung reaches the ground:
 > We use Raft for leader election after a quorum failure. Consensus, described in §5, preserves linearizability.
 
 *Raft*, *leader election*, *quorum*, *linearizability* unadmitted; *consensus* forward-referenced.
-
-**Epic-scoped admission (§2.3.5, §2.3.6, §4.8.4).** A child work item uses its ancestor `epic`'s admissions instead of repeating them. The per-document ladder does not compose across a *family* sharing one domain vocabulary. A 500-word `task` depending on eight family terms must duplicate ~200 words of verbatim definition (§6.5.1), or fail §2.3.1. ITWS already grants a family vocabulary twice: §0.6 meta-vocabulary, and the work-item block in `epic`/`task`/`subtask`. §2.3.5 extends it from the *genre's* vocabulary to the *subject's*. Admission itself is unchanged — an `epic` `Shared vocabulary` entry satisfies §2.3.1–§2.4.5 as an in-document definition does.
-
-Worked — epic admits, child relies:
-
-> **Epic, `Shared vocabulary`:** A *running log* is a single record field holding many dated observations as one continuous body of text.
->
-> **Task, `Parent and invariants`:** Parent: EPIC-4 (https://example.invalid/epic-4). Inherited terms: *running log*, admitted in EPIC-4.
-
-A child expected to circulate alone may instead recall an inherited definition verbatim under §6.5.3, trading length for independence.
 
 ### 2.4 Definition quality
 
@@ -436,6 +426,7 @@ Main point may be a requirement, proposal, decision, instruction goal, explanato
 | 4.3.2 | M | J | ! independently perform another profile's primary job; required subordinate content stays inside the declared profile |
 | 4.3.3 | M | L | every required slot for the profile is present, in the profile's stated order |
 | 4.3.4 | M | L | a governed unit declares one `AI disclosure` value from the §0.5 closed set, on the same surface as its other declarations; any value other than `none` carries the scope-and-review note |
+| 4.3.5 | M | L | a governed unit declares the ITWS version it is written against, on the same surface as its other declarations |
 
 ### 4.4 Applying the skeleton
 
@@ -486,7 +477,6 @@ Ladder makes rigor possible; budgets make it manageable.
 | 4.8.1 | M | S | ≤ 3 new terms or symbols admitted per page (page = consecutive non-overlapping 500-word window; remainder = final page) |
 | 4.8.2 | R | L | section ≤ 1,500 words |
 | 4.8.3 | R | L | subsection ≤ 600 words |
-| 4.8.4 | M | J | *(`epic`, `task`, `subtask`)* a term admitted under §2.3.5 counts against the admitting `epic`'s §4.8.1 budget, ! against any child's |
 
 ### 4.9 Path-agnostic prose (no warpath)
 
@@ -583,7 +573,7 @@ A statement is **material** when changing or omitting it could change an impleme
 | 5.4.3 | M | S | every citation resolves: DOI resolves to the referenced publication, URL is live or archived, book citation carries page numbers |
 | 5.4.4 | M | J | the cited page or section states or directly supports the claim it is cited for |
 | 5.4.5 | M | S | plural attribution ("several studies") is backed by at least that many distinct cited sources |
-| 5.4.6 | M | S | first reference to an external source or artifact — publication, standard, ticket, document, repository, change request — carries a resolvable **locator**: a URL, a DOI, or a path valid at the declared scope. Later references use the established short name (§2.1.2). Where no locator exists, the reference states that; ! invent one. |
+| 5.4.6 | M | S | first reference to an external source or artifact — publication, standard, ticket, document, repository, change request — carries a resolvable **locator**: a URL, a DOI, or a repository-relative path. A path is a locator only where the unit names the repository it is relative to; otherwise use a URL. Later references use the established short name (§2.1.2). Where no locator exists, the reference states that; ! invent one. |
 
 **Complete evidence record** = these five shared fields + every profile-specific field the profile file lists:
 
@@ -752,7 +742,7 @@ A statement beyond an established boundary is a different, weaker statement.
 
 **No machine decides conformance.** ITWS has no validator. A reader or agent checks the text against the rules above and states what it checked. There is no `pass` result.
 
-**What a checker may establish.** The `D` column marks how much of a rule a machine settles ([legend.md](legend.md)). A tool may decide an `L` rule and locate every candidate for an `S` rule. It establishes nothing about a `J` rule, and nothing about conformance at any decidability — §0.5 keeps that binary and textual. A clean run is a **coverage statement**, not a result. Three constraints keep a checker from becoming an authority. Its output names the rules it did **not** evaluate. No rule refers to a tool, so deleting it changes no obligation. It replaces **reading for** the literal rules, never loading them.
+**What a checker may establish.** The `D` column marks how much of a rule a machine settles ([legend.md](legend.md)). A tool may decide an `L` rule and locate every candidate for an `S` rule. The same tool establishes nothing about a `J` rule, and nothing about conformance at any decidability — §0.5 keeps that binary and textual. A clean run is a **coverage statement**, not a result. Three constraints keep a checker from becoming an authority. Its output names the rules it did **not** evaluate. No rule refers to a tool, so deleting it changes no obligation. A checker replaces **reading for** the literal rules, never loading them.
 
 **Self-check obligations.** After writing or rewriting a governed unit:
 

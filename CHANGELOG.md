@@ -19,7 +19,8 @@ The observed failure: a session convened to fix prose ended up litigating what w
 - **Amended: §5.6.2.** Strength now matches "the evidence the document carries for it". The coupling to approval status is gone; the decision semantics already live inside the `adopted` and `proposed` tier definitions, which are unchanged.
 - **Amended: core §5.4 evidence record — field 6 removed.** The **open question STY-81 left to this session is decided by removal.** "Lifecycle or authority status" was the last place process state was mandatory document content outside the stamp. STY-68's reader-protection argument is answered inside the text instead: §5.6 now states that the tier carries the settled/unsettled distinction, so an unsettled item takes the `proposed` or `interpretive` tier and reads correctly from the tier alone. The record is now **five** shared fields.
 - **Amended slots.** `epic` `Summary` drops "approval or alignment requested"; `epic` `Task map` and `task` `Subtask map` drop "current ownership or status"; `task` `Summary` drops "current lifecycle state". A document may state any of these where it genuinely has them; no slot requires them. *The two `map` slots are not named in STY-81's enumeration; they are removed under its definition of done, which reaches any slot requiring workflow state as document content.*
-- **Amended shallow-model outcomes.** `epic` and `design-rfc` no longer put approval status on the scan path; both now carry the §5.6 strength instead. An unapproved design read as settled — `design-rfc`'s sharpest hazard — is protected by the `proposed` tier.
+- **Amended shallow-model outcomes.** `epic` and `design-rfc` no longer put approval status on the scan path; both now carry the §5.6 strength instead.
+- **Amended `design-rfc` `Summary`.** The slot asked for "the decision reviewers are asked to make" and now asks for "the decision this document asks for". The named audience was the last place a slot pointed at a review event rather than at content. An unapproved design read as settled — `design-rfc`'s sharpest hazard — is protected by the `proposed` tier.
 - **`AGENTS.md` and `skills/itws-rewrite/SKILL.md`** both state the process fence: the agent governs the text, records the owner's account of their own review without overruling it, and never invents a reviewer.
 
 Reader assumptions: unchanged. No baseline or genre-knowledge item is added or removed.
@@ -74,7 +75,9 @@ The profile governed "a comment change set, not a corpus at rest", which left th
 - **Amended core §0.2.** The `hosted-comment-set` surface now covers one change set in one host file **or** one **declaration boundary** — a repository, package, or directory tree — holding a corpus at rest.
 - **New rule §4.13.15 (`P`).** One carrier's declarations may cover a declaration boundary rather than one host file.
 - **New rule §4.13.16 (`M`).** A `change-set` carrier carries one `Comment record` per governed comment. A `corpus-at-rest` carrier may omit the records, and conformance then rests on the comment text alone — which core §0.5 already makes the test.
+- **Amended rule §4.13.9 (`M`).** The scan path of a carrier is its change-set ID **or declaration boundary**, then in host order each host anchor and its complete governed comment. The rule previously named only a comment change set, which a boundary-scoped carrier does not have.
 - **Amended slots.** `Change scope` declares the carrier shape and what it covers; `Comment record` is required for a change set and optional for a corpus at rest; `Boundaries` now bounds the carrier rather than the change set.
+- **Amended reader overlay.** The `maintenance-comment` reader now recognizes "one carrier" rather than "one comment change set". Reader assumption affected: the reader is no longer assumed to be looking at a diff.
 
 STY-69's counter-argument is honoured by keeping the record mandatory exactly where it does its work — a change set beside a diff — and optional only where the field report showed it produced a liability instead.
 
@@ -82,7 +85,7 @@ STY-69's counter-argument is honoured by keeping the record mandatory exactly wh
 
 1.0.0 removed the per-rule `Machine-checkable` metadata along with the tooling. The reason was sound and the conclusion took the useful half with the useless one: a closed list of nineteen prohibited words is not something prose review catches, and every consumer now rebuilds the same checker and gets the same edge cases wrong.
 
-- **New `D` column on every rule table**, in `core.md` and all thirteen profile files — 216 rows. Values, defined in `spec/legend.md`:
+- **New `D` column on every rule table**, in `core.md` and each of the eight profile files carrying one — 216 distinct rule IDs across 227 physical rows. Five profiles carry no rule table. Values, defined in `spec/legend.md`:
   - `L` **literal** — a match, a count, or a closed-set test settles it.
   - `S` **screened** — a match or count finds every candidate; a reader decides each one.
   - `J` **judgment** — nothing mechanical narrows the candidates.
@@ -121,7 +124,7 @@ Both profile paragraphs carry the "no rule ID" marker and name the record's `pro
 
 **No rule identifier is assigned, and no rule changes.** §4.14.1 already puts the declarations on the Title sheet, and §4.14.1–§4.14.4 already require the sheets. The additions to `spec/profiles/data-table.md` state how those rules read on each carrier, which core §0.2 keeps outside conformance. No reader assumption changes.
 
-**STY-72's `INV-3` fails as delivered.** `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold. `INV-3` asks that base plus `data-table` stay inside the 15,000–25,000 band; it measures 25,506, and the known-defect table below now records that figure rather than the stale one. The profile was already 312 tokens over when this work began, and this change adds 194 more. Nothing further is cuttable under the budget policy without deleting a normative statement, a closed list, or an ITWS-original mechanism, so closing the epic on its own definition of done needs the same maintainer decision the known defect already asks for.
+**STY-72's `INV-3` is over its target.** `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold. `INV-3` aims for base plus `data-table` inside the 15,000–25,000 band; it measures 25,506, and the measurement table below records that figure rather than the stale one. The profile was already 312 tokens over when this work began, and this change adds 194 more. The band is a target rather than a limit, so the overage is reported and the epic closes on it.
 
 ### Added — the `data-table` profile has a validated pilot fixture (STY-78)
 
@@ -145,21 +148,73 @@ Nothing in `spec/` changed for this. The fixture is outside the load set and no 
 - Both decision records read their own ticket as the question it carries, used "below" as a cross-reference against §4.7.3, and stated selections in the past tense while carrying `Status: proposed`. 0002 also asserted that every delivery format preserves filenames, an unmarked declarative carrying verified-tier force with nothing behind it (§5.6.2); it now records the assumption as untested.
 - The pilot fixture's `Infrastructure` registry entry said "nothing in this fixture has been built" while the `Build or reuse` entry defined Reuse as "exists and runs today" (§2.1.1). The entry now separates the unbuilt system from the components a Reuse row names.
 
-### Known defect — the load set exceeds its band
+### Amended — the review of the STY-71 change set (STY-71 follow-up)
 
-`AGENTS.md` fixes the load set at 15,000–25,000 tokens and calls anything over 25,000 a defect to fix in the same change. After compression, three profiles are over:
+The STY-71 change set was reviewed after it merged. Every finding below comes from that review, and each is a defect in the amendments themselves rather than a new field report.
+
+**A gap where a mandatory obligation was missing.**
+
+- **New rule §4.13.17 (`M`).** Every anchor in a carrier resolves. §4.13.10 defined when an anchor *resolves* but no rule required one *to*, so two identical comments in one file violated no stated mandatory rule. §1.3 precedence cannot repair a gap.
+- **Amended §4.13.10.** "Two matches = the ambiguity §4.13.3 forbids" no longer named a real prohibition: amended §4.13.3 constrains anchors per comment, not comments per hash, and 1.0.0's "resolving to one construct span" clause was dropped in the same change. The row now states the consequence directly and §4.13.17 carries the force.
+- **Amended the `comment hash` vocabulary entry.** It named no algorithm, encoding, or normalization, so two checkers could disagree — which fails `legend.md`'s test for `D = L` on the two rules that depend on it. The entry now states SHA-256, lowercase hex, and the normalization order, including the block-comment continuation marker the old wording left ambiguous.
+
+**Three decidability markers corrected.** A wrong `L` tells a reader to stop looking, which is the direction that costs most.
+
+- **§4.13.8 `L` → `S`.** A match finds the marker keyword and the work-item reference; whether a clause states a *removal condition* is judgment, as §4.13.7 already recognises.
+- **§2.3.3 `L` → `S`.** The rule bans using a term on a promise to define it later. `phrases.md` carries only the settled instances and its own front matter routes a near miss to the rule statement, which is `S` by definition.
+- **New rule §4.3.5 (`M`, `L`).** A governed unit declares the ITWS version it is written against. §0.5 required the field with no rule row behind it, so a finding about it could only cite a section.
+
+**§4.13.14 withdrawn, ID reserved.** It recommended a read-only audit before converting. Whether an audit happened is an event outside the document, so the row falsified core §0.5's own boundary — and STY-70's failure mode reaches `R` rows too, because an agent enforces anything carrying a class marker. The practice moves to `AGENTS.md` and `SKILL.md`, where it carries no marker.
+
+**§5.4.6 amended.** "A path valid at the declared scope" was untestable: no §0.5 declaration carries a scope. A path is now a locator only where the unit names the repository it is relative to.
+
+**§2.3.5, §2.3.6, and §4.8.4 move from core into `epic`, `task`, and `subtask`**, under a shared heading, with wording identical in all three. `AGENTS.md`'s placement table and budget arithmetic both call for it: three profile-scoped rules in core charged all thirteen load sets. The worked example moves to `SKILL.md` §5, as the §7.3 example did.
+
+- **§2.3.6 amended while moving.** It required the inherited-term list in "the slot carrying its parent reference", but `subtask`'s skeleton puts it in `Boundaries and invariants`, and citing §2.3.6 as a slot's basis does not displace it under §1.3(2). The rule now names either slot, so `task` and `subtask` are both conformant as written.
+
+**§5.8.1 diverges between `research-paper` and `technical-report` on purpose**, and each file now says so. Without the note, `AGENTS.md`'s keep-the-wording-identical instruction read as violated. §5.8.2 is identical in both and is marked shared.
+
+**`spec/phrases.md` §4.10.5 emoji set corrected.** `\U0001FE0F` is an unassigned codepoint; U+FE0F, the variation selector, was meant. Regional-indicator flags (U+1F1E6–U+1F1FF) fall between two of the ranges and were uncovered, so the closed set under-covered its own `L`-marked rule.
+
+**Changelog completeness, per `AGENTS.md`.** Three amendments this change set made were not named in it, and are now: §4.13.9's wording (STY-69), the `maintenance-comment` reader-overlay row, and the `design-rfc` `Summary` slot. The `D`-column entry said "all thirteen profile files"; five profiles carry no rule table, and the 216 count is of distinct rule IDs across 227 physical rows.
+
+**STY-81 residuals.** `task` and `subtask` shallow-model outcomes still promised "integrated-acceptance **status**" and "evidence **status**", the same word the amendment removed from `epic` and `design-rfc`; both now name the condition and the evidence instead. `epic` `Summary` said "current state", which invited the removed lifecycle reading, and now says whose state and bars the epic's own.
+
+**Voice.** Four bare "It" openers in core §0.5 and §8 name their referent (§3.6.2).
+
+Reader assumptions: one changes. The `maintenance-comment` reader is no longer assumed to be reading a diff.
+
+### Fixed — the checker, again
+
+Eight defects found by the same review. None changes a rule; all eight made the tool's output wrong or its own claims overstated.
+
+- **`D` markers are now parsed from `spec/` at run time.** The tool hardcoded 28 of them, so its "carries no copy / cannot drift" claim was true of phrase strings and false of decidability. A rule reclassified in the specification now changes what the tool prints with no code change. It still holds the *list* of IDs it evaluates, and a rule whose ID no longer has a row stops the run rather than screening silently against nothing.
+- **A sentence beginning with a digit now splits.** The lookahead admitted no `0-9`, so "…over the cap. 12 sentences ran long" counted as one sentence and every §3.1 result on that paragraph was wrong.
+- **`"certainly!"` can match.** `\b` after `!` demanded a following word character, so the entry could never fire. The boundary is now anchored only where a word edge exists.
+- **`--self-test` checks every entry, not every rule.** Its guarantee was per rule ID, which is exactly how the broken entry above stayed invisible while §2.6.11 kept passing. Each entry is now asked to match its own source string. `tools/README.md` overstated the old guarantee and now states this one.
+- **`check_section_length` tracks fences.** A `##` inside a fenced example reset section attribution, and fenced and tabular words counted against §4.8.2–§4.8.3.
+- **An indented continuation line is prose again.** Four-space indentation opens a code block only after a blank line; indented after prose it is a wrapped line, and every check silently skipped it.
+- **§7.3.3 matches the inflections §5.6 permits.** "The record showed" and "we proposed" are the same phrases at the same tiers, and only the citation forms matched. The non-strength reading of "we find" stays a match, because §7.3.3 is `L` on the phrase itself.
+- **A missing version declaration cites §4.3.5**, a rule row, rather than §0.5, a section.
+
+### Measured — the load set against its target band
+
+`AGENTS.md` aims the load set at 15,000–25,000 tokens and asks that any overage be measured and reported in the same change. After compression, 3 profiles are over:
 
 | Load set | Tokens | Over |
 |---|---|---|
-| base + `maintenance-comment` | 26,138 | +1,138 |
-| base + `task` | 25,640 | +640 |
-| base + `data-table` | 25,506 | +506 |
+| base + `maintenance-comment` | 26,070 | +1,070 |
+| base + `task` | 25,691 | +691 |
+| base + `data-table` | 25,233 | +233 |
 
-Measured at the head that carries the STY-79 and STY-78 work, not at the head that first reported the defect. The `data-table` figure moved twice after that first report: the two carrier paragraphs STY-79 adds to the profile put it up 194 tokens, and compressing both to the legend's notation took 26 back. `maintenance-comment` and `task` are unchanged. Base is 23,250, up from 22,121. 1.0.0 shipped with about 800 tokens of headroom, and this change set adds eleven rules (§2.3.5, §2.3.6, §4.8.4, §4.13.10–§4.13.16, §5.4.6), withdraws two, adds three ITWS-original mechanisms, and adds a column across 216 rows.
+Base is 22,977, up from 22,121. 1.0.0 shipped with about 800 tokens of headroom, and this change set adds twelve rules (§2.3.5, §2.3.6, §4.3.5, §4.8.4, §4.13.10–§4.13.17, §5.4.6), withdraws three, adds three ITWS-original mechanisms, and adds a column across 216 rule IDs.
 
-Everything the budget policy names as cuttable — restated source material and micro-examples — has been cut. Closing the remaining gap means deleting a normative statement, a closed list, or an ITWS-original mechanism, which the same policy forbids. The two instructions now conflict, and resolving it is a maintainer decision rather than a drafting one.
+Two rounds of compression have run against it. Moving §2.3.5, §2.3.6, and §4.8.4 out of core took roughly 270 tokens off ten of the thirteen load sets and put them back into the three that actually use them; `epic` and `subtask` land back under the target and `task` does not. Everything else the budget policy names as cuttable — restated source material and micro-examples — is already cut. Closing the remaining gap means deleting a normative statement, a closed list, or an ITWS-original mechanism, which the policy puts ahead of the target. So the compression stops here and the three figures stand as measured.
 
-**Recommended resolution:** drop `spec/ontology.md` (1,690 tokens) from the consumer load set, keeping it as maintainer reading. By its own front matter it adds no obligation — "every ITWS obligation is stated in `core.md`, `phrases.md`, and the profile file" — and removing it brings every profile to roughly 24,500 with headroom restored. This is not applied here: it changes the load set every other file names, and that is the maintainer's call.
+**This is a measurement, not a blocker.** The band is a target: nothing here fails conformance, and no change was held back for it. STY-72 closes with `INV-3` over target, recorded.
+
+**One option remains open, for whenever it is wanted:** drop `spec/ontology.md` (1,681 tokens) from the consumer load set, keeping it as maintainer reading. By its own front matter it adds no obligation — "every ITWS obligation is stated in `core.md`, `phrases.md`, and the profile file" — and removing it brings every profile under 24,500 with headroom restored. This is not applied here: it changes the load set every other file names, and that is the maintainer's call.
+
 
 ---
 

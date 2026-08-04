@@ -108,7 +108,7 @@ The rewritten document, the missing-fact list, and the findings with rule IDs. S
 
 ### 6. When the unit of work is a corpus
 
-Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone is about 22,000 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
+Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 22,900–26,000 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its own diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -118,7 +118,7 @@ Steps 1 through 5 describe one session over one document. A corpus does not fit 
 
 **Say what the disclosure records when several tools contribute.** Where one model drafted, a second repaired, and a person accepted the result, the §0.5 note lists each contribution in order and ends with the human review status. Where that person accepted the work without reading it line by line, say that — §0.5 bars recording a review that did not happen, and it does not bar recording a qualified one.
 
-Before converting a corpus, consider auditing it first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing at all (ITWS §4.13.14).
+Before converting a corpus, consider auditing it first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing at all. This is practice, not a rule: whether an audit happened is an event outside the document, so no rule turns on it.
 
 ---
 
@@ -126,7 +126,9 @@ Before converting a corpus, consider auditing it first. A read-only pass that re
 
 ### The design constraint: recall over restatement
 
-**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs about 22,000 tokens, and the working band is **15,000–25,000**. This is a hard constraint on every edit, not a preference. A specification nobody can afford to load is not enforced.
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,900–26,000 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
+
+The band is a **target, not a limit**. Nothing fails conformance by exceeding it, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
 
 The constraint is met by **relying on model recall**, not by writing tersely. ITWS is assembled from standards a competent model already knows — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, IPCC calibrated uncertainty. `spec/ontology.md` names each one and marks it `required` or `optional`. Core does not re-teach any of them. **Core states only where ITWS differs.**
 
@@ -161,7 +163,7 @@ for f in sorted(glob.glob('spec/profiles/*.md')):
 "
 ```
 
-Rough proxy: characters ÷ 4. Treat anything over 25,000 as a defect to fix in the same change, not a follow-up. The first places to cut are restated source material and micro-examples — never a normative statement, a closed list, or an ITWS-original mechanism.
+Rough proxy: characters ÷ 4. Report anything over 25,000 in the same change and say what you tried. The first places to cut are restated source material and micro-examples — **never** a normative statement, a closed list, or an ITWS-original mechanism. Where only those are left, stop cutting and record the measurement: the content wins, and going over is the correct outcome.
 
 ### Rule format
 
