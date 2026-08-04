@@ -8,8 +8,9 @@ AI disclosure: generated — drafted every section from the STY-79 ticket and th
 
 Proposed. No superseding record exists.
 
-Recorded against [STY-79](https://linear.app/inveneprod/issue/STY-79), the second
-of the two questions the spreadsheet-overlay proposal left open.
+Recorded against [STY-79](https://linear.app/inveneprod/issue/STY-79), the ticket
+carrying both questions the spreadsheet-overlay proposal left open. This record
+answers the second.
 
 ## Summary
 
@@ -37,9 +38,9 @@ nothing to read. A reader cannot settle them.
 
 Two boundaries bound the answer. Version: the answer is written against ITWS
 1.0.0 and its amendments of 2026-08-04. Dependencies: the answer assumes only
-that filenames survive storage and transfer. Every delivery format in use here
-preserves them. Capacity, security, privacy, and data-provenance
-dimensions do not apply to a naming convention.
+that filenames survive storage and transfer. We have surveyed no delivery format
+against that assumption, which therefore stays untested. Capacity, security,
+privacy, and data-provenance dimensions do not apply to a naming convention.
 
 ## Alternatives
 
@@ -48,7 +49,7 @@ dimensions do not apply to a naming convention.
 One extra file would map each filename to a sheet name and kind. A sheet name
 could then hold a character a filename cannot.
 
-We rejected the option because the manifest is a second artifact describing the
+We reject the option because the manifest is a second artifact describing the
 first. The two drift apart on the first rename that touches only one of them.
 [STY-63](https://linear.app/inveneprod/issue/STY-63) reports that failure on the
 comment surface. A quarter of one corpus pointed at the wrong place. The
@@ -56,19 +57,19 @@ derived record had fallen out of step with what it described.
 
 ### A positional convention breaks without an edit
 
-The files would be ordered, and the first would be the Title sheet. We rejected
+The files would be ordered, and the first would be the Title sheet. We reject
 the option because file ordering is not preserved. A copy, an archive, a
 download, and a listing each apply their own order.
 
 ### Silence is what produced the question
 
 The specification would stay silent, and each delivery would invent its own
-answer. We rejected the option because every consumer would guess, and the
+answer. We reject the option because every consumer would guess, and the
 guesses would differ.
 
 ### The filename convention survives every move
 
-We selected this option. A workbook that adopts the convention repackages as a
+We propose this option. A workbook that adopts the convention repackages as a
 `.xlsx` file without loss, because the sheet names survive the move. A workbook
 that later adds a manifest keeps its filenames. Anyone who ignores the manifest
 still reads the set.

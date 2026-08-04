@@ -117,7 +117,11 @@ Both questions the spreadsheet-overlay proposal deliberately left open are now r
 
 Both records carry `Status: proposed`. Neither has been accepted by a maintainer, and recording an acceptance that did not happen is barred by core §8 obligation 2.
 
-**No rule identifier is assigned, and no rule changes.** §4.14.1 already puts the declarations on the Title sheet, and §4.14.1–§4.14.4 already require the sheets. The additions to `spec/profiles/data-table.md` state how those rules read on each carrier, which core §0.2 keeps outside conformance. STY-72's `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold; `INV-3` is the load-set band recorded as a known defect above. No reader assumption changes.
+Both profile paragraphs carry the "no rule ID" marker and name the record's `proposed` status, so a reader reaching them from the profile alone sees that nothing there has been accepted. Rejecting either record reverts its paragraph and nothing else.
+
+**No rule identifier is assigned, and no rule changes.** §4.14.1 already puts the declarations on the Title sheet, and §4.14.1–§4.14.4 already require the sheets. The additions to `spec/profiles/data-table.md` state how those rules read on each carrier, which core §0.2 keeps outside conformance. No reader assumption changes.
+
+**STY-72's `INV-3` fails as delivered.** `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold. `INV-3` asks that base plus `data-table` stay inside the 15,000–25,000 band; it measures 25,506, and the known-defect table below now records that figure rather than the stale one. The profile was already 312 tokens over when this work began, and this change adds 194 more. Nothing further is cuttable under the budget policy without deleting a normative statement, a closed list, or an ITWS-original mechanism, so closing the epic on its own definition of done needs the same maintainer decision the known defect already asks for.
 
 ### Added — the `data-table` profile has a validated pilot fixture (STY-78)
 
@@ -133,9 +137,13 @@ Nothing in `spec/` changed for this. The fixture is outside the load set and no 
 - **Self-application pass over every line this change adds to `spec/`** (core §8: "its own prose follows core rules where meaningful"). `spec/profiles/task.md` carried "§5.9.5 is what §5.9.6 used to enforce procedurally" — a §4.9.1 residual-history aside about a rule this same change withdraws, which passes delete-or-promote by deleting. Core §0.2 used "corpus at rest" before its admission (§2.3.1), which lives in the `maintenance-comment` vocabulary block. The epic-scoped-admission chunk opened on the problem rather than its point (§4.2.2). Nine semicolons joining independent clauses became sentences (§3.8.1), two bare "This is" openers named their referent (§3.6.2), seven over-cap sentences were split (§3.1.1, §3.1.2), and parenthetical em dashes in core §0.2 became parentheses (§3.10.3).
 
   Left as they are, with reasons: `·` enumerations and vocabulary-block definition entries are the file's fixture forms, and §2.4.4 governs a definition rather than §3.1. The remaining over-cap lines are pre-existing text this change only reflowed.
-- `tools/itws_literal.py` compiled `pattern` lists case-insensitively, so `<[A-Z_]{3,}>` matched lowercase text and `\bTBD\b` matched "tbd". A regular expression states its own case sensitivity; only the literal lists fold case, as `spec/phrases.md` says. Found by screening the two decision records with the tool.
-- `tools/itws_literal.py` applied §4.12.3 to all prose. Core §4.12.1 bounds that rule to the scan path, and the tool now screens only the title and each section's opening chunk.
+- `tools/itws_literal.py` screened a quoted token as though the document asserted it, so `<[A-Z_]{3,}>` matched a `<workbook>` written in backticks. The tool now blanks inline code spans before screening. An earlier attempt at this compiled `pattern` lists case-sensitively instead; that contradicted `spec/phrases.md`, which states one rule for all four list kinds — matching folds case unless an entry says otherwise — and no entry says otherwise. It also silently narrowed a screened rule, so sentence-initial "No" and "Not only" stopped producing §4.12.3 and §3.10.2 candidates. Every list folds case again.
+- `tools/itws_literal.py` applied §4.12.3 to all prose. Core §4.12.1 bounds that rule to the scan path, and the tool now screens every heading including the title, plus each section's opening chunk. A bounded block no longer consumes its section's opening slot, so a `[Detail — …]` block under a heading cannot hide the opening chunk behind it. The approximation over-includes — a whole opening paragraph rather than its first sentence, and no appendix detection — and the run's coverage statement now says so.
 - `tools/itws_literal.py` failed to end a sentence before one opening with inline code, bold, or italics, which merged two sentences into one over-cap word count.
+- `tools/fixtures/phrase-list-fixture.md` carried its §4.12.3 line mid-section, off the scan path the rule is bounded to, so the line produced nothing and `--self-test` passed only because the intro paragraph happened to carry a negation. The line now sits in a section that exercises the heading, the opening chunk, and a bounded block between them.
+- `fixtures/data-table/CHECK.md` attributed judgment rules to a script. §2.6.1, §2.6.2, §3.10.1, §4.3.2, and §4.14.10 are `J`, and no script decides a `J` rule. Every coverage row now says what settled it in the `D` column's own vocabulary — decided, screened then read, or read — and the record states that no checked-in tool reads CSV, so its counts came from scripts that were not retained. The record also claimed no external artifact was referenced while recording STY-78's locator two rows later; §2.7.4 is now `not applicable` with its reason.
+- Both decision records read their own ticket as the question it carries, used "below" as a cross-reference against §4.7.3, and stated selections in the past tense while carrying `Status: proposed`. 0002 also asserted that every delivery format preserves filenames, an unmarked declarative carrying verified-tier force with nothing behind it (§5.6.2); it now records the assumption as untested.
+- The pilot fixture's `Infrastructure` registry entry said "nothing in this fixture has been built" while the `Build or reuse` entry defined Reuse as "exists and runs today" (§2.1.1). The entry now separates the unbuilt system from the components a Reuse row names.
 
 ### Known defect — the load set exceeds its band
 
@@ -143,11 +151,11 @@ Nothing in `spec/` changed for this. The fixture is outside the load set and no 
 
 | Load set | Tokens | Over |
 |---|---|---|
-| base + `maintenance-comment` | 26,150 | +1,150 |
-| base + `task` | 25,652 | +652 |
-| base + `data-table` | 25,308 | +308 |
+| base + `maintenance-comment` | 26,138 | +1,138 |
+| base + `task` | 25,640 | +640 |
+| base + `data-table` | 25,506 | +506 |
 
-Base is 23,247, up from 22,121. 1.0.0 shipped with about 800 tokens of headroom, and this change set adds eleven rules (§2.3.5, §2.3.6, §4.8.4, §4.13.10–§4.13.16, §5.4.6), withdraws two, adds three ITWS-original mechanisms, and adds a column across 216 rows.
+Measured at the head that carries the STY-79 and STY-78 work, not at the head that first reported the defect. The `data-table` figure moved twice after that first report: the two carrier paragraphs STY-79 adds to the profile put it up 194 tokens, and compressing both to the legend's notation took 26 back. `maintenance-comment` and `task` are unchanged. Base is 23,250, up from 22,121. 1.0.0 shipped with about 800 tokens of headroom, and this change set adds eleven rules (§2.3.5, §2.3.6, §4.8.4, §4.13.10–§4.13.16, §5.4.6), withdraws two, adds three ITWS-original mechanisms, and adds a column across 216 rows.
 
 Everything the budget policy names as cuttable — restated source material and micro-examples — has been cut. Closing the remaining gap means deleting a normative statement, a closed list, or an ITWS-original mechanism, which the same policy forbids. The two instructions now conflict, and resolving it is a maintainer decision rather than a drafting one.
 

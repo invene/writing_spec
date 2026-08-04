@@ -29,35 +29,45 @@ The source Alex supplied was already fictional and said so on its own Title shee
 | 6 | §5.6.2, §4.14.19 | Two unmarked declarative claims carried verified-tier force with no evidence behind them: "Proven parsing libraries cover the supported formats" and "An inverted index answers term queries in near-constant time per term" | Every `Why this choice` cell now carries a §5.6 phrase, almost all `we decided`, and row Q2 carries `we propose` |
 | 7 | §2.7.3 | The grid said *Text normalizer*, the registry said *Normalizer* | One name throughout |
 | 8 | §4.14.17 | Rows X1 and X2 said `Not applicable.` with no reason | Each states the reason: the approach was not taken |
-| 9 | §0.5 | Column C8 read "pending operational review", conditioning content on an event outside the document | Reads "a design intention, not a deployed fact, because nothing in this fixture has been built" |
-| 10 | §4.14.13 → §3.1.1 | Several cells ran past the sentence caps | No sentence in a governed cell exceeds 20 words |
+| 9 | §0.5 | Column C8 read "pending operational review", conditioning content on an event outside the document | Reads "a design intention, not a deployed fact, because this system has not been built" |
+| 10 | §4.14.13 → §3.1.1 | Several cells ran past the sentence caps | No sentence in a governed cell exceeds 20 words. The one longer run is C3's closed-set enumeration, which §4.14.14 makes metadata rather than governed prose |
 
 Finding 4 is the one the profile predicts. `spec/profiles/data-table.md` names §4.14.5 as a rule that "most often bites", and it was missing from all nine columns of a workbook that otherwise looked finished.
 
 ## CC-2 — coverage
 
-Every rule below was evaluated. `mechanical` marks a result a script decided; everything else was decided by reading.
+Every rule below was evaluated. Each result says what settled it, in the vocabulary of the rule's own `D` column (`spec/legend.md`):
+
+- **decided** — a match or a count settles the rule outright.
+- **screened** — a match finds every candidate, and a reader decides each one.
+- **read** — nothing mechanical narrows it.
+
+A row covering several rule IDs of different `D` values names each group.
+
+No checked-in tool reads CSV, and none evaluates a §4.14 rule. Every count and match below came from throwaway scripts written for this check. They were not retained, so a later session re-derives these results rather than re-running them.
+
+Alex Melton reviewed this record on 2026-08-04. They state that they re-derived five results from the CSVs, and that each holds. Those five: the column registrations, the row IDs, the cross-row references, the strength phrases, and the longest cell sentence. Their statement is recorded here, not verified here.
 
 ### `data-table` scoped rules
 
 | Rule | Result |
 |---|---|
-| §4.14.1 declarations on the Title sheet | pass, mechanical |
+| §4.14.1 declarations on the Title sheet | pass, decided |
 | §4.14.2 Title sheet carries no data facts | pass |
 | §4.14.3 Title sheet carries coverage and boundaries | pass |
-| §4.14.4 one registry `Columns` entry per column | pass, mechanical — 9 of 9 |
-| §4.14.5 each `Columns` entry declares its §7.3 role | pass, mechanical |
+| §4.14.4 one registry `Columns` entry per column | pass, decided — 9 of 9 |
+| §4.14.5 each `Columns` entry declares its §7.3 role | pass, decided |
 | §4.14.6 registry replaces the ladder | pass — which terms are non-baseline is my judgment, recorded below |
-| §4.14.7 `Terms` entries meet §2.4 | pass, partly mechanical — all ≤ 2 sentences and ≤ 40 words |
+| §4.14.7 `Terms` entries meet §2.4 | pass, read — a count established all ≤ 2 sentences and ≤ 40 words; whether each meets §2.4 is my judgment |
 | §4.14.8 first-use expansion | not triggered — no acronym or initialism appears |
 | §4.14.9 registry completeness replaces the page budget | pass |
-| §4.14.10 (R) cell uses ≤ 3 non-baseline terms | pass, mechanical |
+| §4.14.10 (R) cell uses ≤ 3 non-baseline terms | pass, read — a count of registry terms per cell narrowed it; which uses are non-baseline is my judgment |
 | §4.14.11 one column, one meaning | pass |
 | §4.14.12 cell carries only its column's declared content | pass |
-| §4.14.13 a prose cell is a §4.1 chunk | pass — §3.1 mechanical, §2, §5, §7 by reading |
+| §4.14.13 a prose cell is a §4.1 chunk | pass — §3.1 screened by count, §2, §5, and §7 read |
 | §4.14.14 IDs, headers, closed-set values are metadata | pass — C1 through C4 declared metadata |
-| §4.14.15 stable row ID per row | pass, mechanical |
-| §4.14.16 cross-row dependence uses the row ID | pass, mechanical — every `row Xn` resolves |
+| §4.14.15 stable row ID per row | pass, decided |
+| §4.14.16 cross-row dependence uses the row ID | pass, screened then read — a match found every `row Xn` and each resolves; which cells depend on another row is my judgment |
 | §4.14.17 no silent blank | pass — the five empty `Notes` cells are covered by C9's systematic-absence statement, which §4.14.17 permits |
 | §4.14.18 scan surface replaces the scan path | pass — walked, below |
 | §4.14.19 material claim carries its evidence record | pass — the shared `Built from` row states that no source stands behind any cell |
@@ -68,38 +78,38 @@ Every rule below was evaluated. `mechanical` marks a result a script decided; ev
 
 | Rule | Result |
 |---|---|
-| §0.5 three declarations, closed values, note form | pass, mechanical |
+| §0.5 three declarations, closed values, note form | pass, decided |
 | §2.1.1, §2.1.2 one meaning, no synonym swap | pass |
 | §2.1.4 acronym expansion | not triggered |
 | §2.3.1, §2.3.3 term ladder | displaced by §4.14.6 |
 | §2.4.1–§2.4.5 definition quality | pass |
-| §2.6.1–§2.6.11 prohibited patterns | pass, mechanical |
+| §2.6.1–§2.6.11 prohibited patterns | pass — §2.6.7 decided, §2.6.3–§2.6.6 and §2.6.8–§2.6.11 screened then read, §2.6.1 and §2.6.2 read |
 | §2.7.1 coined name gets a plain introduction | pass — each `Technology` name is introduced by its `Role in the stack` cell |
 | §2.7.3 one name per artifact | pass |
-| §2.7.4 version pin | not triggered — no external artifact is referenced |
-| §3.1.1–§3.1.4 length | pass, mechanical |
+| §2.7.4 version pin | not applicable — the one external reference, STY-78, is a work-item ticket, which carries no version to pin. Its locator is recorded under §5.4.6 |
+| §3.1.1–§3.1.4 length | pass — §3.1.3 decided, §3.1.1 and §3.1.2 screened then read, §3.1.4 read |
 | §3.2 one idea per sentence | pass |
 | §3.3 voice, §3.4 tense | pass |
 | §3.5 noun clusters | pass |
-| §3.6.1, §3.6.2 reference | pass, mechanical |
+| §3.6.1, §3.6.2 reference | pass — §3.6.2 screened then read, §3.6.1 read |
 | §3.7 ambiguity controls | pass |
-| §3.8.1–§3.8.3 punctuation and connectives | pass, mechanical |
-| §3.9.1, §3.9.2 hedging | pass, mechanical |
-| §3.10.1–§3.10.6 formulaic constructions | pass, mechanical |
+| §3.8.1–§3.8.3 punctuation and connectives | pass, screened then read |
+| §3.9.1, §3.9.2 hedging | pass, screened then read |
+| §3.10.1–§3.10.6 formulaic constructions | pass — §3.10.2 and §3.10.4 decided, §3.10.3, §3.10.5, and §3.10.6 screened then read, §3.10.1 read |
 | §4.1.1 one purpose per chunk | pass |
 | §4.2.4 document main point | does not apply to this profile |
-| §4.3.1–§4.3.4 one job, slots, disclosure | pass, mechanical |
+| §4.3.1–§4.3.4 one job, slots, disclosure | pass — §4.3.1, §4.3.3, and §4.3.4 decided, §4.3.2 read |
 | §4.4.1, §4.4.2 skeleton and dependency order | pass |
 | §4.4.3 plain-then-exact restatement | does not apply to this profile |
 | §4.6 bounded blocks | cannot exist on this surface, so §6.3.1 and §7.3.2 bar informal explanation and beyond-interpretive statements outright. Neither appears. |
 | §4.8.1 admission budget | displaced by §4.14.9 |
 | §4.9.1–§4.9.3 path-agnostic prose | pass — rows X1 and X2 state rejected approaches as current facts, not as history |
-| §4.10.5 emoji | pass, mechanical |
+| §4.10.5 emoji | pass, decided |
 | §4.12.1 scan path | displaced by §4.14.18 |
 | §4.12.2–§4.12.4 scan-path quality | pass — walked, below |
 | §5.1.1, §5.1.2 exactness | pass |
 | §5.4.1–§5.4.6 evidence record and locators | pass — the one external reference, STY-78, carries its URL |
-| §5.6.1, §5.6.2 strength | pass, mechanical — every `Why this choice` cell carries a closed-vocabulary phrase |
+| §5.6.1, §5.6.2 strength | pass — §5.6.1 screened then read: a match found a closed-vocabulary phrase in every `Why this choice` cell. §5.6.2, whether each tier matches its evidence, I read |
 | §7.1.1–§7.1.6 boundary content | pass — the Title sheet names each applicable dimension and each inapplicable one |
 | §7.2.1, §7.2.2 caveat placement | pass |
 | §7.3.1 observation and interpretation | pass — no column declares the observation role, and nothing is reported as observed |
@@ -122,7 +132,9 @@ Status and strength survive the scan: the Title sheet's `Built from` row says no
 
 ## Missing facts
 
-None. The fixture is fictional by declaration, and the `Built from` row records that rather than leaving a reader to infer it. No cell was filled with an invented value standing in for a real one, which is the failure core §8 obligation 2 exists to prevent.
+One, and it concerns this record rather than the fixture. The scripts behind every count and match above were not retained. No later session can re-run this check as it was run. Re-deriving the counts is cheap on a workbook of eleven rows, and expensive at the size a real inventory reaches.
+
+The fixture itself leaves nothing missing. It is fictional by declaration, and the `Built from` row records that rather than leaving a reader to infer it. No cell was filled with an invented value standing in for a real one, which is the failure core §8 obligation 2 exists to prevent.
 
 ## What this says about the profile
 

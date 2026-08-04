@@ -8,8 +8,9 @@ AI disclosure: generated — drafted every section from the STY-79 ticket and th
 
 Proposed. No superseding record exists.
 
-Recorded against [STY-79](https://linear.app/inveneprod/issue/STY-79), the first
-of the two questions the spreadsheet-overlay proposal left open.
+Recorded against [STY-79](https://linear.app/inveneprod/issue/STY-79), the ticket
+carrying both questions the spreadsheet-overlay proposal left open. This record
+answers the first.
 
 ## Summary
 
@@ -34,7 +35,7 @@ cells. A Markdown document under the same treatment would be rewritten in
 sections. Its disclosure note would then describe that rewrite. The proposal
 asked whether a table needs its own convention for the smaller, later edit.
 
-Two boundaries bound the answer below. Version: the answer is written against
+Two boundaries bound the answer. Version: the answer is written against
 ITWS 1.0.0 and its amendments of 2026-08-04. Dependencies: none, because the
 disclosure is a declaration and not a computed value. Environment, capacity,
 security, privacy, and data-provenance dimensions do not apply to a declaration
@@ -47,7 +48,7 @@ field.
 Each edited cell, or each edited sheet, would carry its own disclosure. The
 record would then name exactly which values a tool produced.
 
-We rejected the option on three grounds. Core §0.5 attaches the disclosure to the
+We reject the option on three grounds. Core §0.5 attaches the disclosure to the
 governed unit, and a `data-table` is one unit. Rule §4.14.14 already treats a row
 identifier, a column header, and a closed-set value as metadata. A per-cell field
 would add a fourth metadata class that no rule asks for. The bookkeeping also
@@ -60,14 +61,14 @@ as unaffordable on the comment surface.
 The original question named post-approval cell edits. That framing would have the
 disclosure annotate itself when an edit follows an approval.
 
-We rejected the option because ITWS governs text and not process. Core §0.5
+We reject the option because ITWS governs text and not process. Core §0.5
 states that the declaration block is the only process artifact ITWS defines. No
 rule turns on an event outside the document, and an approval is such an event.
 
 ### The workbook keeps one disclosure
 
 The workbook carries one disclosure, updated when the tooling's contribution
-changes. We selected this option.
+changes. We propose this option.
 
 ### Reversibility differs across the three
 

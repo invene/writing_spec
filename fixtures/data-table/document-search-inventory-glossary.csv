@@ -7,7 +7,7 @@ C4,Technology,metadata,"The name this fixture gives the component, method, or ap
 C5,Role in the stack,interpretation,"What the component does inside the system, in the fixture's own terms."
 C6,Why this choice,interpretation,"The reason the component was selected, or for an X row, the reason it was not. Every cell states its strength with a core §5.6 phrase."
 C7,Where it runs,interpretation,The part of the system the component runs in.
-C8,Infrastructure,interpretation,"The runtime the component is deployed on. Every value is a design intention, not a deployed fact, because nothing in this fixture has been built."
+C8,Infrastructure,interpretation,"The runtime the component is deployed on. Every value is a design intention, not a deployed fact, because this system has not been built. A Reuse row's component runs today in another system (column C3)."
 C9,Notes,interpretation,"Caveats and cross-row references. Most rows carry no note, because nothing qualifies them beyond what column C8 already states for every row."
 Terms,,,
 T1,Inverted index,,A lookup structure that maps each term to the list of documents containing it.
