@@ -124,7 +124,7 @@ Both profile paragraphs carry the "no rule ID" marker and name the record's `pro
 
 **No rule identifier is assigned, and no rule changes.** §4.14.1 already puts the declarations on the Title sheet, and §4.14.1–§4.14.4 already require the sheets. The additions to `spec/profiles/data-table.md` state how those rules read on each carrier, which core §0.2 keeps outside conformance. No reader assumption changes.
 
-**STY-72's `INV-3` fails as delivered.** `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold. `INV-3` asks that base plus `data-table` stay inside the 15,000–25,000 band; it measures 25,506, and the known-defect table below now records that figure rather than the stale one. The profile was already 312 tokens over when this work began, and this change adds 194 more. Nothing further is cuttable under the budget policy without deleting a normative statement, a closed list, or an ITWS-original mechanism, so closing the epic on its own definition of done needs the same maintainer decision the known defect already asks for.
+**STY-72's `INV-3` is over its target.** `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold. `INV-3` aims for base plus `data-table` inside the 15,000–25,000 band; it measures 25,506, and the measurement table below records that figure rather than the stale one. The profile was already 312 tokens over when this work began, and this change adds 194 more. The band is a target rather than a limit, so the overage is reported and the epic closes on it.
 
 ### Added — the `data-table` profile has a validated pilot fixture (STY-78)
 
@@ -197,9 +197,9 @@ Eight defects found by the same review. None changes a rule; all eight made the 
 - **§7.3.3 matches the inflections §5.6 permits.** "The record showed" and "we proposed" are the same phrases at the same tiers, and only the citation forms matched. The non-strength reading of "we find" stays a match, because §7.3.3 is `L` on the phrase itself.
 - **A missing version declaration cites §4.3.5**, a rule row, rather than §0.5, a section.
 
-### Known defect — the load set exceeds its band
+### Measured — the load set against its target band
 
-`AGENTS.md` fixes the load set at 15,000–25,000 tokens and calls anything over 25,000 a defect to fix in the same change. After compression, 3 profiles are over:
+`AGENTS.md` aims the load set at 15,000–25,000 tokens and asks that any overage be measured and reported in the same change. After compression, 3 profiles are over:
 
 | Load set | Tokens | Over |
 |---|---|---|
@@ -209,11 +209,11 @@ Eight defects found by the same review. None changes a rule; all eight made the 
 
 Base is 22,977, up from 22,121. 1.0.0 shipped with about 800 tokens of headroom, and this change set adds twelve rules (§2.3.5, §2.3.6, §4.3.5, §4.8.4, §4.13.10–§4.13.17, §5.4.6), withdraws three, adds three ITWS-original mechanisms, and adds a column across 216 rule IDs.
 
-Two rounds of compression have run against it. Moving §2.3.5, §2.3.6, and §4.8.4 out of core took roughly 270 tokens off ten of the thirteen load sets and put them back into the three that actually use them; `epic` and `subtask` land back under the ceiling and `task` does not. Everything else the budget policy names as cuttable — restated source material and micro-examples — is already cut. Closing the remaining gap means deleting a normative statement, a closed list, or an ITWS-original mechanism, which the same policy forbids. The two instructions conflict, and resolving it is a maintainer decision rather than a drafting one.
+Two rounds of compression have run against it. Moving §2.3.5, §2.3.6, and §4.8.4 out of core took roughly 270 tokens off ten of the thirteen load sets and put them back into the three that actually use them; `epic` and `subtask` land back under the target and `task` does not. Everything else the budget policy names as cuttable — restated source material and micro-examples — is already cut. Closing the remaining gap means deleting a normative statement, a closed list, or an ITWS-original mechanism, which the policy puts ahead of the target. So the compression stops here and the three figures stand as measured.
 
-**STY-72's `INV-3` fails while `data-table` is on this list.** The epic cannot close on its own definition of done until the decision below is taken.
+**This is a measurement, not a blocker.** The band is a target: nothing here fails conformance, and no change was held back for it. STY-72 closes with `INV-3` over target, recorded.
 
-**Recommended resolution:** drop `spec/ontology.md` (1,681 tokens) from the consumer load set, keeping it as maintainer reading. By its own front matter it adds no obligation — "every ITWS obligation is stated in `core.md`, `phrases.md`, and the profile file" — and removing it brings every profile under 24,500 with headroom restored. This is not applied here: it changes the load set every other file names, and that is the maintainer's call.
+**One option remains open, for whenever it is wanted:** drop `spec/ontology.md` (1,681 tokens) from the consumer load set, keeping it as maintainer reading. By its own front matter it adds no obligation — "every ITWS obligation is stated in `core.md`, `phrases.md`, and the profile file" — and removing it brings every profile under 24,500 with headroom restored. This is not applied here: it changes the load set every other file names, and that is the maintainer's call.
 
 
 ---

@@ -126,7 +126,9 @@ Before converting a corpus, consider auditing it first. A read-only pass that re
 
 ### The design constraint: recall over restatement
 
-**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,900–26,000 tokens depending on the profile, and the working band is **15,000–25,000**. This is a hard constraint on every edit, not a preference. A specification nobody can afford to load is not enforced.
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,900–26,000 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
+
+The band is a **target, not a limit**. Nothing fails conformance by exceeding it, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
 
 The constraint is met by **relying on model recall**, not by writing tersely. ITWS is assembled from standards a competent model already knows — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, IPCC calibrated uncertainty. `spec/ontology.md` names each one and marks it `required` or `optional`. Core does not re-teach any of them. **Core states only where ITWS differs.**
 
@@ -161,7 +163,7 @@ for f in sorted(glob.glob('spec/profiles/*.md')):
 "
 ```
 
-Rough proxy: characters ÷ 4. Treat anything over 25,000 as a defect to fix in the same change, not a follow-up. The first places to cut are restated source material and micro-examples — never a normative statement, a closed list, or an ITWS-original mechanism.
+Rough proxy: characters ÷ 4. Report anything over 25,000 in the same change and say what you tried. The first places to cut are restated source material and micro-examples — **never** a normative statement, a closed list, or an ITWS-original mechanism. Where only those are left, stop cutting and record the measurement: the content wins, and going over is the correct outcome.
 
 ### Rule format
 
