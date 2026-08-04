@@ -225,27 +225,38 @@ class Paragraph:
     start: int
     text: str
     in_speculation: bool
+    on_scan_path: bool = False
 
 
 def paragraphs(lines: list[Line]) -> list[Paragraph]:
+    """The scan path (core §4.12.1) is the title, then each main-text heading and
+    the first sentence of that section's opening chunk. A paragraph is on it when
+    it is the first prose paragraph after a heading, outside a bounded block."""
     out: list[Paragraph] = []
     buf: list[str] = []
-    start = 0
-    spec = False
+    start, spec, opening = 0, False, False
+    fresh_heading = True
     for line in lines:
         if line.is_prose:
             if not buf:
                 start, spec = line.number, line.in_speculation
+                opening = fresh_heading and not line.in_speculation
             buf.append(prose_text(line).strip())
-        elif buf:
-            out.append(Paragraph(start, " ".join(buf), spec))
-            buf = []
+        else:
+            if buf:
+                out.append(Paragraph(start, " ".join(buf), spec, opening))
+                buf, fresh_heading = [], False
+            if line.text.lstrip().startswith("#"):
+                fresh_heading = True
     if buf:
-        out.append(Paragraph(start, " ".join(buf), spec))
+        out.append(Paragraph(start, " ".join(buf), spec, opening))
     return out
 
 
-SENTENCE_END = re.compile(r'(?<=[.!?])["\u2019\u201d\')\]]*\s+(?=[A-Z"\u201c(\[])')
+# A sentence may also open with inline code, bold, or italics, so the lookahead
+# admits their markers. Missing them merges two sentences into one long count.
+SENTENCE_END = re.compile(
+    '(?<=[.!?])["\u2019\u201d\')\\]]*\\s+(?=[`*_\\[(\u201c"\\x00]*[A-Z`*_\\x00])')
 CODE_SPAN = re.compile(r"`[^`]*`")
 
 
@@ -303,7 +314,12 @@ class Finding:
 
 def compile_matcher(pl: PhraseList, item: str) -> re.Pattern[str]:
     if pl.kind == "pattern":
-        return re.compile(item, re.I)
+        # A regular expression states its own case sensitivity. Folding
+        # `[A-Z_]{3,}` or `\bTBD\b` to case-insensitive matches every
+        # lowercase token of the same shape, which is a false positive
+        # factory. The literal lists below stay case-insensitive, as
+        # spec/phrases.md states.
+        return re.compile(item)
     escaped = re.escape(item)
     if pl.kind == "opener":
         return re.compile(rf"^{escaped}\b", re.I)
@@ -318,6 +334,8 @@ def screen_phrase_lists(path: Path, paras: list[Paragraph],
         for pl in lists:
             if pl.rule not in EVALUATED:
                 continue
+            if pl.rule == "4.12.3" and not para.on_scan_path:
+                continue  # core §4.12.1 bounds this rule to the scan path
             haystacks = sentences if pl.kind == "opener" else [para.text]
             for item in pl.items:
                 matcher = compile_matcher(pl, item)

@@ -108,12 +108,26 @@ Both surfaces are **non-normative**. Neither adds a rule, a slot, or a reader as
 
 - **Moved, not cut:** the core §7.3 worked observation/interpretation split now lives in `SKILL.md` §5, and the §4.4 section-map example is compressed to one line. Both are micro-examples under the `AGENTS.md` budget policy; §7.3's rules are unchanged.
 
+### Added — the two open `data-table` questions carry decisions (STY-79)
+
+Both questions the spreadsheet-overlay proposal deliberately left open are now recorded as `decision-record` documents under a new `decisions/` directory, and `spec/profiles/data-table.md` states both outcomes.
+
+- **[decisions/0001](decisions/0001-tabular-ai-disclosure-scope.md) — a tabular document declares one `AI disclosure` for the whole workbook.** No cell, row, column, or sheet carries its own, and a cell edit updates the Title-sheet note like any other edit. The question was framed around "post-approval cell edits"; that framing is rejected, because an approval is an event outside the document (core §0.5, *Text, not process*). Where several tools contributed, the note uses the ordered-contributions form `AGENTS.md` already states for a corpus.
+- **[decisions/0002](decisions/0002-csv-set-sheet-identity.md) — a CSV set names its sheets in its filenames**, as `<workbook>-<sheet>.csv`, with `-title.csv` and `-glossary.csv` reserved. A `.xlsx` file and a hosted sheet store their own sheet names; a CSV set stores none, so §4.14.1–§4.14.4 had nothing to read on that carrier. A manifest file was rejected because a second artifact describing the first drifts from it, which is the failure STY-63 reports on the comment surface.
+
+Both records carry `Status: proposed`. Neither has been accepted by a maintainer, and recording an acceptance that did not happen is barred by core §8 obligation 2.
+
+**No rule identifier is assigned, and no rule changes.** §4.14.1 already puts the declarations on the Title sheet, and §4.14.1–§4.14.4 already require the sheets. The additions to `spec/profiles/data-table.md` state how those rules read on each carrier, which core §0.2 keeps outside conformance. STY-72's `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold; `INV-3` is the load-set band recorded as a known defect above. No reader assumption changes.
+
 ### Fixed
 
 - `spec/ontology.md` said "all 12 profiles". There are thirteen.
 - **Self-application pass over every line this change adds to `spec/`** (core §8: "its own prose follows core rules where meaningful"). `spec/profiles/task.md` carried "§5.9.5 is what §5.9.6 used to enforce procedurally" — a §4.9.1 residual-history aside about a rule this same change withdraws, which passes delete-or-promote by deleting. Core §0.2 used "corpus at rest" before its admission (§2.3.1), which lives in the `maintenance-comment` vocabulary block. The epic-scoped-admission chunk opened on the problem rather than its point (§4.2.2). Nine semicolons joining independent clauses became sentences (§3.8.1), two bare "This is" openers named their referent (§3.6.2), seven over-cap sentences were split (§3.1.1, §3.1.2), and parenthetical em dashes in core §0.2 became parentheses (§3.10.3).
 
   Left as they are, with reasons: `·` enumerations and vocabulary-block definition entries are the file's fixture forms, and §2.4.4 governs a definition rather than §3.1. The remaining over-cap lines are pre-existing text this change only reflowed.
+- `tools/itws_literal.py` compiled `pattern` lists case-insensitively, so `<[A-Z_]{3,}>` matched lowercase text and `\bTBD\b` matched "tbd". A regular expression states its own case sensitivity; only the literal lists fold case, as `spec/phrases.md` says. Found by screening the two decision records with the tool.
+- `tools/itws_literal.py` applied §4.12.3 to all prose. Core §4.12.1 bounds that rule to the scan path, and the tool now screens only the title and each section's opening chunk.
+- `tools/itws_literal.py` failed to end a sentence before one opening with inline code, bold, or italics, which merged two sentences into one over-cap word count.
 
 ### Known defect — the load set exceeds its band
 

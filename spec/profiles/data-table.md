@@ -42,6 +42,10 @@ Dependency order: seed identity and definitions before the rows depending on the
 
 An empty required Title field states `None` or `Not applicable` with a reason (core §4.4).
 
+**Carrier conventions** (no rule ID; core §0.2 keeps the carrier outside conformance). A `.xlsx` file and a hosted sheet store their own sheet names. A CSV set stores none, so it names each sheet in its filename: `<workbook>-<sheet>.csv`, with `-title.csv` and `-glossary.csv` reserved and every other suffix naming a data sheet. Recorded in [decisions/0002](../../decisions/0002-csv-set-sheet-identity.md).
+
+**One disclosure per workbook.** §4.14.1 puts one `AI disclosure` on the Title sheet for the whole unit. No cell, row, column, or sheet carries its own, and a cell edit updates the Title-sheet note like any other edit (core §4.3.4). Where several tools contributed, the note lists each in order and ends with the human review status. Recorded in [decisions/0001](../../decisions/0001-tabular-ai-disclosure-scope.md).
+
 ## Boundary locations (core §7.1)
 
 - **Title sheet coverage and boundary statement** — every applicable dimension for the table as a whole: what it inventories, what it omits, the time window and source state it reflects, and the conditions under which a row stops being true.
