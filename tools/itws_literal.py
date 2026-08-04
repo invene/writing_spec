@@ -256,7 +256,7 @@ def paragraphs(lines: list[Line]) -> list[Paragraph]:
 # A sentence may also open with inline code, bold, or italics, so the lookahead
 # admits their markers. Missing them merges two sentences into one long count.
 SENTENCE_END = re.compile(
-    '(?<=[.!?])["\u2019\u201d\')\\]]*\\s+(?=[`*_\\[(\u201c"\\x00]*[A-Z`*_\\x00])')
+    '(?<=[.!?])["\u2019\u201d\')\\]*_`]*\\s+(?=[`*_\u00a7\\[(\u201c"\\x00]*[A-Z`*_\u00a7\\x00])')
 CODE_SPAN = re.compile(r"`[^`]*`")
 
 
