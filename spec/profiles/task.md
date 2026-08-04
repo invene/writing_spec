@@ -114,7 +114,7 @@ Scoped to `task`:
 | 5.9.3 | M | L | each completion condition in a `task` has a unique stable identifier |
 | 5.9.5 | M | J | a `task` defines integrated-acceptance checks for behavior depending on several completion conditions |
 
-§5.9.5 is what §5.9.6 used to enforce procedurally: a `task` whose acceptance would follow from its subtasks alone has written no integrated-acceptance check, and that is a finding against the text. Whether the task was accepted, by whom, and when are workflow facts outside ITWS (core §0.5, *Text, not process*). A `task` may record its lifecycle state or ownership where it has them; no slot requires them.
+A `task` whose acceptance would follow from its subtasks alone has written no integrated-acceptance check — a §5.9.5 finding against the text. Whether the task was accepted, by whom, and when = workflow facts outside ITWS (core §0.5, *Text, not process*). A `task` may record lifecycle state or ownership where it has them. No slot requires them.
 
 ## Applicable core rules with profile scope
 

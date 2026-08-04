@@ -55,4 +55,4 @@ Affected interfaces and invariants. Interfaces cover inputs, outputs, errors, co
 
 None. Every obligation comes from core.
 
-An unapproved design read as settled is the hazard this profile most invites. Core §5.6's `proposed` tier carries that protection inside the text; no slot records the document's own approval state (core §0.5, *Text, not process*).
+An unapproved design read as settled is the hazard this profile most invites. Core §5.6's `proposed` tier carries that protection inside the text. No slot records the document's own approval state (core §0.5, *Text, not process*).

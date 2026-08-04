@@ -37,7 +37,7 @@ One ID per unit. Never combine. Companion documents > hybrid. A collection may h
 ### 0.2 Governed surfaces
 
 - `markdown-document` — prose Markdown. First 11 profiles. "governed document" = this alone.
-- `hosted-comment-set` — governed comments inside host source files, declared by a JSON carrier. The carrier covers **one change set in one host file**, or **one declaration boundary** — a repository, package, or directory tree — holding a corpus at rest. Only `maintenance-comment`. Host files themselves = outside conformance; governed comments carry no ITWS boilerplate.
+- `hosted-comment-set` — governed comments inside host source files, declared by a JSON carrier. Carrier covers **one change set in one host file**, or **one declaration boundary** (a repository, package, or directory tree) whose comments are already present. Only `maintenance-comment`. Host files themselves = outside conformance; governed comments carry no ITWS boilerplate.
 - `tabular-document` — workbook of named sheets: one Title sheet, one Glossary sheet, 1+ data grids of homogeneous rows. Only `data-table`. Cells hold governed prose. Rendering (fill, font, frozen panes, merged cells, column width) = outside conformance, as Markdown rendering is. File format (`.xlsx`, CSV set, hosted sheet) = carrier, ! conformance surface.
 
 **governed unit** = any surface. A rule naming the *governed unit* reaches all three. A rule naming the *governed document* is bounded to Markdown. A rule naming a document element (heading, section, figure, equation) is inapplicable where that construct is absent.
@@ -66,11 +66,11 @@ Profile overlays grant **genre knowledge only** — how to read the document typ
 
 **Binary.** A governed unit conforms, or does not, for **one declared version + one declared profile**. It conforms when it satisfies every applicable mandatory (`M`) rule and every required profile slot. Reviews, approvals, reader tests, and accepted deviations do not change this result.
 
-**Text, not process (ITWS-original boundary).** The declaration block below is the **only** process artifact ITWS defines. No other rule requires a governed unit to record its own review, approval, or lifecycle state, and none conditions conformance on an event outside the text.
+**Text, not process (ITWS-original boundary).** The declaration block below is the **only** process artifact ITWS defines. No other rule requires a governed unit to record its own review, approval, or lifecycle state. None conditions conformance on an event outside the text.
 
-Where a process state is the document's **subject** it is exact content under §5.4: the decision a `decision-record` records, an `incident`'s resolution state, an `investigation-log`'s hypothesis state, a `data-table` status column. Test — does the state belong to the thing the document is about, or to the document's own passage through a workflow? First = content. Second = outside ITWS.
+Where a process state is the document's **subject** it is exact content under §5.4. So: the decision a `decision-record` records · an `incident`'s resolution state · an `investigation-log`'s hypothesis state · a `data-table` status column. Test: does the state belong to the thing the document is about, or to the document's own passage through a workflow? First = content. Second = outside ITWS.
 
-An agent applying ITWS governs the text. It ! decide whether a review sufficed, whether a work item may close, or what a team must retain. It reports; the owner judges.
+An agent applying ITWS governs the text. It ! decide whether a review sufficed, whether a work item may close, or what a team must retain. It reports. The owner judges.
 
 **Applicability.** A core rule applies to all thirteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
 
@@ -215,7 +215,7 @@ Broken chain — no rung reaches the ground:
 
 *Raft*, *leader election*, *quorum*, *linearizability* unadmitted; *consensus* forward-referenced.
 
-**Epic-scoped admission (§2.3.5, §2.3.6, §4.8.4).** One feature ships as a *family* of work items sharing one domain vocabulary, and the per-document ladder does not compose across it: a 500-word `task` depending on eight family terms must duplicate ~200 words of verbatim definition (§6.5.1) or fail §2.3.1. ITWS already grants a family vocabulary twice — §0.6 meta-vocabulary, and the work-item block in `epic`/`task`/`subtask`. §2.3.5 extends it from the *genre's* vocabulary to the *subject's*. Admission is unchanged: an entry in an `epic`'s `Shared vocabulary` satisfies §2.3.1–§2.4.5 exactly as an in-document definition does.
+**Epic-scoped admission (§2.3.5, §2.3.6, §4.8.4).** A child work item uses its ancestor `epic`'s admissions instead of repeating them. The per-document ladder does not compose across a *family* sharing one domain vocabulary. A 500-word `task` depending on eight family terms must duplicate ~200 words of verbatim definition (§6.5.1), or fail §2.3.1. ITWS already grants a family vocabulary twice: §0.6 meta-vocabulary, and the work-item block in `epic`/`task`/`subtask`. §2.3.5 extends it from the *genre's* vocabulary to the *subject's*. Admission itself is unchanged — an `epic` `Shared vocabulary` entry satisfies §2.3.1–§2.4.5 as an in-document definition does.
 
 Worked — epic admits, child relies:
 
@@ -597,7 +597,7 @@ Fields take the form the item needs. A field need not appear in every sentence �
 
 Citation-integrity rules apply in **every** profile: fabricated-but-plausible references are a realistic failure mode in any machine-drafted text.
 
-**Locator and pin are distinct (§5.4.6, §2.7.4).** A link without a pin drifts; a pin without a link cannot be followed. §5.4.3 then tests the locator §5.4.6 requires, so the three compose rather than overlap. The writer holds the locator once; without it every reader reconstructs it by search, on every surface the reference is copied to, and a search lands on the wrong artifact of the same name. A bare tracker ID is the sharpest case: unambiguous in one workspace, useless outside it.
+**Locator and pin are distinct (§5.4.6, §2.7.4).** A link without a pin drifts. A pin without a link cannot be followed. §5.4.3 then tests the locator §5.4.6 requires, so the three compose rather than overlap. Writer pays once. Without it every reader reconstructs the locator by search, on every surface the reference is copied to. A search lands on the wrong artifact of the same name. Bare tracker ID = the sharpest case: unambiguous in one workspace, useless outside it.
 
 ### 5.5 Figures and tables
 
@@ -629,9 +629,9 @@ Single source of phrasing for evidential strength and decision authority. §3.9 
 
 An **unmarked declarative material claim carries verified-tier force** — and must meet the verified-tier standard under 5.6.2.
 
-**The tier carries the settled/unsettled distinction.** An unsettled material item — a requirement awaiting a decision, an interface not yet built, a result not yet reproduced — takes the `proposed` or `interpretive` tier. This is why §5.4 has no status field: the protection lives in the text, not in a stamp about workflow position (§0.5).
+**The tier carries the settled/unsettled distinction.** An unsettled material item takes the `proposed` or `interpretive` tier. So: a requirement awaiting a decision · an interface not yet built · a result not yet reproduced. Hence §5.4 carries no status field: the protection lives in the text, not in a stamp about workflow position (§0.5).
 
-**Lifecycle values** (`proposed`, `accepted`, `superseded`, `mitigated`, `resolved`, `open`, `closed`) describe artifact or workflow state. They are **not** strength. A document states one where the state is its subject (§0.5); no core rule requires one.
+**Lifecycle values** (`proposed`, `accepted`, `superseded`, `mitigated`, `resolved`, `open`, `closed`) describe artifact or workflow state. They are **not** strength. A document states one where the state is its subject (§0.5). No core rule requires one.
 
 ### 5.7–5.9 Profile-scoped exactness
 
@@ -752,7 +752,7 @@ A statement beyond an established boundary is a different, weaker statement.
 
 **No machine decides conformance.** ITWS has no validator. A reader or agent checks the text against the rules above and states what it checked. There is no `pass` result.
 
-**What a checker may establish.** The `D` column marks how much of a rule a machine settles ([legend.md](legend.md)). A tool may decide an `L` rule and locate every candidate for an `S` rule. It establishes nothing about a `J` rule, and nothing about conformance at any decidability — §0.5 keeps that binary and textual. A clean run is a **coverage statement**, not a result. Three constraints keep a checker from becoming an authority: its output names the rules it did **not** evaluate; no rule refers to a tool, so deleting it changes no obligation; and it replaces **reading for** the literal rules, never loading them.
+**What a checker may establish.** The `D` column marks how much of a rule a machine settles ([legend.md](legend.md)). A tool may decide an `L` rule and locate every candidate for an `S` rule. It establishes nothing about a `J` rule, and nothing about conformance at any decidability — §0.5 keeps that binary and textual. A clean run is a **coverage statement**, not a result. Three constraints keep a checker from becoming an authority. Its output names the rules it did **not** evaluate. No rule refers to a tool, so deleting it changes no obligation. It replaces **reading for** the literal rules, never loading them.
 
 **Self-check obligations.** After writing or rewriting a governed unit:
 
@@ -761,7 +761,7 @@ A statement beyond an established boundary is a different, weaker statement.
 3. **Continue around blocks.** An unresolved span does not stop work on independent spans. Return the best safe draft plus an explicit missing-fact list.
 4. **Check the scan path last.** Read title + headings + opening sentences alone (§4.12). Confirm the profile's shallow-model outcome survives, with its status, strength, and material boundaries intact.
 5. **State coverage honestly.** Say which rules you checked and which you did not. There is no `pass` result to report — a clean self-check is a disclosed-coverage statement, not a certification.
-6. **Spend judgment where judgment is needed.** Decide `L` rules by match or count, not by reading; treat an `S` list as a finder, not a verdict. Attention saved goes to the `J` rules — the ones a reader most needs help with, and the ones no tool reaches.
+6. **Spend judgment where judgment is needed.** Decide `L` rules by match or count, not by reading. Treat an `S` list as a finder, not a verdict. Attention saved goes to the `J` rules — the ones a reader most needs help with, and the ones no tool reaches.
 
 **Precedence when repairing.** §1.3 governs. Exact content is never edited to satisfy a style rule; repair the surrounding text and report the local limitation instead.
 

@@ -82,7 +82,7 @@ Scoped to `epic`:
 |---|---|---|---|
 | 5.9.7 | M | S | an `epic` DoD verifies its strategic outcome **and** every technical invariant |
 
-A DoD states what closure would require. Whether the item has closed, who owns it now, and whether anyone approved it are workflow facts outside ITWS (core §0.5, *Text, not process*). An `epic` may record ownership, status, or a requested alignment in any slot where it has them; no slot requires them.
+A DoD states what closure would require. Whether the item has closed, who owns it now, and whether anyone approved it = workflow facts outside ITWS (core §0.5, *Text, not process*). An `epic` may record ownership, status, or a requested alignment in any slot where it has them. No slot requires them.
 
 ## Applicable core rules with profile scope
 

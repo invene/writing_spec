@@ -6,13 +6,13 @@ Load set: [legend](../legend.md) + [ontology](../ontology.md) + [core](../core.m
 
 ## Job
 
-Preserve durable code knowledge by governing the comments one maintenance change adds, modifies, or removes — and the comments a repository brings under ITWS the first time.
+Preserve durable code knowledge by governing comments. Two cases: those one maintenance change adds, modifies, or removes · those already present across a repository.
 
 **This profile governs comments, not a Markdown document.** The host source file stays outside ITWS conformance. Governed comments carry no ITWS boilerplate. Declarations and slots live in a JSON **declaration carrier**, not in headings.
 
 Two carrier shapes, and a carrier is one or the other:
 
-- **change set** — the comments one maintenance change adds, modifies, or removes in one host file. This is the profile's primary unit: the reviewer of a diff needs each comment decision beside it.
+- **change set** — the comments one maintenance change adds, modifies, or removes in one host file. Primary unit: the reviewer of a diff needs each comment decision beside it.
 - **corpus at rest** — the comments already present across a **declaration boundary**, brought under the profile in a first conversion. One declaration covers the whole boundary.
 
 A core rule naming a document element — heading, section, figure, equation — is inapplicable here, because the construct is absent (core §0.2).
@@ -107,7 +107,7 @@ Field names are **fixed**. No rename, no merge, no section map. An empty require
 
 §4.13.5 and §4.13.6 are the two rules that most often bite: a comment may not infer intent from the code alone, and a code/comment disagreement is reported, never quietly reconciled.
 
-**Why the anchor is content-addressed (§4.13.3, §4.13.10, §4.13.11).** A line span moves when the carrier's own edits change a comment above it, when a formatter reflows the file, and when a repair round runs — and a drifted span satisfies every check a span can satisfy, because fitting inside the file proves nothing. The hash ties the anchor to its own text, so a stale anchor announces itself instead of pointing a reader at unrelated code. `enclosing named construct` stays mandatory as the stable human pointer; one construct often carries several governed comments.
+**Why the anchor is content-addressed (§4.13.3, §4.13.10, §4.13.11).** A line span moves on three events: the carrier's own edits above it · a formatter reflow · a repair round. A drifted span still satisfies every check a span can satisfy, because fitting inside the file proves nothing. The hash ties the anchor to its own text, so a stale anchor announces itself instead of pointing a reader at unrelated code. `enclosing named construct` stays mandatory as the stable human pointer. One construct often carries several governed comments.
 
 **Adopting the profile is not adopting a conversion (§4.13.14, §4.13.16).** A repository governing only its future changes conforms. Where a conversion is worth doing, the read-only audit delivers most of its value first.
 
