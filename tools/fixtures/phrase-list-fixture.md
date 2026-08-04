@@ -71,9 +71,6 @@ The gateway serves as a rate limiter and the sidecar functions as a proxy.
 
 The build passed on every runner 🎉 and the dashboard turned green. (§4.10.5)
 
-The exporter does not drop spans, although sampling may discard them under load.
-(§4.12.3)
-
 Clearly the cache is correct, and obviously the eviction order does not matter.
 (§5.6.1)
 
@@ -84,6 +81,22 @@ section three point one point one states, and it keeps going well beyond that
 point so the counter has something unambiguous to report. (§3.1.1)
 
 The queue drains in order; the router never reorders a batch. (§3.8.1)
+
+## The exporter does not drop spans
+
+> **[Detail — a bounded block does not consume the opening slot]** Core §4.12.1
+> excludes a bounded block from the scan path. This block sits directly under
+> the heading, so a screen that took the first prose paragraph it found would
+> stop here and never reach the opening chunk below.
+
+The exporter does not drop spans, although sampling may discard them under load.
+(§4.12.3)
+
+Three things carry this line's weight. The heading above is the scan path's
+first element and produces its own candidate. The paragraph is the section's
+opening chunk and produces a second. The block between them produces neither.
+§4.12.3 is bounded to the scan path, so a copy of this sentence further down a
+section produces nothing, which is why the line lives here.
 
 ## Bounded-block screens
 

@@ -27,6 +27,8 @@ spec/glossary.md        canonical admitted terms
 spec/reader.md          what the assumed reader knows
 spec/profiles/*.md      one file per profile
 skills/itws-rewrite/    Claude skill for a consumer session
+decisions/              recorded decisions about the specification
+fixtures/               worked example units, outside the load set
 tools/                  optional, non-normative; outside the load set
 AGENTS.md               working instructions for agent sessions
 CHANGELOG.md            version history

@@ -171,6 +171,8 @@ class Line:
     is_prose: bool
     in_speculation: bool
     is_declaration: bool
+    in_block: bool = False
+    in_fence: bool = False
 
 
 DECLARATION_RE = re.compile(r"^\**(ITWS version|Profile|AI disclosure)\**\s*:", re.I)
@@ -181,17 +183,21 @@ def read_lines(text: str) -> list[Line]:
     lines: list[Line] = []
     in_fence = False
     in_speculation = False
+    in_block = False
     for number, raw in enumerate(text.splitlines(), start=1):
         stripped = raw.strip()
 
         if stripped.startswith("```") or stripped.startswith("~~~"):
             in_fence = not in_fence
-            lines.append(Line(number, raw, False, in_speculation, False))
+            lines.append(Line(number, raw, False, in_speculation, False, in_block,
+                              True))
             continue
 
         if BLOCK_LABEL_RE.match(stripped):
-            in_speculation = stripped.startswith(">") and "[Speculation" in stripped
+            in_block = True
+            in_speculation = "[Speculation" in stripped
         elif not stripped.startswith(">") and stripped:
+            in_block = False
             in_speculation = False
 
         is_declaration = bool(DECLARATION_RE.match(stripped.lstrip("> ").lstrip("-* ")))
@@ -205,7 +211,8 @@ def read_lines(text: str) -> list[Line]:
             or raw.startswith("\t")
             or is_declaration
         )
-        lines.append(Line(number, raw, is_prose, in_speculation, is_declaration))
+        lines.append(Line(number, raw, is_prose, in_speculation, is_declaration,
+                          in_block, in_fence))
     return lines
 
 
@@ -225,27 +232,68 @@ class Paragraph:
     start: int
     text: str
     in_speculation: bool
+    on_scan_path: bool = False
+    is_heading: bool = False
 
 
 def paragraphs(lines: list[Line]) -> list[Paragraph]:
+    """Group consecutive prose lines, and mark the ones standing in for a
+    section's opening chunk (core §4.12.1).
+
+    Two approximations, both deliberate and both widening rather than narrowing:
+    the whole opening paragraph is marked, not §4.12.1's first sentence of it,
+    and appendix content is not detected, so an appendix section's opening
+    paragraph is screened like any other. A bounded block is excluded, and it
+    does not consume the section's opening slot — the prose behind a
+    `[Detail — …]` block after a heading is still the opening chunk."""
     out: list[Paragraph] = []
     buf: list[str] = []
-    start = 0
-    spec = False
+    start, spec, block, opening = 0, False, False, False
+    fresh_heading = True
     for line in lines:
         if line.is_prose:
             if not buf:
-                start, spec = line.number, line.in_speculation
+                start, spec, block = line.number, line.in_speculation, line.in_block
+                opening = fresh_heading and not line.in_block
             buf.append(prose_text(line).strip())
-        elif buf:
-            out.append(Paragraph(start, " ".join(buf), spec))
-            buf = []
+        else:
+            if buf:
+                out.append(Paragraph(start, " ".join(buf), spec, opening))
+                buf = []
+                if not block:
+                    fresh_heading = False
+            if not line.in_fence and line.text.lstrip().startswith("#"):
+                fresh_heading = True
     if buf:
-        out.append(Paragraph(start, " ".join(buf), spec))
+        out.append(Paragraph(start, " ".join(buf), spec, opening))
     return out
 
 
-SENTENCE_END = re.compile(r'(?<=[.!?])["\u2019\u201d\')\]]*\s+(?=[A-Z"\u201c(\[])')
+HEADING_RE = re.compile(r"^(#{1,6})\s+(.*\S)\s*$")
+
+
+def scan_path_headings(lines: list[Line]) -> list[Paragraph]:
+    """The document title and every heading, as scan-path elements.
+
+    `read_lines` classifies a heading as non-prose, which is right for the
+    length and semicolon checks and wrong for §4.12.3 — the title is the first
+    thing on the scan path core §4.12.1 describes, and a heading that qualifies
+    away its own claim is exactly what the rule screens for."""
+    out: list[Paragraph] = []
+    for line in lines:
+        if line.in_fence or line.in_speculation:
+            continue
+        match = HEADING_RE.match(line.text.strip())
+        if match:
+            out.append(Paragraph(line.number, match.group(2), False,
+                                 on_scan_path=True, is_heading=True))
+    return out
+
+
+# A sentence may also open with inline code, bold, or italics, so the lookahead
+# admits their markers. Missing them merges two sentences into one long count.
+SENTENCE_END = re.compile(
+    '(?<=[.!?])["\u2019\u201d\')\\]*_`]*\\s+(?=[`*_\u00a7\\[(\u201c"\\x00]*[A-Z`*_\u00a7\\x00])')
 CODE_SPAN = re.compile(r"`[^`]*`")
 
 
@@ -302,6 +350,14 @@ class Finding:
 
 
 def compile_matcher(pl: PhraseList, item: str) -> re.Pattern[str]:
+    # Every list folds case. spec/phrases.md states the rule for all four kinds
+    # — "matching is case-insensitive unless an entry says otherwise" — and no
+    # entry says otherwise. Compiling `pattern` items case-sensitively narrows a
+    # screened rule from inside the tool, which is the failure this file exists
+    # to avoid: sentence-initial "No" and "Not only" stop producing candidates
+    # and a reader is told to stop looking. The `<workbook>`-shaped false
+    # positives that motivated the narrowing are handled where they belong, by
+    # masking inline code spans in `screen_text` below.
     if pl.kind == "pattern":
         return re.compile(item, re.I)
     escaped = re.escape(item)
@@ -310,15 +366,32 @@ def compile_matcher(pl: PhraseList, item: str) -> re.Pattern[str]:
     return re.compile(rf"\b{escaped}\b", re.I)
 
 
+def screen_text(text: str) -> str:
+    """Blank every inline code span before phrase screening.
+
+    A phrase inside backticks is a quoted token — a filename pattern, a schema
+    placeholder, a leaked marker being named — not the document asserting it.
+    The placeholder is a non-word character, so a `\\b` boundary still closes
+    against it and a sentence opening with a code span cannot match an `opener`
+    list at position 0."""
+    return CODE_SPAN.sub("\x00", text)
+
+
 def screen_phrase_lists(path: Path, paras: list[Paragraph],
-                        lists: list[PhraseList]) -> list[Finding]:
+                        lists: list[PhraseList],
+                        headings: list[Paragraph]) -> list[Finding]:
     findings: list[Finding] = []
-    for para in paras:
-        sentences = split_sentences(para.text)
+    for para in [*paras, *headings]:
+        sentences = [screen_text(s) for s in split_sentences(para.text)]
+        body = screen_text(para.text)
         for pl in lists:
             if pl.rule not in EVALUATED:
                 continue
-            haystacks = sentences if pl.kind == "opener" else [para.text]
+            if para.is_heading and pl.rule != "4.12.3":
+                continue  # a heading is a scan-path element, not prose
+            if pl.rule == "4.12.3" and not para.on_scan_path:
+                continue  # core §4.12.1 bounds this rule to the scan path
+            haystacks = sentences if pl.kind == "opener" else [body]
             for item in pl.items:
                 matcher = compile_matcher(pl, item)
                 for haystack in haystacks:
@@ -489,9 +562,10 @@ def screen_file(path: Path, lists: list[PhraseList], profile_ids: set[str],
     text = path.read_text(encoding="utf-8")
     lines = read_lines(text)
     paras = paragraphs(lines)
+    headings = scan_path_headings(lines)
     findings = [
         *check_declarations(path, text, lines, profile_ids, disclosure_values),
-        *screen_phrase_lists(path, paras, lists),
+        *screen_phrase_lists(path, paras, lists, headings),
         *check_sentence_length(path, paras),
         *check_semicolons(path, paras),
         *check_bounded_blocks(path, lines),
@@ -518,6 +592,12 @@ def coverage_report(lists: list[PhraseList]) -> str:
         "  rule marked D = J. This run establishes nothing about them, and",
         "  nothing about conformance at any decidability (ITWS §0.5, §8).",
         "  A screened finding is a candidate. You decide it.",
+        "",
+        "  §4.12.3 runs on an approximation of the §4.12.1 scan path: every",
+        "  heading including the title, plus the whole opening paragraph of",
+        "  each section rather than its first sentence, and with no appendix",
+        "  detection. It over-includes, so a finding here may sit off the",
+        "  real path. Read the path yourself before you decide one.",
     ])
 
 
