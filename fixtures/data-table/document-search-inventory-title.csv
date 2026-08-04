@@ -1,0 +1,12 @@
+Key,Value
+Title,Document search service: technology inventory
+ITWS version,1.0.0
+Profile,data-table
+AI disclosure,generated — every sheet drafted by generative AI tooling as fictional fixture material; not yet reviewed
+Built from,"Nothing. Every row is invented for this fixture. No source system, engagement, or measurement stands behind any cell, and no row reports an observation."
+Coverage,"The components a fictional document search service runs, one row per component, plus the approaches it rejected. Rows X1 and X2 record rejected approaches and name no component in use."
+Omitted,"Cost, staffing, delivery dates, security controls, and data classification. The table names components and reasons, and nothing else."
+Time window,"The stack as this fixture describes it on 2026-08-04. A row stops being true when the component it names is replaced, moved to another runtime, or withdrawn."
+Not applicable,"No capacity, duration, failure-mode, privacy, or data-provenance limit applies, because the table reports no measurement and holds no collected data."
+Purpose,"Pilot fixture for the data-table profile, recorded under STY-78 (https://linear.app/inveneprod/issue/STY-78). It carries a conformance claim against ITWS 1.0.0 and nothing more."
+Last updated,2026-08-04

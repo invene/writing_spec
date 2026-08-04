@@ -1,0 +1,26 @@
+ID,Term,Role,Definition
+Columns,,,
+C1,ID,metadata,"Row identifier. The letter groups rows by layer: I ingestion, N index, Q query, O operations, X considered and not used."
+C2,Category,metadata,"The stack layer the row's component belongs to. Closed set: Ingestion layer, Index layer, Query layer, Operations, Considered and not used."
+C3,Build or reuse,metadata,"Whether the component carries over. Closed set: Reuse (exists and runs today), Adapt (the mechanism exists and this system supplies the content), Build (new for this system), Excluded by design (deliberately not taken)."
+C4,Technology,metadata,"The name this fixture gives the component, method, or approach."
+C5,Role in the stack,interpretation,"What the component does inside the system, in the fixture's own terms."
+C6,Why this choice,interpretation,"The reason the component was selected, or for an X row, the reason it was not. Every cell states its strength with a core §5.6 phrase."
+C7,Where it runs,interpretation,The part of the system the component runs in.
+C8,Infrastructure,interpretation,"The runtime the component is deployed on. Every value is a design intention, not a deployed fact, because nothing in this fixture has been built."
+C9,Notes,interpretation,"Caveats and cross-row references. Most rows carry no note, because nothing qualifies them beyond what column C8 already states for every row."
+Terms,,,
+T1,Inverted index,,A lookup structure that maps each term to the list of documents containing it.
+T2,Ingestion,,The pipeline stage that receives documents and prepares them for indexing.
+T3,Text normalizer,,A component that converts varied text into one canonical form.
+T4,Canonical form,,"One agreed way of writing text, chosen so that two inputs meaning the same thing are stored identically."
+T5,Token boundary,,"The point where one text unit ends and the next begins, such as the edge between two words."
+T6,Synonym table,,"A mapping of equivalent terms, applied when a query is expanded."
+T7,Object storage,,"A service that stores files durably by name, without a filesystem hierarchy."
+T8,Index snapshot,,"A saved copy of the index at one point in time, kept so the index can be rebuilt after loss."
+T9,Index freshness,,The delay between a document arriving and that document becoming findable by a search.
+T10,Term frequency,,How often a term appears in one document. A higher count is taken to mean the document is more about that term.
+T11,Search cluster,,The group of machines that together hold the index and answer search requests.
+T12,Container job,,"A program packaged with its dependencies, started to do one piece of work and stopped when that work ends."
+T13,Format reader,,A component that turns one document format into plain text. One reader handles one format.
+T14,Full scan,,"Reading every document in the collection to answer one search, instead of consulting an index."

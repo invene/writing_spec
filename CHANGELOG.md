@@ -119,6 +119,14 @@ Both records carry `Status: proposed`. Neither has been accepted by a maintainer
 
 **No rule identifier is assigned, and no rule changes.** §4.14.1 already puts the declarations on the Title sheet, and §4.14.1–§4.14.4 already require the sheets. The additions to `spec/profiles/data-table.md` state how those rules read on each carrier, which core §0.2 keeps outside conformance. STY-72's `INV-1`, `INV-2`, `INV-4`, and `INV-5` hold; `INV-3` is the load-set band recorded as a known defect above. No reader assumption changes.
 
+### Added — the `data-table` profile has a validated pilot fixture (STY-78)
+
+`fixtures/data-table/` holds the profile's first real unit: a fictional document-search technology inventory, carried as a CSV set so that it also exercises the [decisions/0002](decisions/0002-csv-set-sheet-identity.md) naming convention. `fixtures/data-table/CHECK.md` is the recorded consumer-session check — every applicable rule with its result, the scan-surface walk, and the missing-fact list.
+
+**Ten findings were raised and repaired. Every one was a fixture defect; none was a profile defect.** The profile held on first contact. The finding that matters most is §4.14.5: no registry `Columns` entry declared its column's §7.3 role, in a workbook that otherwise looked finished — which is exactly the rule `spec/profiles/data-table.md` names as most often biting.
+
+Nothing in `spec/` changed for this. The fixture is outside the load set and no rule refers to it.
+
 ### Fixed
 
 - `spec/ontology.md` said "all 12 profiles". There are thirteen.
