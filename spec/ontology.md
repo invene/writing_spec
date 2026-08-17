@@ -59,4 +59,4 @@ Do not resolve these from the source. Core is authoritative.
 | Review artifacts | — | **change-request** (host title + description as one unit) and **feedback-comment** (addressed to a person, about a change, expecting a response) — ITWS-original |
 | Conformance | requirements practice | **guidance applied with judgment** against one declared version + profile; `M` = strong default, departures reported; owner has final say — ITWS-original |
 | Reader | ISO 26514 audience analysis | **one fixed cross-functional software-pod baseline** ([reader.md](reader.md)) — ITWS-original |
-| Versioning | Semantic Versioning 2.0.0 | **commit-addressed refs** (§9): third field = git object name, not a patch counter. Spec files declare the line. A governed unit declares the release tag. Hash-addressed names do not sort |
+| Versioning | Semantic Versioning 2.0.0 | **commit-addressed refs** (§9): third field = 12-hex SHA-1, not a patch counter. Tag name = version string. Spec files declare the line. A governed unit copies the tag. Hash-addressed names do not sort |

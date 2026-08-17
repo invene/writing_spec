@@ -782,11 +782,11 @@ A statement beyond an established boundary is a different, weaker statement.
 
 ## 9. Versioning
 
-Release refs are commit-addressed. Tag form on the 1.0 line: `1.0.<commit-hash>`. Tag form after 1.0: `<major>.<minor>.<commit-hash>`. Third field = git object name of the tagged commit. No patch counter. The branch is the moving edge. Any merged change set may be tagged.
+Release refs are commit-addressed. Tag form on the 1.0 line: `1.0.<commit-hash>`. Tag form after 1.0: `<major>.<minor>.<commit-hash>`. Third field = tagged commit's SHA-1 object name, abbreviated to exactly 12 lowercase hex characters. Git's default abbreviation is not used: that length grows with the repository. No patch counter. The branch is the moving edge. Any merged change set may be tagged.
 
 Spec files, profile files, and `README.md` declare the **line** (`1.0`, then `1.1`, `2.0`, …). They never declare a commit hash. A hash does not exist until after the commit that would write it.
 
-A governed unit's §0.5 `ITWS version` names the release tag it was checked against. A reader retrieves that rule set from the specification repository by checking out the named tag or commit. Copying a spec file's line declaration, or a plain `1.0.0`, is not a pin. Documents that declare `1.0.0` are the accepted casualty of this scheme.
+The tag name is the version string. A governed unit's §0.5 `ITWS version` names the release tag it was checked against, copied verbatim. A consumer does not compute the hash. A reader retrieves that rule set from the specification repository by checking out the named tag. Computing the third field (first 12 hex of the commit object name) is the fallback when the tag is absent, and must produce the identical string. Copying a spec file's line declaration, or a plain `1.0.0`, is not a pin. Documents that declare `1.0.0` are the accepted casualty of this scheme.
 
 A hash-addressed ref does not sort. Two releases cannot be ordered by their names alone without the repository.
 

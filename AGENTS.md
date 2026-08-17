@@ -2,7 +2,7 @@
 
 **ITWS 1.0.** The specification is markdown only. There is no Python package, no validator, and no generated catalog. Every rule is read, applied, and checked by you.
 
-One optional, non-normative checker lives at `tools/itws_literal.py`. It screens a corpus for the rules marked `D = L` and `D = S` and reports what it did not evaluate. It is outside the load set, no rule refers to it, and it decides no conformance question. Use it to stop *reading for* the literal rules; never let it stand in for loading them. See `tools/README.md`.
+One optional, non-normative checker lives at `tools/itws_literal.py`. It screens a corpus for the rules marked `D = L` and `D = S` and reports what it did not evaluate. A second optional tool, `tools/itws_version.py`, prints, tags, and checks the §9 version string. Both are outside the load set, no rule refers to them, and deleting them changes no obligation. Use the checker to stop *reading for* the literal rules; never let it stand in for loading them. See `tools/README.md`.
 
 Decide which session you are in before changing anything. Getting this wrong is the most expensive mistake available here.
 
@@ -120,7 +120,7 @@ The rewritten document, the missing-fact list, and the findings with rule IDs. S
 
 ### 6. When the unit of work is a corpus
 
-Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 23,644–27,819 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
+Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 23,736–27,912 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its own diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -152,7 +152,7 @@ Keep the rewritten comments, the `corpus-at-rest` carrier of declarations, and a
 
 ### The design constraint: recall over restatement
 
-**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 23,644–27,819 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 23,736–27,912 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
 
 The band is a **target, not a limit**. Exceeding it fails no obligation, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
 
@@ -230,11 +230,15 @@ A rule scoped to several profiles is repeated verbatim in each of their files, u
 
 ### Version rules
 
-Commit-addressed release refs, per core §9. Spec files declare the **line** (`1.0`). A governed unit declares the release tag it was checked against (`1.0.<commit-hash>`, or `<major>.<minor>.<commit-hash>` after 1.0). Major and minor still name the kind of change. There is no patch number.
+Commit-addressed release refs, per core §9. Spec files declare the **line** (`1.0`). A governed unit declares the release tag it was checked against (`1.0.<commit-hash>`, or `<major>.<minor>.<commit-hash>` after 1.0). The third field is exactly 12 lowercase hex characters. Major and minor still name the kind of change. There is no patch number.
 
 Major: adds or tightens a mandatory rule, widens applicability, removes a reader-baseline item, or changes a profile ID. Minor: adds a recommended or permitted rule, relaxes, narrows applicability, adds a baseline or glossary entry. Wording and typography stay on the current line.
 
 Change the declared line in `spec/*.md`, `spec/profiles/*.md`, and `README.md` only when §9 moves the line — a major or minor change after the line is declared stable. Until that declaration, amendments land in place. A wording change never moves the line. Every edit still adds a `CHANGELOG.md` entry.
+
+**Publishing a release.** The tree must be clean. Run `python3 tools/itws_version.py --tag` to create the annotated tag on HEAD. The tool prints the `git push` command and does not run it. Pushing the tag is the owner's act; the tool never pushes and never creates a tag on a remote. Do not use `git rev-parse --short`: that length grows with the repository.
+
+`python3 tools/itws_version.py` (default `--current`) prints the declarable tag name only when HEAD is that tagged commit and the tree is clean. An untagged commit is not a release. A dirty tree matches no commit, and the tool refuses to print a declarable string.
 
 ---
 
@@ -250,4 +254,5 @@ Change the declared line in `spec/*.md`, `spec/profiles/*.md`, and `README.md` o
 | `spec/reader.md` | the assumed-reader baseline |
 | `spec/profiles/` | one file per profile |
 | `skills/itws-rewrite/` | Claude skill that runs the consumer session above |
+| `tools/` | optional, non-normative; outside the load set |
 | `CHANGELOG.md` | version history |

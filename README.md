@@ -45,7 +45,7 @@ Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidabili
 
 ## Using it
 
-Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,644–27,819 tokens depending on the profile.
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,736–27,912 tokens depending on the profile.
 
 The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then report the departure. The owner of the document has final say.
 
@@ -57,7 +57,17 @@ Profile: design-rfc
 AI disclosure: assisted — drafted the rollout section
 ```
 
-Pin a release tag, not the branch. Spec files on the branch declare the line (`1.0`), which is not a pin. Core §9 states the form and how a reader retrieves the named rule set.
+Pin a release tag, not the branch. Spec files on the branch declare the line (`1.0`), which is not a pin.
+
+The `ITWS version` field takes the release tag name, copied verbatim. In a specification checkout, list the tags (`git tag -l '1.0.*'`) and copy the one you checked against. Do not compute the hash; the tag name is the string.
+
+`python3 tools/itws_version.py` prints that string when HEAD is the tagged commit and the tree is clean. A consuming repository's CI pins the tag and proves the checkout has not floated:
+
+```bash
+python3 tools/itws_version.py --check 1.0.<commit-hash>
+```
+
+This tool lives in the specification repository. A consumer runs it against a specification checkout. Nothing from `tools/` is copied into a consuming repository. No ITWS conformance tooling belongs in a consuming repository (STY-83); this tool is not an exception.
 
 The `AI disclosure` field is `none`, `assisted`, or `generated`. It records provenance for transparency; it never affects how the rules apply.
 

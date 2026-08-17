@@ -26,7 +26,7 @@ spec/profiles/<id>.md   one of: design-rfc decision-record procedure explanation
                         feedback-comment maintenance-comment data-table
 ```
 
-That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,644–27,819 tokens depending on the profile, so it fits alongside the document you are working on.
+That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,736–27,912 tokens depending on the profile, so it fits alongside the document you are working on.
 
 Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notation, and it states the voice fence described below.
 
@@ -124,7 +124,7 @@ Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §4.13.19, §
 
 ## 9. Working on a corpus rather than one document
 
-Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,644–27,819 tokens — so the work becomes many sessions, and four things change.
+Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,736–27,912 tokens — so the work becomes many sessions, and four things change.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 

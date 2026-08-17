@@ -80,3 +80,36 @@ two implementations of the recipe, given the same source span, reach the digest
 the fixture records. They do not guarantee that the Python function is the
 profile; agreement with the prose is a maintainer check, walked by hand on the
 `interior-indentation` vector in `skills/itws-rewrite/SKILL.md`.
+
+## `itws_version.py`
+
+Prints, tags, and checks the §9 version string. The tag name is the version
+string; this tool's job is to produce that string the same way every time.
+
+```bash
+python3 tools/itws_version.py              # --current: print this checkout's version
+python3 tools/itws_version.py --tag        # create the annotated tag on HEAD (does not push)
+python3 tools/itws_version.py --check VER  # does this checkout match the declared pin
+```
+
+It reads the line (`1.0`, `1.1`, …) from `spec/` at run time and the hash length
+from core §9. It never hardcodes the line, never uses git's default abbreviation,
+never pushes, and never creates a tag on a remote.
+
+**What a run guarantees.**
+
+- `--current` prints a declarable string only when HEAD is a tagged release and
+  the tree is clean. An untagged commit is reported as not a release. A dirty tree
+  is refused: a modified spec checkout matches no commit.
+- `--tag` creates a local annotated tag whose name is the version string, then
+  prints the `git push` command. Publishing is the owner's act.
+- `--check` compares this checkout to a declared version string. Exit 0 means the
+  pin holds; non-zero means it has floated or the string is not a §9 form.
+
+Exit 0 only for those success cases. Every other outcome — dirty tree, untagged
+HEAD, mismatch, already tagged, no git, not a repository, spec files that
+disagree about the line — exits 1 with a message.
+
+This tool is not ITWS conformance tooling for a consuming repository. It lives
+here. A consumer runs it against a specification checkout. Nothing is copied into
+the consuming repository.

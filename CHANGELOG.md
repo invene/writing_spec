@@ -8,6 +8,28 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: co
 
 Each amendment comes from a field report filed against 1.0.0 by a real consumer session, tracked as [STY-71](https://linear.app/inveneprod/issue/STY-71) and its children.
 
+### Changed — §9 fixes the hash at twelve hex characters (STY-93)
+
+STY-82 made release refs commit-addressed: `1.0.<commit-hash>`. "Git object name" does not settle how many characters. Git's default abbreviation length grows with the repository, so a maintainer tagging today and a consumer running `git rev-parse --short HEAD` later produce two different version strings for the same rule set. That is the same class of defect STY-86 fixed for the comment hash, and it matters more here because §4.3.5 makes the declaration mandatory and a consumer's CI pins on it.
+
+**The third field is exactly 12 lowercase hex characters.** Twelve is unambiguous for any realistic repository size and short enough to read in a declaration. The number lives in §9; it is not left to a tool's default.
+
+**A consumer does not compute the hash.** They copy the tag name verbatim. The tag name is the version string. Computing is the fallback when the tag is absent, and that fallback must produce the identical string.
+
+**`tools/itws_version.py`** prints, tags, and checks that string. It reads the line from `spec/` at run time and the hash length from §9. `--current` prints a declarable string only when HEAD is a tagged release and the tree is clean; an untagged commit is not a release; a dirty tree is refused. `--tag` creates the local annotated tag and prints the `git push` command; it never pushes and never creates a tag on a remote. `--check` is the CI pin: exit 0 if this specification checkout matches the declared string.
+
+This tool lives in the specification repository. A consumer runs it against a specification checkout. Nothing is copied into a consuming repository. That is STY-83's position; this tool is not an exception to it.
+
+No new rule. No rule's `C` value changed. No version string changed. Spec files still declare `1.0`.
+
+**Reader assumptions.** Unchanged. No §1 or §2 baseline item is added or removed. The 12-character abbreviation and copying a tag name use version-control and release knowledge already in `reader.md` §1.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,736 (23,644 → 23,736; +92). The tool and the consumer/maintainer instructions sit outside the load set. Growth is the §9 precision (fixed length, tag name is the version string, compute-as-fallback) and a matching ontology delta. Nothing normative was cut. Eight of sixteen profiles still sit over 25,000, the same eight as after STY-82. The band is a target, not a limit.
+
+Eight over 25,000: `maintenance-comment` 27,912, `task` 26,450, `data-table` 25,982, `epic` 25,684, `subtask` 25,580, `research-paper` 25,443, `role-specification` 25,195, `technical-report` 25,152. Remaining: `investigation-log` 24,704, `feedback-comment` 24,682, `change-request` 24,635, `design-rfc` 24,594, `incident` 24,538, `procedure` 24,474, `decision-record` 24,440, `explanation` 24,321.
+
+Affects: core §9; `ontology.md` (Versioning delta). `tools/itws_version.py` (new); `tools/README.md`; `README.md` (how to fill `ITWS version`, CI `--check`, STY-83); `AGENTS.md` (maintainer publish steps); `skills/itws-rewrite/SKILL.md` (load-set range). Reader assumptions: unchanged.
+
 ### Changed — commit-addressed release refs (STY-82)
 
 The specification repository publishes 1.0.0 as a branch and carries no git tags. Every consumer instruction that said "pin to 1.0.0" pinned a movable ref. A consuming repository that screens `spec/` at run time in continuous integration takes the entire rule set from that ref. A moved branch head silently changes what that job screens against.
