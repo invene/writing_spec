@@ -1,6 +1,6 @@
 ---
 name: itws-rewrite
-description: Write, review, or rewrite a document against the Invene Technical Writing Specification (ITWS). Use when asked to make a design RFC, decision record, procedure or runbook, explanation, incident report, technical report, research paper, investigation log, epic, task, or subtask conform to ITWS; when asked to govern a pull request, merge request, or change description (the change-request profile); when asked to govern a review comment (the feedback-comment profile); when asked to review or check a document against ITWS rules; when asked to govern the code comments a change adds, edits, or removes (the maintenance-comment profile); or when asked to bring an inventory, register, or data-sources spreadsheet under ITWS (the data-table profile).
+description: Write, review, or rewrite a document against the Invene Technical Writing Specification (ITWS). Use when asked to make a design RFC, decision record, procedure or runbook, explanation, incident report, technical report, research paper, investigation log, epic, task, or subtask conform to ITWS; when asked to govern a hiring role specification or job description written for a screen (the role-specification profile); when asked to govern a pull request, merge request, or change description (the change-request profile); when asked to govern a review comment (the feedback-comment profile); when asked to review or check a document against ITWS rules; when asked to govern the code comments a change adds, edits, or removes (the maintenance-comment profile); or when asked to bring an inventory, register, or data-sources spreadsheet under ITWS (the data-table profile).
 ---
 
 # Write or rewrite a document against ITWS
@@ -21,12 +21,12 @@ spec/phrases.md         literal prohibited and replacement strings
 spec/glossary.md        canonical admitted terms
 spec/reader.md          what the assumed reader knows
 spec/profiles/<id>.md   one of: design-rfc decision-record procedure explanation
-                        incident technical-report research-paper investigation-log
-                        epic task subtask change-request feedback-comment
-                        maintenance-comment data-table
+                        role-specification incident technical-report research-paper
+                        investigation-log epic task subtask change-request
+                        feedback-comment maintenance-comment data-table
 ```
 
-That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,192–27,368 tokens depending on the profile, so it fits alongside the document you are working on.
+That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,290–27,465 tokens depending on the profile, so it fits alongside the document you are working on.
 
 Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notation, and it states the voice fence described below.
 
@@ -34,7 +34,7 @@ Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notatio
 
 If the document declares a profile, use that one. If it does not, classify it against the profile registry in core §0.1 — each profile ID is listed there with the job it does — and say which one you chose and why. If two fit equally well, ask.
 
-Never load two profiles. A document that seems to need two needs companion documents instead (core §0.1). A pull-request description and its title are `change-request`. A review comment on that change is `feedback-comment`. A durable comment in source is `maintenance-comment`.
+Never load two profiles. A document that seems to need two needs companion documents instead (core §0.1). A hiring role specification written for an operator running a screen is `role-specification`, not `explanation`. A pull-request description and its title are `change-request`. A review comment on that change is `feedback-comment`. A durable comment in source is `maintenance-comment`.
 
 ## 3. Respect the voice fence
 
@@ -124,7 +124,7 @@ Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §4.13.19, §
 
 ## 9. Working on a corpus rather than one document
 
-Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,192–27,368 tokens — so the work becomes many sessions, and four things change.
+Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,290–27,465 tokens — so the work becomes many sessions, and four things change.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 

@@ -22,6 +22,7 @@ Governed unit = shared core + **exactly one** profile ID. ID is canonical; label
 | `decision-record` | record one decision + context + alternatives + consequences |
 | `procedure` | let reader complete an operational task safely + repeatably |
 | `explanation` | build accurate mental model of a system, mechanism, concept |
+| `role-specification` | specify a role for an operator running a hiring screen |
 | `incident` | record impact, response, evidence, causes, follow-up |
 | `technical-report` | present analysis / system / method / result in sustained detail |
 | `research-paper` | report question, method, evidence, result, limitations to publication standard |
@@ -82,7 +83,7 @@ An agent applying ITWS governs the text and reports. The owner judges. That agen
 
 **Departures and the specification (practice, not a rule).** A reported departure carries a strong encouragement to file an issue against the specification repository's issue tracker. Filing is never required. The issue records how, when, and why applying the rule would have worsened the passage. Filing is an event outside the document. The paragraph carries no rule ID and no class marker. No finding cites it.
 
-**Applicability.** A core rule applies to all fifteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
+**Applicability.** A core rule applies to all sixteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
 
 **Required declaration.** Every governed unit declares three fields:
 
@@ -543,6 +544,10 @@ Heading identifies the topic. Opening sentence states the point about it.
 ### 4.16 Feedback comments
 
 §4.16 rules apply to `feedback-comment` only. They live in that profile file.
+
+### 4.17 Role specifications
+
+§4.17 rules apply to `role-specification` only. They live in that profile file.
 
 ---
 
