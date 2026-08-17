@@ -93,7 +93,7 @@ Field names are **fixed**. No rename, no merge, no section map. An empty require
 | Slot | Required | Job |
 |---|---|---|
 | Change scope | yes | the carrier shape — `change-set` or `corpus-at-rest` — the host adapter, the carrier's one-sentence purpose, and the three core §0.5 declarations including `AI disclosure`. A `change-set` adds its change-set ID, host file, and base and proposed hashes. A `corpus-at-rest` adds its declaration boundary and the boundary's pre-conversion state. |
-| Comment record | `change-set`: yes, per governed comment · `corpus-at-rest`: optional (§4.13.16) | one governed comment's complete record — fields below |
+| Comment record | `change-set`: yes, per governed comment · `corpus-at-rest`: optional; carrying them incurs §4.13.17 (§4.13.16) | one governed comment's complete record — fields below |
 | → Change kind | yes | exactly one of `added`, `modified`, `removed`, `converted`; selects the source the Anchor resolves against |
 | → Anchor | yes | host file, enclosing named construct, and comment hash: in the **proposed** source for `added`, `modified`, and `converted`, in the **base** source for `removed` |
 | → Line span | no | a cached position for navigation, marked derived (§4.13.11) |
@@ -112,6 +112,8 @@ Field names are **fixed**. No rename, no merge, no section map. An empty require
 
 ## §4.13 Scoped rules — maintenance comments
 
+§4.13.1 is a per-comment test. §4.13.19 weighs the added sentence against the anchored code. Document profiles are out of scope: their reader has no adjacent code. §4.13.20 weighs a rationale against the declaration boundary §4.13.15 names.
+
 | ID | C | D | Rule |
 |---|---|---|---|
 | 4.13.1 | M | J | a governed comment adds information its anchored code does not state to a reader with the declared host-language supplement |
@@ -128,9 +130,11 @@ Field names are **fixed**. No rename, no merge, no section map. An empty require
 | 4.13.12 | M | S | a `converted` record's base = the boundary's pre-conversion state. In a conversion `Change kind` is constant and carries no editorial signal; the base is a version boundary rather than a maintenance edit. |
 | 4.13.13 | M | J | a `converted` record for a comment with no information delta states the empty delta and records it as a §4.13.6 finding. Conversion ! compel the comment's removal — the finding goes to the owner. |
 | 4.13.15 | P | J | one carrier's declarations may cover a **declaration boundary** — a repository, package, or directory tree — rather than one host file |
-| 4.13.16 | M | L | a `change-set` carrier carries one `Comment record` per governed comment. A `corpus-at-rest` carrier may omit the records; the comment text alone is then the governed surface, which core §0.5 already states. |
+| 4.13.16 | M | L | a `change-set` carrier carries one `Comment record` per governed comment. A `corpus-at-rest` carrier may omit the records; the comment text alone is then the governed surface, which core §0.5 already states. A `corpus-at-rest` carrier that carries records incurs §4.13.17. |
 | 4.13.17 | M | L | every anchor in a carrier resolves (§4.13.10) |
 | 4.13.18 | M | S | identical normalized text inside one enclosing named construct is out of scope for anchoring. The carrier names each such comment in `Boundaries`. ! edit a comment to make an anchor unique. |
+| 4.13.19 | M | J | a governed comment's length answers to the anchored code + the cost of reading it there. Length is earned by recording what a reader cannot recover from that code. Examples, not a closed set — a hazard, a measured fact, a decision + consequence, a defect a test pins. Restating what the code shows earns none. No character or word cap. |
+| 4.13.20 | M | J | a rationale is recorded once inside a declaration boundary. A later dependent anchor refers to that recording by enclosing construct or module docstring, never by line number (§4.13.11). Exception: the site where getting it wrong is fatal may state the thing rather than point. Scope = the declaration boundary, not the repository. A test pinning a specific defect keeps that defect's rationale. |
 
 **§4.13.14 is withdrawn and its ID is reserved.** It recommended a read-only audit before converting. Whether an audit happened is an event outside the document, and core §0.5 keeps ITWS on the text. The practice is sound and now sits in `AGENTS.md` as practice, carrying no class marker for an agent to enforce.
 
@@ -138,7 +142,7 @@ Field names are **fixed**. No rename, no merge, no section map. An empty require
 
 **Why the anchor is content-addressed (§4.13.3, §4.13.10, §4.13.11).** A line span moves on three events: the carrier's own edits above it · a formatter reflow · a repair round. A drifted span still satisfies every check a span can satisfy, because fitting inside the file proves nothing. The hash ties the anchor to its own text, so a stale anchor announces itself instead of pointing a reader at unrelated code. `enclosing named construct` stays mandatory as the stable human pointer and as the resolution scope (§4.13.10). Identical comments in different constructs therefore resolve. Identical normalized text inside one construct cannot resolve. That residue is out of scope for anchoring (§4.13.18). One construct often carries several governed comments.
 
-**Adopting the profile is not adopting a conversion (§4.13.16).** A repository governing only its future changes conforms. Where a conversion is worth doing, a read-only audit first delivers most of its value.
+**Adopting the profile is not adopting a conversion (§4.13.16).** A repository governing only its future changes conforms. A conversion delivers rewritten comments and a `corpus-at-rest` carrier of declarations only. Where a conversion is worth doing, a read-only audit first delivers most of its value.
 
 ## Applicable core rules with profile scope
 

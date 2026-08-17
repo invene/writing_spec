@@ -45,7 +45,7 @@ Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidabili
 
 ## Using it
 
-Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 22,883–26,757 tokens depending on the profile.
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 22,883–27,059 tokens depending on the profile.
 
 The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then report the departure. The owner of the document has final say.
 

@@ -23,7 +23,7 @@ spec/reader.md          what the assumed reader knows
 spec/profiles/<id>.md   exactly one file from spec/profiles/
 ```
 
-That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 22,883–26,757 tokens depending on the profile, so it fits alongside the document you are working on.
+That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 22,883–27,059 tokens depending on the profile, so it fits alongside the document you are working on.
 
 Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notation, and it states the voice fence described below.
 
@@ -117,11 +117,11 @@ Four traps, all of which have produced wrong results in practice:
 - **The phrase lists carry exceptions, and the exceptions matter.** `underscore` is permitted for a physical mark, `landscape` for physical terrain, and `significant` and `robust` in the statistical sense once §5.7 admits them. `rather than` is a comparative, not the §3.9.1 hedge `rather`. This is what the `S` marker means.
 - **Match what a rule states, not what it resembles.** A phrase close to a listed one is judged under the rule's statement (`spec/phrases.md`, front matter).
 
-Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §5.1.1, and the §4.12 scan path. §4.13.4 is `S` — a match finds the `Basis` field, and you decide whether what it names is durable.
+Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §4.13.19, §4.13.20, §5.1.1, and the §4.12 scan path. §4.13.4 is `S` — a match finds the `Basis` field, and you decide whether what it names is durable.
 
 ## 9. Working on a corpus rather than one document
 
-Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 22,883–26,757 tokens — so the work becomes many sessions, and four things change.
+Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 22,883–27,059 tokens — so the work becomes many sessions, and four things change.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -131,7 +131,21 @@ Sections 1 through 7 describe one document. A corpus does not fit in one context
 
 **Aggregate the coverage.** Core §8 obligation 6 asks each session what it checked. Nothing composes those answers, so state the corpus-level one yourself: which rules were checked across every unit, and which were not.
 
-Before converting a corpus, audit it first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing. No rule requires it: whether an audit happened is an event outside the document.
+**Conversion — read this before starting.** A conversion delivers rewritten comments as the product. A `corpus-at-rest` carrier carries the §0.5 declarations, `Change scope`, and `Boundaries`. Per-comment records are omitted by default; carrying them takes on §4.13.17, and is right only where the repository has chosen to govern its corpus with those records and will maintain them.
+
+Audit first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing. File the audit output on the team's issue tracker or equivalent. Do not leave inventories, conflict lists, gap lists, or baseline screens in the converted repository. The audit is valuable. Its output location is what this paragraph fixes. No rule requires the audit: whether it happened is an event outside the document.
+
+A consuming repository may be delivered to a party that does not use ITWS. It must stay fully readable without ITWS: the comments are comments, the declaration carrier is JSON a non-user can ignore, and no hook enforces a specification the recipient cannot read. No ITWS conformance tooling belongs in a consuming repository. The optional checker lives in the specification repository.
+
+**Teardown, before handoff.** Remove from the consuming repository:
+
+1. Audit inventories, conflict lists, gap lists, and baseline screens.
+2. Profile-assignment tables that are not the declaration carrier.
+3. Derived anchor indexes.
+4. Per-comment records on any `corpus-at-rest` carrier. Keep them only where the repository has chosen to govern its corpus with those records and will maintain them under §4.13.17.
+5. ITWS conformance tooling: checkers, pre-commit screens, and tests of those screens.
+
+Keep the rewritten comments, the `corpus-at-rest` carrier of declarations, and any `change-set` carrier the repository will use for later maintenance. The declaration block is what keeps ITWS boilerplate out of source files. The `change-set` carrier is how a repository governs its own future changes. Neither is conversion scaffolding.
 
 ## 10. Working in the `maintenance-comment` profile
 
@@ -171,6 +185,16 @@ UTF-8 SHA-256, lowercase hex: `f9894917f85ea61f08c415a7bafeeed457a83c75140320df7
 
 **A conversion is not a licence to delete.** §4.13.13 has you record an empty information delta as a finding and leave the comment for the owner. Removing it is their call, not yours.
 
+**Length answers to the anchored code (§4.13.19).** §4.13.1 asks whether a sentence adds information. §4.13.19 asks whether that addition earns its cost against the code it sits on. There is no character or word cap. A comment on a subtle concurrency invariant and a comment on a constant have different right lengths. Each answers to its code. Do not trim a comment into terseness that drops a hazard a reader cannot recover from the code.
+
+Worked pair:
+
+*Earned its length.* A forbidden-sequence list includes `..`. The comment records that the check guards the local filesystem backend, and that S3 stores a key literally and does not walk paths. A reader of the list cannot recover which backend the check is for, or that the other backend is unaffected. The comment is longer than the list. The extra length is earned. The hazard is not in the code.
+
+*Did not earn its length.* A function of a dozen lines returns an empty list when a filter matches nothing. The comment walks each branch, restates the empty-list return, and notes that the caller should handle it. Every sentence can answer §4.13.1's "does this add something?". The comment is now longer than the function. The branch walk restates the code. The caller-handling sentence belongs at the call site, or not at all.
+
+**A rationale is recorded once per declaration boundary (§4.13.20).** §4.13.1 is a per-comment test, so the same explanation freshly worded at fourteen anchors in one file passes it fourteen times. Record the rationale once, in an enclosing construct or a module docstring, never by line number. Later anchors name that construct. Exception: the site where getting it wrong is fatal may state the thing rather than point. A test that pins a specific defect keeps that defect's rationale. Scope is the declaration boundary, not the repository: a rationale that matters in two packages belongs in both.
+
 ## Failure modes to check your own draft against
 
 Each of these has survived a self-check that reported the document clean.
@@ -189,6 +213,8 @@ Each of these has survived a self-check that reported the document clean.
 - Do not report a document as conforming when you did not check the rules that would decide it. Report coverage instead.
 - Do not edit a comment or its surrounding code merely to force agreement between them. ITWS §4.13.6, in the `maintenance-comment` profile, requires preserving the conflict, reporting it, and continuing elsewhere.
 - Do not accept a delegated session's self-report as your coverage statement. Check its output.
+- Do not leave conversion scaffolding in a consuming repository. A conversion delivers rewritten comments and a `corpus-at-rest` carrier of declarations. Per-comment records on that carrier come out before handoff unless the repository has chosen to govern its corpus with them and will maintain them. Audit inventories, derived indexes, and ITWS conformance tooling come out before handoff.
+- Do not restate a rationale at every dependent anchor inside one declaration boundary. Record it once and refer to the recording (§4.13.20).
 - Do not record a line span you have not confirmed contains its comment.
 - Do not invent a reviewer. The `AI disclosure` records provenance only; it carries no review-state field.
 - Do not arbitrate process. You govern the text, not whether a review sufficed or a work item may close (core §0.5, *Text, not process*).

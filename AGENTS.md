@@ -119,7 +119,7 @@ The rewritten document, the missing-fact list, and the findings with rule IDs. S
 
 ### 6. When the unit of work is a corpus
 
-Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 22,883–26,757 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
+Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 22,883–27,059 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its own diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -129,7 +129,21 @@ Steps 1 through 5 describe one session over one document. A corpus does not fit 
 
 **Say what the disclosure records when several tools contribute.** Where one model drafted, a second repaired, and a person accepted the result, the §0.5 note lists each contribution in order.
 
-Before converting a corpus, consider auditing it first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing at all. This is practice, not a rule: whether an audit happened is an event outside the document, so no rule turns on it.
+**Conversion — read this before starting.** A conversion delivers rewritten comments as the product. A `corpus-at-rest` carrier carries the §0.5 declarations, `Change scope`, and `Boundaries`. Per-comment records are omitted by default; carrying them takes on §4.13.17, and is right only where the repository has chosen to govern its corpus with those records and will maintain them.
+
+Audit first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing at all. File the audit output on the team's issue tracker or equivalent. Do not leave inventories, conflict lists, gap lists, or baseline screens in the converted repository. The audit is valuable. Its output location is what this paragraph fixes. Whether an audit happened is an event outside the document, so no rule turns on it.
+
+A consuming repository may be delivered to a party that does not use ITWS. It must stay fully readable without ITWS: the comments are comments, the declaration carrier is JSON a non-user can ignore, and no hook enforces a specification the recipient cannot read. No ITWS conformance tooling belongs in a consuming repository. The optional checker lives in this specification repository.
+
+**Teardown, before handoff.** Remove from the consuming repository:
+
+1. Audit inventories, conflict lists, gap lists, and baseline screens.
+2. Profile-assignment tables that are not the declaration carrier.
+3. Derived anchor indexes.
+4. Per-comment records on any `corpus-at-rest` carrier. Keep them only where the repository has chosen to govern its corpus with those records and will maintain them under §4.13.17.
+5. ITWS conformance tooling: checkers, pre-commit screens, and tests of those screens.
+
+Keep the rewritten comments, the `corpus-at-rest` carrier of declarations, and any `change-set` carrier the repository will use for later maintenance. The declaration block is what keeps ITWS boilerplate out of source files. The `change-set` carrier is how a repository governs its own future changes. Neither is conversion scaffolding.
 
 ---
 
@@ -137,7 +151,7 @@ Before converting a corpus, consider auditing it first. A read-only pass that re
 
 ### The design constraint: recall over restatement
 
-**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,883–26,757 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,883–27,059 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
 
 The band is a **target, not a limit**. Exceeding it fails no obligation, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
 
