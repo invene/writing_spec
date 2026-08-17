@@ -29,6 +29,8 @@ Governed unit = shared core + **exactly one** profile ID. ID is canonical; label
 | `epic` | define one strategic outcome + measures + invariants + child-task boundaries |
 | `task` | specify one independently acceptable tactical outcome |
 | `subtask` | verify one named completion condition under exactly one parent `task` |
+| `change-request` | describe a proposed change: what changed, what could break, what to read first |
+| `feedback-comment` | address a person about a change with a request, observation, or question that expects a response |
 | `maintenance-comment` | govern comments one maintenance change adds, modifies, removes |
 | `data-table` | inventory homogeneous items as rows against a fixed column schema, for lookup, comparison, delivery tracking |
 
@@ -36,7 +38,7 @@ One ID per unit. Never combine. Companion documents > hybrid. A collection may h
 
 ### 0.2 Governed surfaces
 
-- `markdown-document` — prose Markdown. First 11 profiles. "governed document" = this alone.
+- `markdown-document` — prose Markdown. Every profile except `maintenance-comment` and `data-table`. "governed document" = this alone.
 - `hosted-comment-set` — governed comments inside host source files, declared by a JSON carrier. Carrier covers **one change set in one host file**, or **one declaration boundary** (a repository, package, or directory tree) whose comments are already present. Only `maintenance-comment`. Host files themselves = outside conformance; governed comments carry no ITWS boilerplate.
 - `tabular-document` — workbook of named sheets: one Title sheet, one Glossary sheet, 1+ data grids of homogeneous rows. Only `data-table`. Cells hold governed prose. Rendering (fill, font, frozen panes, merged cells, column width) = outside conformance, as Markdown rendering is. File format (`.xlsx`, CSV set, hosted sheet) = carrier, ! conformance surface.
 
@@ -44,11 +46,13 @@ One ID per unit. Never combine. Companion documents > hybrid. A collection may h
 
 ### 0.3 Outside scope
 
-Source code (except a declared `maintenance-comment` set) · standalone API/command reference · slide decks, posters, talk scripts · marketing and general-audience writing · chat, issue-tracker comments, status events, unstructured tickets, review comments.
+Source code (except a declared `maintenance-comment` set) · standalone API/command reference · slide decks, posters, talk scripts · marketing and general-audience writing · chat, issue-tracker comments, status events, unstructured tickets.
 
 **Computational workbook** — assumptions, formula graph, derived outputs — is outside scope. A `data-table` inventories rows; it does not govern a workbook that computes. A workbook mixing both is governed only over its `data-table` sheets, and the computational sheets carry no conformance claim.
 
-Issue-tracker item is governed only when it declares `epic` | `task` | `subtask` **and** carries every required slot.
+Issue-tracker item is governed only when it declares `epic` | `task` | `subtask` **and** carries every required slot. A change description is governed only when it declares `change-request` **and** carries every required slot. A review comment is governed only when it declares `feedback-comment` **and** carries every required slot.
+
+Durable review artifact = a declared change description or feedback comment a later reader can retrieve. Status event = a host-generated or bot-generated notice of workflow state. Chat = ephemeral conversation.
 
 Out-of-scope work may reuse ITWS practice; no conformance claim attaches.
 
@@ -78,7 +82,7 @@ An agent applying ITWS governs the text and reports. The owner judges. That agen
 
 **Departures and the specification (practice, not a rule).** A reported departure carries a strong encouragement to file an issue against the specification repository's issue tracker. Filing is never required. The issue records how, when, and why applying the rule would have worsened the passage. Filing is an event outside the document. The paragraph carries no rule ID and no class marker. No finding cites it.
 
-**Applicability.** A core rule applies to all thirteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
+**Applicability.** A core rule applies to all fifteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
 
 **Required declaration.** Every governed unit declares three fields:
 
@@ -418,7 +422,7 @@ Deciding which type a passage carries is a **reader's judgment**. It is never de
 | 4.2.1 | R | J | sentence states its main point in the main clause, before subordinate qualification |
 | 4.2.2 | M | J | chunk states its point in its first sentence; remaining sentences support, elaborate, or bound it |
 | 4.2.3 | M | J | section states its takeaway or operational purpose in its opening chunk, before supporting material |
-| 4.2.4 | M | J | *(all profiles except `investigation-log`, `subtask`, `maintenance-comment`, `data-table`)* document states its profile-specific main point in the earliest applicable slot, before supporting detail |
+| 4.2.4 | M | J | *(all profiles except `investigation-log`, `subtask`, `maintenance-comment`, `data-table`, `feedback-comment`)* document states its profile-specific main point in the earliest applicable slot, before supporting detail |
 
 Main point may be a requirement, proposal, decision, instruction goal, explanatory takeaway, incident outcome, or evidential claim. The reader should never hold unexplained machinery while waiting to learn why it matters.
 
@@ -515,7 +519,7 @@ Scan path = the governed unit's cheapest correct reading. Access and orientation
 
 | ID | C | D | Rule |
 |---|---|---|---|
-| 4.12.1 | M | L | Markdown scan path = document title, then in document order each main-text heading + the first sentence of that section's opening chunk; excludes bounded blocks and appendix content. *(`maintenance-comment` and `data-table` each replace this path — see their profile files.)* |
+| 4.12.1 | M | L | Markdown scan path = document title, then in document order each main-text heading + the first sentence of that section's opening chunk; excludes bounded blocks and appendix content. *(`maintenance-comment`, `data-table`, and `feedback-comment` each replace this path — see their profile files.)* |
 | 4.12.2 | M | J | scan path lets the assumed reader produce the declared profile's shallow-model outcome, preserving each applicable status, strength, and material boundary; the title ! frame a wider or stronger outcome |
 | 4.12.3 | M | S | a material assertion on the scan path carries every truth-preserving qualification **in its own sentence**, using affirmative content words wherever a bare negation or trailing hedge could leave a stronger reading |
 | 4.12.4 | M | J | each scan-path element states its subject without depending on adjacent prose or reading order; a dependency uses a local noun or an explicit numbered reference |
@@ -531,6 +535,14 @@ Heading identifies the topic. Opening sentence states the point about it.
 ### 4.14 Tabular documents
 
 §4.14 rules apply to `data-table` only. They live in that profile file.
+
+### 4.15 Change requests
+
+§4.15 rules apply to `change-request` only. They live in that profile file.
+
+### 4.16 Feedback comments
+
+§4.16 rules apply to `feedback-comment` only. They live in that profile file.
 
 ---
 

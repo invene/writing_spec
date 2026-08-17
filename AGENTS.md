@@ -78,7 +78,8 @@ spec/glossary.md        canonical admitted terms
 spec/reader.md          what the assumed reader knows
 spec/profiles/<id>.md   one of: design-rfc decision-record procedure explanation
                         incident technical-report research-paper investigation-log
-                        epic task subtask maintenance-comment data-table
+                        epic task subtask change-request feedback-comment
+                        maintenance-comment data-table
 ```
 
 That set is the complete applicable rule set. There is nothing else to retrieve.
@@ -106,7 +107,7 @@ There is no `pass` result to report. Before returning:
 1. **Cite the rule.** Every finding and material semantic judgment names an ID: "ITWS §4.12.3". A finding without an ID is not a finding.
 2. **Report, never invent.** A missing fact is reported as missing. Never generate a value, citation, timestamp, owner, or measurement to fill a slot. This outranks completing the draft.
 3. **Continue around blocks.** An unresolved span does not stop work on independent spans. Return the best safe draft plus an explicit missing-fact list.
-4. **Walk the scan path.** Read title + headings + opening sentences alone (core §4.12). Confirm the profile's shallow-model outcome survives with its status, strength, and material boundaries intact.
+4. **Walk the scan path.** Read title + headings + opening sentences alone (core §4.12). Confirm the profile's shallow-model outcome survives with its status, strength, and material boundaries intact. Three profiles replace this path: `maintenance-comment` (§4.13.9), `data-table` (§4.14.18), `feedback-comment` (§4.16.1).
 5. **Set the AI disclosure.** You are generative AI tooling. If you contributed any content, the `AI disclosure` field is at least `assisted` (core §0.5, §4.3.4). Never leave a stale `none` on a document you edited, and never downgrade an existing value.
 
    State what you did — which sections you drafted or rewrote. Do not invent a reviewer (obligation 2). The disclosure records provenance only.
@@ -119,7 +120,7 @@ The rewritten document, the missing-fact list, and the findings with rule IDs. S
 
 ### 6. When the unit of work is a corpus
 
-Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 22,883–27,059 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
+Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 23,192–27,368 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its own diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -151,7 +152,7 @@ Keep the rewritten comments, the `corpus-at-rest` carrier of declarations, and a
 
 ### The design constraint: recall over restatement
 
-**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,883–27,059 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 23,192–27,368 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
 
 The band is a **target, not a limit**. Exceeding it fails no obligation, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
 
@@ -172,7 +173,7 @@ Never outsource to recall, regardless of how well-known it seems:
 - Numbers, caps, thresholds, slot names, and rule IDs.
 - Anything a model would recall *differently* depending on which edition it learned. If the answer turns on a source's own wording, the wording belongs in ITWS.
 
-**Budget arithmetic.** A line added to `spec/core.md`, `spec/phrases.md`, `spec/glossary.md`, or `spec/reader.md` costs every one of the thirteen profiles. A line added to one profile file costs only that profile. Push profile-specific content down. This is why work-item vocabulary lives in `epic`/`task`/`subtask` and hosted-comment vocabulary lives in `maintenance-comment` rather than in core.
+**Budget arithmetic.** A line added to `spec/core.md`, `spec/phrases.md`, `spec/glossary.md`, or `spec/reader.md` costs every one of the fifteen profiles. A line added to one profile file costs only that profile. Push profile-specific content down. This is why work-item vocabulary lives in `epic`/`task`/`subtask` and hosted-comment vocabulary lives in `maintenance-comment` rather than in core.
 
 Measure after any substantive edit — there is no tool, so run this:
 
@@ -209,7 +210,7 @@ New rule → append within its section, next free number.
 
 | Content | File |
 |---|---|
-| applies to all thirteen profiles | `spec/core.md` |
+| applies to all fifteen profiles | `spec/core.md` |
 | applies to some profiles | each of those `spec/profiles/<id>.md` |
 | literal prohibited or replacement strings | `spec/phrases.md` |
 | canonical term meanings | `spec/glossary.md` |

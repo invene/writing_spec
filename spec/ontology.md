@@ -15,7 +15,7 @@ Rule of thumb: **never block on a fetch.** Every ITWS obligation is stated in [c
 
 These standards change on multi-year cycles. A recalled version some years stale is acceptable background.
 
-## Anchors — general (all 13 profiles)
+## Anchors — general (all 15 profiles)
 
 | Source | ITWS borrows | Recall | Where |
 |---|---|---|---|
@@ -46,7 +46,7 @@ Do not resolve these from the source. Core is authoritative.
 | Area | Source | ITWS delta |
 |---|---|---|
 | Vocabulary | ASD-STE100 closed dictionary | **open but gated**: any term is usable once admitted through the term ladder (§2.3) |
-| Document types | Diátaxis four types | **thirteen profiles** (§0.1); one-job discipline kept, registry replaced |
+| Document types | Diátaxis four types | **fifteen profiles** (§0.1); one-job discipline kept, registry replaced |
 | Prose layers | — | **two-layer model** (§1.2): plain wraps exact, never replaces it — ITWS-original |
 | Notation | — | term ladder extended to **symbols** (§5.2) — ITWS-original |
 | Context | Google timeless documentation | extended from time-relative to **decision-path-relative** prose (§4.9) — ITWS-original |
@@ -55,5 +55,6 @@ Do not resolve these from the source. Core is authoritative.
 | Detail layering | NN/g progressive disclosure | **skip-coherence test** (§4.6.3) — ITWS-original |
 | Work items | general work-item convention | **hierarchy, dual classification, path ownership, DoD composition** — ITWS-original |
 | Code comments | Ousterhout; Google TODO format | **information delta, host anchor, durable basis, lifecycle, conflict-report** — ITWS-original |
+| Review artifacts | — | **change-request** (host title + description as one unit) and **feedback-comment** (addressed to a person, about a change, expecting a response) — ITWS-original |
 | Conformance | requirements practice | **guidance applied with judgment** against one declared version + profile; `M` = strong default, departures reported; owner has final say — ITWS-original |
 | Reader | ISO 26514 audience analysis | **one fixed cross-functional software-pod baseline** ([reader.md](reader.md)) — ITWS-original |

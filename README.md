@@ -4,7 +4,7 @@
 
 ITWS gives a working technical reader a **correct shallow model at low reading cost**, while the main text stays complete for the document's declared job and exact detail stays reachable. Conformance does not depend on who or what wrote the text.
 
-One shared core plus thirteen document profiles. A governed unit declares one profile and applies the core plus that profile.
+One shared core plus fifteen document profiles. A governed unit declares one profile and applies the core plus that profile.
 
 ## Breaking change in 1.0.0
 
@@ -41,11 +41,11 @@ Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidabili
 
 ## Profiles
 
-`design-rfc` · `decision-record` · `procedure` · `explanation` · `incident` · `technical-report` · `research-paper` · `investigation-log` · `epic` · `task` · `subtask` · `maintenance-comment` · `data-table`
+`design-rfc` · `decision-record` · `procedure` · `explanation` · `incident` · `technical-report` · `research-paper` · `investigation-log` · `epic` · `task` · `subtask` · `change-request` · `feedback-comment` · `maintenance-comment` · `data-table`
 
 ## Using it
 
-Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 22,883–27,059 tokens depending on the profile.
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,192–27,368 tokens depending on the profile.
 
 The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then report the departure. The owner of the document has final say.
 
@@ -73,4 +73,4 @@ The specification is written in compressed notation for agent reading. **Governe
 
 ITWS assembles existing standards — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, RFC 2119, IPCC calibrated uncertainty language, and others. [spec/ontology.md](spec/ontology.md) names each source, says whether you need to recall it, and states exactly where ITWS forks it.
 
-ITWS-original: the two-layer exact/plain model, the term ladder, the scan path, path-agnostic prose, the work-item hierarchy, the maintenance-comment surface, and the tabular-document surface.
+ITWS-original: the two-layer exact/plain model, the term ladder, the scan path, path-agnostic prose, the work-item hierarchy, the maintenance-comment surface, the tabular-document surface, and the review-time profiles.

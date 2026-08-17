@@ -83,6 +83,8 @@ Each profile file states its genre-knowledge overlay: the navigation conventions
 
 `maintenance-comment` additionally carries a conditional host-language supplement — see its profile file.
 
+`change-request` and `feedback-comment` each carry a conditional named-in-the-change supplement — see the profile file.
+
 A profile-specific audience declaration may narrow the actual audience. It does not change ITWS conformance.
 
 ## 5. Changing this file
