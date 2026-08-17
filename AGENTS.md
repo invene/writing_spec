@@ -119,7 +119,7 @@ The rewritten document, the missing-fact list, and the findings with rule IDs. S
 
 ### 6. When the unit of work is a corpus
 
-Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 23,254–26,346 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
+Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 22,883–26,757 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its own diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -137,7 +137,7 @@ Before converting a corpus, consider auditing it first. A read-only pass that re
 
 ### The design constraint: recall over restatement
 
-**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 23,254–26,346 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,883–26,757 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
 
 The band is a **target, not a limit**. Exceeding it fails no obligation, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
 

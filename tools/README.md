@@ -30,7 +30,7 @@ decides each one).
 ```bash
 python3 tools/itws_literal.py docs/**/*.md      # screen a corpus
 python3 tools/itws_literal.py --json FILE       # machine-readable findings
-python3 tools/itws_literal.py --self-test       # run the fixture
+python3 tools/itws_literal.py --self-test       # run the fixtures
 ```
 
 It carries no copy of any rule string. Every phrase list, profile ID, disclosure
@@ -64,3 +64,19 @@ That guarantee is per rule ID, not per entry, so one broken entry inside a worki
 list would stay green — which is how `"certainly!"` compiled to a pattern that
 could never match while §2.6.11 kept passing. `--self-test` therefore also asks
 every entry to match its own source string, and names any that cannot.
+
+## `fixtures/comment-hash-vectors.jsonl`
+
+Five source spans plus the SHA-256 the `maintenance-comment` hash recipe produces
+for each one. The set covers interior indentation, a block comment without
+continuation markers, a line-comment run at differing indents, a blank interior
+line, and non-ASCII content (including a combining character).
+
+`--self-test` recomputes every digest from the recipe in
+`spec/profiles/maintenance-comment.md` and fails on a mismatch. The tool does not
+carry a copy of the hashes: they live in this fixture, and they are regenerated
+by applying the recipe to the `source` field. That is what the vectors guarantee:
+two implementations of the recipe, given the same source span, reach the digest
+the fixture records. They do not guarantee that the Python function is the
+profile; agreement with the prose is a maintainer check, walked by hand on the
+`interior-indentation` vector in `skills/itws-rewrite/SKILL.md`.

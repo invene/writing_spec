@@ -41,6 +41,43 @@ Load-set proxy (characters ÷ 4) after this change: base 23,254. Five profiles s
 
 Affects: core §0.5, §4.3.4, §8, §9; `legend.md` class definitions; `ontology.md` Conformance delta; `data-table` (Title-sheet disclosure guidance); `maintenance-comment` (§4.13.16 wording). `AGENTS.md`, `SKILL.md`, `README.md`, `tools/itws_literal.py`, and `tools/README.md` follow. Reader assumptions: unchanged.
 
+### Changed — the load set partitions, and the comment hash becomes one computation (STY-90)
+
+This section records [STY-90](https://linear.app/inveneprod/issue/STY-90). Round A is STY-91 and STY-86. Round B (STY-83, STY-84, STY-85) will extend it.
+
+**STY-91 — the ontology partitions.**
+
+Dropping `spec/ontology.md` from the consumer load set was considered and **rejected**. The file does two jobs the recall-compression strategy rests on, and both stay. **Recall activation:** the anchors table names each source and what ITWS borrows, and the recall policy gives a model that does not know a source a fetch escape hatch. **Recall correction:** the deltas table stops a model that knows a source well from resolving ITWS's forks from that source. The better the recall, the more that guard matters. The recall policy, the general anchors table, and the deltas table stay in the base load set.
+
+What left the base is what only some profiles use.
+
+The research-only anchors moved into `research-paper` and `technical-report`, repeated verbatim under a "shared with" heading. The previous heading read "`research-paper`; `technical-report` where noted" while the closing line charged both profiles for all four sources. **Resolved:** APA JARS, the NeurIPS Paper Checklist and ML Reproducibility Checklist, and Model Cards / Datasheets for Datasets are shared by both. IMRaD is `research-paper` only. The split follows the genre fork already on the page. `research-paper`'s overlay and skeleton are IMRaD — section order, and results kept apart from discussion. `technical-report`'s overlay and skeleton are not: they separate system or method, evidence, interpretation, limitations, and checkability. §5.8.1 already diverges on purpose: a research paper promises reproducibility, and a technical report widens the same ID to reproducibility, verification, or both. The three shared sources serve method, result, reproducibility, and artifact disclosure, which both profiles ask for.
+
+Ousterhout, *A Philosophy of Software Design* (2018), moved to `maintenance-comment`. It is the comment-knowledge source that profile forks, and it serves no other.
+
+The scan-path evidence — nine citations justifying core §4.12 — moved to `appendices/scan-path-evidence.md`, outside `spec/` and outside the load set. `ontology.md` keeps a pointer: trust your own recall of that research and your judgment of the §4.12 rules; open the appendix only when a judgment call on §4.12 genuinely turns on a citation; never block on opening it. This is context discipline. A discovered file gets pulled into context reflexively, and this one is background a reader almost never needs. The rules remain complete without it.
+
+**STY-86 — the comment hash is reproducible.**
+
+The recipe said to strip each line's leading continuation marker "and the whitespace around it". That does not settle interior indentation — the leading whitespace inside a docstring after the marker is gone. Two implementations of the same comment text hashed two different ways. Nothing detected it until later anchors stopped resolving. §4.13.10 and §4.13.17 are both `M` with `D = L`. A `D = L` marker tells a reader the question is mechanically settled, which is where an under-specified recipe does the most damage.
+
+The `comment hash` vocabulary entry now points at a numbered computation. Interior indentation is part of the text. The recipe also settles a block comment whose continuation lines carry no marker, a line-comment run at differing host indents, a blank interior line, and non-ASCII content including combining characters, with no Unicode normalization form applied.
+
+- **Amended §4.13.10 (`M`, `L`).** An anchor now resolves when exactly one comment in its **enclosing named construct**, in the named source, matches its hash. Zero and two-or-more matches are restated against that construct. The construct is already part of the anchor under §4.13.3, so this costs no new data and resolves identical comments in different functions. `C` is unchanged.
+- **New §4.13.18 (`M`, `S`).** Identical normalized text inside one enclosing named construct is out of scope for anchoring. The carrier names each such comment in `Boundaries`. No comment is edited to make an anchor unique. This answers the case where §4.13.17 previously mandated something unsatisfiable: a file with two byte-identical comments could never make every anchor resolve. An occurrence ordinal was **rejected** because position-derived data is what §4.13.11 keeps out of an anchor.
+- **Amended the `Comment text` record field.** It now records the normalized text the recipe produces, before UTF-8 encoding. The recorded text is the hash input, so §4.13.11's cached-span check — a span whose text does not match the hash is a finding against the carrier — has something to compare against.
+- **Amended the `Boundaries` slot and the boundary-locations list** to carry the §4.13.18 residue. No new slot.
+
+§4.13.3, §4.13.11, §4.13.16, and §4.13.17 are unchanged in their rule rows. The "Why the anchor is content-addressed" paragraph now names the construct as resolution scope and the §4.13.18 residue.
+
+Test vectors ship at `tools/fixtures/comment-hash-vectors.jsonl`, outside the load set. `--self-test` recomputes every digest from the recipe in the profile rather than hardcoding hashes the tool cannot regenerate. The worked example — hashing a comment with interior indentation by hand — lives in `SKILL.md`, outside the load set, per the budget policy on micro-examples.
+
+**Classes, IDs, versions.** No `C` value moved except the new §4.13.18. No rule ID was reused or renumbered. §4.13.14 stays withdrawn and reserved. No version string changed.
+
+Load-set proxy (characters ÷ 4) after this change: base 22,883 (23,254 → 22,883; STY-91 bought 371 tokens). Three profiles sit over the 25,000 target, down from five: `maintenance-comment` 26,757, `task` 25,597, `data-table` 25,130. `epic` 24,831 and `subtask` 24,727 came back under. Remaining: `research-paper` 24,590, `technical-report` 24,299, `investigation-log` 23,852, `design-rfc` 23,741, `incident` 23,686, `procedure` 23,621, `decision-record` 23,587, `explanation` 23,468. `maintenance-comment` rose from 26,346 because the hash recipe is normative prose that cannot be cut, and it is the profile that most needed the headroom STY-91 bought. The band is a target, not a limit; the content wins; the overage is recorded.
+
+Affects: `ontology.md` (research and Ousterhout rows removed from the base; scan-path pointer); `research-paper` and `technical-report` (research anchors); `maintenance-comment` (Ousterhout, hash recipe, §4.13.10, new §4.13.18, `Comment text`, `Boundaries`). `appendices/scan-path-evidence.md` is new and outside the load set. `AGENTS.md`, `SKILL.md`, `README.md`, `tools/itws_literal.py`, `tools/README.md`, and `tools/fixtures/comment-hash-vectors.jsonl` follow. Reader assumptions: unchanged. No baseline or genre-knowledge item is added or removed.
+
 ### Amended — text is governed, process is not (STY-81, closing STY-68 and STY-70)
 
 ITWS is agnostic of process. The §0.5 declaration block is now stated to be the **only** process artifact the specification defines. Nothing else records review state, approval state, or lifecycle position, and no rule conditions conformance on an event outside the text.

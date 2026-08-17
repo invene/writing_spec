@@ -16,6 +16,16 @@ The scan path lets the assumed reader state **the technical question or outcome,
 
 The reader recognizes a report separating system or method, evidence, interpretation, limitations, and reproducibility or verification. Navigation only.
 
+## Anchors — research sources
+
+Shared with `research-paper`, `technical-report`. Recall `optional`. Every ITWS obligation stays in core, phrases, and this profile's rules.
+
+| Source | ITWS borrows | Recall | Where |
+|---|---|---|---|
+| APA JARS | method, statistical, and result-reporting disclosures | optional | https://apastyle.apa.org/jars |
+| NeurIPS Paper Checklist · ML Reproducibility Checklist | reproducibility and limitations disclosure | optional | https://neurips.cc/public/guides/PaperChecklist |
+| Model Cards · Datasheets for Datasets | artifact, data, and use-context disclosure | optional | https://arxiv.org/abs/1810.03993 · https://arxiv.org/abs/1803.09010 |
+
 ## Skeleton
 
 Dependency order: seed prerequisites before the methods, evidence, and claims that use them (core §4.4.2).

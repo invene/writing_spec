@@ -28,6 +28,7 @@ spec/reader.md          what the assumed reader knows
 spec/profiles/*.md      one file per profile
 skills/itws-rewrite/    Claude skill for a consumer session
 decisions/              recorded decisions about the specification
+appendices/             non-normative background, outside the load set
 fixtures/               worked example units, outside the load set
 tools/                  optional, non-normative; outside the load set
 AGENTS.md               working instructions for agent sessions
@@ -44,7 +45,7 @@ Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidabili
 
 ## Using it
 
-Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,254–26,346 tokens depending on the profile.
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 22,883–26,757 tokens depending on the profile.
 
 The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then report the departure. The owner of the document has final say.
 

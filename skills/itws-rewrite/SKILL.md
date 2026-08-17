@@ -23,7 +23,7 @@ spec/reader.md          what the assumed reader knows
 spec/profiles/<id>.md   exactly one file from spec/profiles/
 ```
 
-That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,254–26,346 tokens depending on the profile, so it fits alongside the document you are working on.
+That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 22,883–26,757 tokens depending on the profile, so it fits alongside the document you are working on.
 
 Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notation, and it states the voice fence described below.
 
@@ -121,7 +121,7 @@ Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §5.1.1, and 
 
 ## 9. Working on a corpus rather than one document
 
-Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,254–26,346 tokens — so the work becomes many sessions, and four things change.
+Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 22,883–26,757 tokens — so the work becomes many sessions, and four things change.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -135,7 +135,27 @@ Before converting a corpus, audit it first. A read-only pass that records confli
 
 ## 10. Working in the `maintenance-comment` profile
 
-**The anchor is the comment hash, not the line span.** §4.13.3 identifies a governed comment by its host file, its enclosing named construct, and a hash of its own text with markers stripped. An anchor resolves when exactly one comment in the source matches that hash (§4.13.10). Zero matches means the comment is gone or edited and the record needs a second reading; two means the anchor is ambiguous.
+**The anchor is the comment hash, not the line span.** §4.13.3 identifies a governed comment by its host file, its enclosing named construct, and a hash of its own text with markers stripped. An anchor resolves when exactly one comment in that enclosing named construct matches the hash (§4.13.10). Zero matches in the construct means the comment is gone or edited and the record needs a second reading; two or more in the construct means the anchor is ambiguous. Identical comments in different functions therefore resolve, because the construct is already in the anchor. Identical normalized text inside one construct cannot be anchored: name those comments in `Boundaries` and leave the text unedited (§4.13.18). Do not add an occurrence ordinal. Position-derived data stays out of the anchor (§4.13.11).
+
+**Worked example — hashing a comment that has interior indentation.** The recipe is in the `maintenance-comment` profile. This walk-through is the same `interior-indentation` vector `tools/itws_literal.py --self-test` checks. Source span:
+
+```
+    /**
+     * Retry the handshake
+     *   after a 50 ms pause
+     */
+```
+
+Four lines, with the indentation shown. Step 2 strips `    /**` from the first line and `*/` from the last, leaving an empty first line, two starred body lines, and a whitespace-only last line. Step 3 then strips each body line's leading whitespace, the `*`, and at most one space after it. The first body line becomes `Retry the handshake`. The second becomes `  after a 50 ms pause` — the two extra spaces after the pad are interior indentation and are kept. Step 5 strips trailing spaces; step 6 joins with `\n`; step 7 strips leading and trailing whitespace of the whole string, including the empty first and last lines. The normalized text is:
+
+```
+Retry the handshake
+  after a 50 ms pause
+```
+
+UTF-8 SHA-256, lowercase hex: `f9894917f85ea61f08c415a7bafeeed457a83c75140320df7310a014969b53cc`. An implementation that ate the two spaces before `after` would not match. An implementation that kept the Javadoc `*` indent as content would not match either.
+
+**A cached line span is derived data, and it goes stale constantly.**
 
 **A cached line span is derived data, and it goes stale constantly.** It moves when your own edits change a comment above it, when a repair round runs, and when a formatter reflows the file. §4.13.11 permits caching one for navigation and lets nothing rely on it. Re-derive it after your last edit, and treat a cached span whose text does not match the hash as a finding against the carrier — never against the host file.
 

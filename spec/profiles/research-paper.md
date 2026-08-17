@@ -20,6 +20,22 @@ The reader recognizes IMRaD-derived navigation, treats citations as source point
 
 The overlay also assumes no formal statistics, algebra beyond arithmetic, linear algebra, calculus, optimization, research-community shorthand, venue conventions, or benchmark names.
 
+## Anchors — research sources
+
+Shared with `research-paper`, `technical-report`. Recall `optional`. Every ITWS obligation stays in core, phrases, and this profile's rules.
+
+| Source | ITWS borrows | Recall | Where |
+|---|---|---|---|
+| APA JARS | method, statistical, and result-reporting disclosures | optional | https://apastyle.apa.org/jars |
+| NeurIPS Paper Checklist · ML Reproducibility Checklist | reproducibility and limitations disclosure | optional | https://neurips.cc/public/guides/PaperChecklist |
+| Model Cards · Datasheets for Datasets | artifact, data, and use-context disclosure | optional | https://arxiv.org/abs/1810.03993 · https://arxiv.org/abs/1803.09010 |
+
+IMRaD is this profile only. Recall `optional`.
+
+| Source | ITWS borrows | Recall | Where |
+|---|---|---|---|
+| IMRaD | research section order; results ≠ discussion | optional | https://en.wikipedia.org/wiki/IMRAD |
+
 ## Skeleton
 
 Dependency order: seed prerequisites before the methods, evidence, and claims that use them (core §4.4.2).
