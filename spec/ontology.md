@@ -69,5 +69,5 @@ Do not resolve these from the source. Core is authoritative.
 | Detail layering | NN/g progressive disclosure | **skip-coherence test** (§4.6.3) — ITWS-original |
 | Work items | general work-item convention | **hierarchy, dual classification, path ownership, DoD composition** — ITWS-original |
 | Code comments | Ousterhout; Google TODO format | **information delta, host anchor, durable basis, lifecycle, conflict-report** — ITWS-original |
-| Conformance | requirements practice | **binary textual conformance** against one declared version + profile — ITWS-original |
+| Conformance | requirements practice | **guidance applied with judgment** against one declared version + profile; `M` = strong default, departures reported; owner has final say — ITWS-original |
 | Reader | ISO 26514 audience analysis | **one fixed cross-functional software-pod baseline** ([reader.md](reader.md)) — ITWS-original |

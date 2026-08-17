@@ -23,7 +23,7 @@ spec/reader.md          what the assumed reader knows
 spec/profiles/<id>.md   exactly one file from spec/profiles/
 ```
 
-That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 22,900–26,000 tokens depending on the profile, so it fits alongside the document you are working on.
+That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,254–26,346 tokens depending on the profile, so it fits alongside the document you are working on.
 
 Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notation, and it states the voice fence described below.
 
@@ -45,7 +45,11 @@ The specification is written in compressed notation: dropped articles, fragments
 
 Reading compressed input biases output toward compressed output. Check your draft against this before returning it. A rewrite that reads like `spec/core.md` has failed §3 and §4.
 
-There is a second fence, and it separates text from process. **You govern the text. You do not arbitrate your user's process.** ITWS defines one process artifact — the §0.5 declaration block — and nothing else in the specification records review state, approval state, or lifecycle position (core §0.5, *Text, not process*). Do not judge whether a review was sufficient, whether a work item may close, or what a team must retain. Where the user says a review happened, record their statement and attribute it to them; where a process state is the document's own subject, such as the decision a `decision-record` records, govern it as exact content.
+There is a second fence, and it separates text from process. **You govern the text. You do not arbitrate your user's process.** ITWS defines one process artifact — the §0.5 declaration block — and the disclosure records provenance, not review. No rule records review state, approval state, or lifecycle position (core §0.5, *Text, not process*). Do not judge whether a review was sufficient, whether a work item may close, or what a team must retain. You may not invent a reviewer (core §8, obligation 2). Where the user says a review happened, attribute that statement to them in the session report; where a process state is the document's own subject, such as the decision a `decision-record` records, govern it as exact content.
+
+An `M` rule is the strong default. Apply it unless applying it makes the passage worse. Where it would make the passage worse, leave the passage and report the departure. The owner of the document has final say.
+
+A reported departure carries a strong encouragement to file an issue against the specification repository's issue tracker. Filing is never required. The issue should record how, when, and why applying the rule would have worsened the passage. Filing is an event outside the document. The encouragement is practice, not a rule: it carries no rule ID and no class marker.
 
 ## 4. Read and classify before you edit
 
@@ -56,6 +60,8 @@ Note the document's declared ITWS version. A document is checked against **its**
 ## 5. Apply the rules
 
 Work rule by rule, by ID. Where two applicable rules collide on one passage, use the core §1.3 precedence order. Never resolve a collision ad hoc.
+
+An `M` rule is the strong default: apply it unless applying it makes the passage worse. Where it would make the passage worse, leave the passage and report the departure. The owner of the document has final say.
 
 Exact content — claims, requirements, interfaces, invariants, procedure steps, measurements — is never edited to satisfy a style rule. Repair the surrounding text and report the local limitation instead.
 
@@ -87,8 +93,8 @@ Core §8 sets these obligations. All of them apply every time.
 2. **Report, never invent.** A missing fact is reported as missing. Never generate a value, citation, timestamp, owner, or measurement to fill a slot. This outranks completing the draft.
 3. **Continue around blocks.** An unresolved span does not stop work on independent spans. Return the best safe draft plus an explicit missing-fact list.
 4. **Walk the scan path.** Read the title, the headings, and the opening sentences alone (core §4.12). Confirm the profile's shallow-model outcome still survives, with its status, strength, and material boundaries intact. Two profiles replace this path with their own: `maintenance-comment` (§4.13.9) and `data-table` (§4.14.18). Walk whichever one the declared profile defines.
-5. **Set the AI disclosure.** You are generative AI tooling. If you contributed any content, the `AI disclosure` field is at least `assisted` (core §0.5, §4.3.4). State what you did — which sections you drafted or rewrote. For review, write `not yet reviewed` unless the user has told you a review happened; naming a reviewer you cannot verify violates obligation 2. Never leave a stale `none` on a document you edited, and never downgrade an existing value.
-6. **State coverage.** Say which rules you checked and which you did not. A clean self-check is a disclosed-coverage statement, not a certification.
+5. **Set the AI disclosure.** You are generative AI tooling. If you contributed any content, the `AI disclosure` field is at least `assisted` (core §0.5, §4.3.4). State what you did — which sections you drafted or rewrote. Do not invent a reviewer (obligation 2). The disclosure records provenance only. Never leave a stale `none` on a document you edited, and never downgrade an existing value.
+6. **State coverage.** Say which rules you checked and which you did not. Name every reported departure. A self-check is a disclosed-coverage statement plus those departures.
 
 ## 7. Return
 
@@ -115,7 +121,7 @@ Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §5.1.1, and 
 
 ## 9. Working on a corpus rather than one document
 
-Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 22,900–26,000 tokens — so the work becomes many sessions, and four things change.
+Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,254–26,346 tokens — so the work becomes many sessions, and four things change.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -164,5 +170,5 @@ Each of these has survived a self-check that reported the document clean.
 - Do not edit a comment or its surrounding code merely to force agreement between them. ITWS §4.13.6, in the `maintenance-comment` profile, requires preserving the conflict, reporting it, and continuing elsewhere.
 - Do not accept a delegated session's self-report as your coverage statement. Check its output.
 - Do not record a line span you have not confirmed contains its comment.
-- Do not name a reviewer you cannot verify. Where a person accepted work without reading it line by line, say that; §0.5 forbids recording a review that did not occur, and it does not forbid recording a qualified one.
+- Do not invent a reviewer. The `AI disclosure` records provenance only; it carries no review-state field.
 - Do not arbitrate process. You govern the text, not whether a review sufficed or a work item may close (core §0.5, *Text, not process*).

@@ -2,11 +2,44 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/).
 
-## [1.0.0] — amended 2026-08-04
+## [1.0.0] — amended 2026-08-17
 
 **1.0.0 is pre-release.** The amendments below land in 1.0.0 in place, with no version bump, because 1.0.0 has not been declared stable. Core §9's semantic-versioning rules start binding at that declaration. Under §9 as written, several of these changes would be **major**: §5.4.6 adds a mandatory rule, §4.13.3 tightens one, and §5.9.6 and §5.9.8 are withdrawn.
 
 Each amendment comes from a field report filed against 1.0.0 by a real consumer session, tracked as [STY-71](https://linear.app/inveneprod/issue/STY-71) and its children.
+
+### Amended — guidance with judgment, not a binary gate (STY-87)
+
+ITWS is a general guideline. Agents loading it were spending a rewrite session clearing a pass/fail gate. Two posture changes, and no individual style rule is reclassified.
+
+**What `M` means.** Every rule keeps its current `C` value. The binary statement in core §0.5 is gone. The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then leave the passage and report the departure. The owner of the document has final say. `legend.md` now states this force for `M`, `R`, and `P`. The ontology Conformance delta no longer says "binary textual conformance".
+
+A unit conforms when every applicable `M` rule was applied or a departure from it was reported. The word stays. Its gate meaning does not.
+
+**Boundary narrowed to workflow events (review finding).** The `conforms` definition lets a reported departure change the result, and that report lives in the session's coverage statement, not in the unit. STY-81's boundary sentence ("None conditions a result on an event outside the text") forbade that. **Resolved by narrowing the boundary, not by requiring the departure inside the unit.** The boundary now bars conditioning on a workflow event: a review, an approval, or a lifecycle transition. A reported departure is the writer's account of the text, named in the session's coverage statement (§8 obligation 5). STY-81 stays closed: no rule records review, approval, or lifecycle state; none of those events changes the result; the subject-versus-passage test is unchanged. `AGENTS.md` and `README.md` restatements of the boundary follow. STY-81's CHANGELOG entry is left as the historical record of what that change closed.
+
+**Duplicated agent-scope lead merged (review finding).** The *Owner has final say* paragraph no longer ends "An agent applying ITWS governs the text and reports. The owner judges." That statement now appears once, in the *Text, not process* block, with that block's specific prohibitions intact.
+
+**Load-set figures updated (review finding).** `README.md` and `AGENTS.md` stated the pre-STY-87 22,000 / 22,900–26,000 range. Both now state the measured range. `SKILL.md` carried the same stale range and was updated with them.
+
+**The departure loop (practice, not a rule).** A reported departure carries a strong encouragement — never a requirement — to file an issue against the specification repository's issue tracker, recording how, when, and why applying the rule would have worsened the passage. This sits in core §0.5 prose, `AGENTS.md`, and `skills/itws-rewrite/SKILL.md`. It carries no rule ID and no class marker. Filing is an event outside the document; §4.13.14 was withdrawn for that reason, and this change does not put the same event back in a rule table.
+
+**The review clause leaves the AI disclosure.** The disclosure keeps its provenance note. The review half goes.
+
+- **Amended §4.3.4 (`M`).** Any value other than `none` carries the provenance note. The scope-and-review note is gone. `C` is unchanged.
+- **Amended core §0.5.** The form is `<value> — <what the tooling did>`. The `reviewed by` clause, the `not yet reviewed` line, and the example's review clause are gone.
+- **Amended `data-table` Title-sheet guidance.** Several tools still list each contribution in order. The note no longer ends with human review status.
+- **Amended `AGENTS.md` and `SKILL.md`.** Consumer step 5 no longer writes `not yet reviewed`. Core §8 obligation 2 still bars inventing a reviewer.
+
+**§8 and §9.** A partial check names what it evaluated and what it did not; it does not stand in for applying the load set. Obligation 5 names coverage and reported departures; it no longer frames a self-check as a certification. §9 major still turns on a change that can make a unit that conformed under the previous edition no longer conform under this one, with "conforms" now meaning applied-with-departures-reported. Patch no longer says "no change to conformance".
+
+**Amended §4.13.16.** A `corpus-at-rest` carrier that omits records leaves the comment text as the governed surface. The row no longer says conformance "rests on" that text as a test.
+
+No `C` value moved. No rule ID was reused or renumbered. No version string changed.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,254. Five profiles sit over the 25,000 target: `maintenance-comment` 26,346, `task` 25,968, `data-table` 25,501, `epic` 25,202, `subtask` 25,098. Nothing was cut; the §0.5 rewrite, the departure-loop paragraph, and the workflow-event clarification are new normative prose. Cost of this review round against the prior STY-87 measurement: base +35 (23,219 → 23,254). The band is a target, not a limit.
+
+Affects: core §0.5, §4.3.4, §8, §9; `legend.md` class definitions; `ontology.md` Conformance delta; `data-table` (Title-sheet disclosure guidance); `maintenance-comment` (§4.13.16 wording). `AGENTS.md`, `SKILL.md`, `README.md`, `tools/itws_literal.py`, and `tools/README.md` follow. Reader assumptions: unchanged.
 
 ### Amended — text is governed, process is not (STY-81, closing STY-68 and STY-70)
 

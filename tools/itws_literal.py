@@ -3,8 +3,8 @@
 
 This tool is NOT part of ITWS. No rule refers to it, it is outside the load set,
 and deleting it changes no obligation. It decides no conformance question: ITWS
-§0.5 keeps conformance binary and textual, and a clean run here is a coverage
-statement rather than a result.
+§0.5 keeps the result textual — applied `M` rules plus reported departures — and
+a clean run here is a coverage statement rather than a result.
 
 Load the full seven-file rule set first, always. This tool replaces *reading for*
 the literal rules. It never replaces loading them.
@@ -523,8 +523,8 @@ def check_declarations(path: Path, text: str, lines: list[Line],
         elif value != "none" and not note.strip().startswith("—"):
             findings.append(Finding(
                 str(path), 1, "4.3.4", EVALUATED["4.3.4"],
-                f"`{value}` carries no scope-and-review note "
-                "(`<value> — <what the tooling did>; reviewed by <who>`)",
+                f"`{value}` carries no provenance note "
+                "(`<value> — <what the tooling did>`)",
             ))
     return findings
 

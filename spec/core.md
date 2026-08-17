@@ -64,22 +64,28 @@ Profile overlays grant **genre knowledge only** — how to read the document typ
 
 ### 0.5 Conformance
 
-**Binary.** A governed unit conforms, or does not, for **one declared version + one declared profile**. That unit conforms when it satisfies every applicable mandatory (`M`) rule and every required profile slot. Reviews, approvals, reader tests, and accepted deviations do not change this result.
+**Guidance, applied with judgment.** Rules are guidance a writer applies to a governed unit for **one declared version + one declared profile**. An `M` rule is the **strong default**: apply it unless applying it makes the passage worse. Where applying it would make the passage worse, leave the passage and **report the departure**.
 
-**Text, not process (ITWS-original boundary).** The declaration block below is the **only** process artifact ITWS defines. No other rule requires a governed unit to record its own review, approval, or lifecycle state. None conditions conformance on an event outside the text.
+A unit **conforms** when every applicable `M` rule was applied or a departure from it was reported. Reviews, approvals, and reader tests do not change this result.
+
+**Owner has final say.** The owner of the document decides. The specification defers to that owner. A rule that does not improve a given passage is reported and left. Never force the passage to satisfy the rule.
+
+**Text, not process (ITWS-original boundary).** The declaration block below is the **only** process artifact ITWS defines. No rule requires a governed unit to record its own review, approval, or lifecycle state. None conditions a result on a workflow event: a review, an approval, or a lifecycle transition. A reported departure is the writer's account of the text, not a workflow event. The session's coverage statement names it (§8 obligation 5).
 
 Where a process state is the document's **subject** it is exact content under §5.4. So: the decision a `decision-record` records · an `incident`'s resolution state · an `investigation-log`'s hypothesis state · a `data-table` status column. Test: does the state belong to the thing the document is about, or to the document's own passage through a workflow? First = content. Second = outside ITWS.
 
-An agent applying ITWS governs the text. That agent ! decide whether a review sufficed, whether a work item may close, or what a team must retain. The agent reports. The owner judges.
+An agent applying ITWS governs the text and reports. The owner judges. That agent ! decide whether a review sufficed, whether a work item may close, or what a team must retain.
+
+**Departures and the specification (practice, not a rule).** A reported departure carries a strong encouragement to file an issue against the specification repository's issue tracker. Filing is never required. The issue records how, when, and why applying the rule would have worsened the passage. Filing is an event outside the document. The paragraph carries no rule ID and no class marker. No finding cites it.
 
 **Applicability.** A core rule applies to all thirteen profiles. A profile file's rules apply to that profile only. Construct triggers still gate: an equation rule is irrelevant to a document with no equation.
 
-**Required declaration.** Every conforming unit declares three fields:
+**Required declaration.** Every governed unit declares three fields:
 
 ```text
 ITWS version: 1.0.0
 Profile: design-rfc
-AI disclosure: assisted — drafted the rollout section and rewrote the summary; reviewed by the platform pod
+AI disclosure: assisted — drafted the rollout section and rewrote the summary
 ```
 
 Markdown document → front matter. Hosted comment set → declaration carrier. Tabular document → Title sheet.
@@ -96,13 +102,11 @@ Declaration fields are metadata, not governed prose. §3 sentence rules do not a
 | `assisted` | generative AI tooling contributed part of the content |
 | `generated` | generative AI tooling produced the substantial majority of the content |
 
-Form: `<value>` alone for `none`; otherwise `<value> — <what the tooling did>; reviewed by <who>`. The note states scope and human review, because a bare value tells the reader nothing they can act on (P5, P6).
+Form: `<value>` alone for `none`. Otherwise `<value> — <what the tooling did>`. The note states what the tooling contributed. A bare value tells the reader nothing they can act on (P5, P6).
 
-Where review has not happened, say so — `not yet reviewed` — rather than naming a reviewer. Never record a review that did not occur.
+**The disclosure records provenance.** Authorship does not change how the rules apply. A `generated` unit and an `assisted` unit take the same treatment: apply each `M` rule or report the departure. The field exists so a reader knows how the text came to exist.
 
-**The disclosure records provenance. It does not affect the conformance result.** Conformance is a property of the text (§0.5, opening). A `generated` unit satisfying every applicable mandatory rule conforms. An `assisted` unit that does not, does not. The field exists so a reader knows how the text came to exist, not so they can discount it.
-
-A partial check may name what it evaluated. It **shall not** claim full conformance. Cherry-picking rules establishes nothing.
+A partial check names what it evaluated and what it did not. Evaluating a subset of rules does not stand in for applying the load set.
 
 ### 0.6 Meta-vocabulary
 
@@ -425,7 +429,7 @@ Main point may be a requirement, proposal, decision, instruction goal, explanato
 | 4.3.1 | M | L | governed unit declares exactly one canonical §0.1 profile ID on its declaration surface (front matter, or the carrier) |
 | 4.3.2 | M | J | ! independently perform another profile's primary job; required subordinate content stays inside the declared profile |
 | 4.3.3 | M | L | every required slot for the profile is present, in the profile's stated order |
-| 4.3.4 | M | L | a governed unit declares one `AI disclosure` value from the §0.5 closed set, on the same surface as its other declarations; any value other than `none` carries the scope-and-review note |
+| 4.3.4 | M | L | a governed unit declares one `AI disclosure` value from the §0.5 closed set, on the same surface as its other declarations; any value other than `none` carries the provenance note |
 | 4.3.5 | M | L | a governed unit declares the ITWS version it is written against, on the same surface as its other declarations |
 
 ### 4.4 Applying the skeleton
@@ -742,7 +746,7 @@ A statement beyond an established boundary is a different, weaker statement.
 
 **No machine decides conformance.** ITWS has no validator. A reader or agent checks the text against the rules above and states what it checked. There is no `pass` result.
 
-**What a checker may establish.** The `D` column marks how much of a rule a machine settles ([legend.md](legend.md)). A tool may decide an `L` rule and locate every candidate for an `S` rule. The same tool establishes nothing about a `J` rule, and nothing about conformance at any decidability — §0.5 keeps that binary and textual. A clean run is a **coverage statement**, not a result. Three constraints keep a checker from becoming an authority. Its output names the rules it did **not** evaluate. No rule refers to a tool, so deleting it changes no obligation. A checker replaces **reading for** the literal rules, never loading them.
+**What a checker may establish.** The `D` column marks how much of a rule a machine settles ([legend.md](legend.md)). A tool may decide an `L` rule and locate every candidate for an `S` rule. The same tool establishes nothing about a `J` rule, and nothing about conformance at any decidability. §0.5 keeps the result textual: applied `M` rules plus reported departures. A clean run is a **coverage statement**, not a result. Three constraints keep a checker from becoming an authority. Its output names the rules it did **not** evaluate. No rule refers to a tool, so deleting it changes no obligation. A checker replaces **reading for** the literal rules, never loading them.
 
 **Self-check obligations.** After writing or rewriting a governed unit:
 
@@ -750,7 +754,7 @@ A statement beyond an established boundary is a different, weaker statement.
 2. **Report, never invent.** A missing fact is reported as missing. Never generate a value, citation, timestamp, owner, or measurement to fill a slot. This obligation outranks completing the draft.
 3. **Continue around blocks.** An unresolved span does not stop work on independent spans. Return the best safe draft plus an explicit missing-fact list.
 4. **Check the scan path last.** Read title + headings + opening sentences alone (§4.12). Confirm the profile's shallow-model outcome survives, with its status, strength, and material boundaries intact.
-5. **State coverage honestly.** Say which rules you checked and which you did not. There is no `pass` result to report — a clean self-check is a disclosed-coverage statement, not a certification.
+5. **State coverage honestly.** Say which rules you checked and which you did not. Name every reported departure. A self-check is a disclosed-coverage statement plus those departures.
 6. **Spend judgment where judgment is needed.** Decide `L` rules by match or count, not by reading. Treat an `S` list as a finder, not a verdict. Attention saved goes to the `J` rules — the ones a reader most needs help with, and the ones no tool reaches.
 
 **Precedence when repairing.** §1.3 governs. Exact content is never edited to satisfy a style rule; repair the surrounding text and report the local limitation instead.
@@ -763,9 +767,9 @@ A statement beyond an established boundary is a different, weaker statement.
 
 Semantic Versioning.
 
-- **major** — adds or tightens a mandatory rule; upward reclassification; wider profile applicability; adding, removing, or repurposing a profile ID; removing a reader-baseline item. Any change that can make a conforming document non-conforming.
+- **major** — adds or tightens a mandatory rule; upward reclassification; wider profile applicability; adding, removing, or repurposing a profile ID; removing a reader-baseline item. Any change that can make a unit that conformed under the previous edition no longer conform under this one. A unit conforms when every applicable `M` rule was applied or a departure from it was reported (§0.5).
 - **minor** — adds a recommended or permitted rule; relaxation; downward reclassification; narrower applicability; adding a baseline item, glossary entry, or genre-knowledge item.
-- **patch** — wording, examples, typography; no change to conformance, applicability, or reader assumptions.
+- **patch** — wording, examples, typography; no change to which rules apply, to their class, or to reader assumptions.
 
 **Permanent rule IDs.** Assigned once, never reused — including across profiles. Changed wording or applicability does not give a rule a new ID. A withdrawn ID stays reserved and is never reassigned.
 

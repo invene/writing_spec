@@ -8,7 +8,7 @@ and deleting the directory changes no obligation. Read `spec/` for the rules and
 
 ITWS 1.0.0 removed the 0.x tool suite because agents used the tools to *navigate*
 the specification instead of loading it, then applied only the retrieved subset of
-rules. That failure is what the roughly 22,000-token load set exists to prevent:
+rules. That failure is what the roughly 23,000-token load set exists to prevent:
 loading the whole specification has to stay affordable, so that nothing competes
 with loading it.
 
@@ -44,7 +44,8 @@ moved to a profile file is found there; a rule whose ID was withdrawn stops the
 run with a message rather than screening silently against nothing.
 
 **What a run does not tell you.** It decides no conformance question — ITWS §0.5
-keeps that binary and textual, and §8 states what a checker may establish. Every
+keeps the result textual (applied `M` rules plus reported departures), and §8
+states what a checker may establish. Every
 run ends with its own coverage statement naming what it did not evaluate, which is
 every rule marked `D = J` and most of what a reader actually has to judge. A clean
 run means the literal rules are clean. It means nothing else.

@@ -44,7 +44,7 @@ An empty required Title field states `None` or `Not applicable` with a reason (c
 
 **Carrier conventions** (no rule ID; core §0.2 keeps the carrier outside conformance). `.xlsx` + hosted sheet store their own sheet names. CSV set stores none → names each sheet in its filename: `<workbook>-<sheet>.csv` · `-title.csv` + `-glossary.csv` reserved · every other suffix = a data sheet. [decisions/0002](../../decisions/0002-csv-set-sheet-identity.md), `proposed`.
 
-**One disclosure per workbook** (no rule ID; reads §4.14.1, extends nothing). One `AI disclosure` on the Title sheet covers the unit; ! per cell, row, column, or sheet. A cell edit updates that note like any other edit (core §4.3.4). Several tools → note lists each in order, ending with the human review status. [decisions/0001](../../decisions/0001-tabular-ai-disclosure-scope.md), `proposed`.
+**One disclosure per workbook** (no rule ID; reads §4.14.1, extends nothing). One `AI disclosure` on the Title sheet covers the unit; ! per cell, row, column, or sheet. A cell edit updates that note like any other edit (core §4.3.4). Several tools → note lists each in order. [decisions/0001](../../decisions/0001-tabular-ai-disclosure-scope.md), `proposed`.
 
 ## Boundary locations (core §7.1)
 

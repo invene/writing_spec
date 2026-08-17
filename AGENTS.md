@@ -41,16 +41,25 @@ Reading compressed input biases output. Check your draft against this before ret
 
 **You govern the text. You do not arbitrate your user's process.**
 
-ITWS defines exactly one process artifact: the §0.5 declaration block — ITWS version, profile, AI disclosure. Nothing else in the specification records review state, approval state, or lifecycle position, and no rule turns on an event outside the document (core §0.5, *Text, not process*).
+ITWS defines exactly one process artifact: the §0.5 declaration block — ITWS version, profile, AI disclosure. The disclosure records provenance, not review. No rule records review state, approval state, or lifecycle position, and no rule turns on a workflow event: a review, an approval, or a lifecycle transition (core §0.5, *Text, not process*).
 
 So, in any session:
 
 - Do not judge whether a review was sufficient, whether a work item may close, or what a team must retain.
 - Do not add an approval, sign-off, or lifecycle field a profile does not ask for.
-- Where the user states that a review happened, record their statement and attribute it to them. You may not overrule an owner's account of their own review, and you may not invent a reviewer to fill the slot (core §8, obligation 2).
+- You may not invent a reviewer (core §8, obligation 2). The `AI disclosure` records provenance only; it carries no review-state field.
+- Where the user states that a review happened, attribute that statement to them in the session report. You may not overrule an owner's account of their own review.
 - Where a process state is the document's **subject** — the decision a `decision-record` records, the resolution state an `incident` reports — it is exact content. Govern it as content.
 
 Report what you did. The owner judges it.
+
+---
+
+## The departure loop (both session types)
+
+An `M` rule is the strong default. Apply it unless applying it makes the passage worse. Where it would make the passage worse, leave the passage and report the departure. The owner of the document has final say.
+
+A reported departure carries a strong encouragement to file an issue against the specification repository's issue tracker. Filing is never required. The issue should record how, when, and why applying the rule would have worsened the passage. Filing is an event outside the document. The encouragement is practice, not a rule: it carries no rule ID and no class marker.
 
 ---
 
@@ -86,6 +95,8 @@ Note the declared ITWS version. A document is checked against **its** declared v
 
 Work rule by rule, by ID. Where two applicable rules collide, use the core §1.3 precedence order — never resolve a collision ad hoc.
 
+An `M` rule is the strong default: apply it unless applying it makes the passage worse. Where it would make the passage worse, leave the passage and report the departure. The owner of the document has final say.
+
 Exact content (claims, requirements, interfaces, invariants, procedure steps, measurements) is never edited to satisfy a style rule. Repair the surrounding text and report the local limitation.
 
 ### 4. Self-check
@@ -98,9 +109,9 @@ There is no `pass` result to report. Before returning:
 4. **Walk the scan path.** Read title + headings + opening sentences alone (core §4.12). Confirm the profile's shallow-model outcome survives with its status, strength, and material boundaries intact.
 5. **Set the AI disclosure.** You are generative AI tooling. If you contributed any content, the `AI disclosure` field is at least `assisted` (core §0.5, §4.3.4). Never leave a stale `none` on a document you edited, and never downgrade an existing value.
 
-   State what you did — which sections you drafted or rewrote. For review, write `not yet reviewed` unless the user has told you a review happened. Naming a reviewer you cannot verify violates obligation 2 above; if the document needs one, put it on the missing-fact list.
+   State what you did — which sections you drafted or rewrote. Do not invent a reviewer (obligation 2). The disclosure records provenance only.
 
-6. **State coverage.** Say which rules you checked and which you did not.
+6. **State coverage.** Say which rules you checked and which you did not. Name every reported departure.
 
 ### 5. Return
 
@@ -108,7 +119,7 @@ The rewritten document, the missing-fact list, and the findings with rule IDs. S
 
 ### 6. When the unit of work is a corpus
 
-Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 22,900–26,000 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
+Steps 1 through 5 describe one session over one document. A corpus does not fit in one context — the load set alone runs 23,254–26,346 tokens — so the work becomes many sessions, and four things change. This is practice, not obligation: no conformance question turns on anything in this subsection.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its own diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -116,7 +127,7 @@ Steps 1 through 5 describe one session over one document. A corpus does not fit 
 
 **Bound the repair loop.** Repairs introduce findings — shortening a sentence produces §3.10.2 contrast reframes and §3.6.2 bare openers that were not there before. A healthy loop drops sharply and converges. A round that trades one violation for another is not progress: stop, and finish by hand.
 
-**Say what the disclosure records when several tools contribute.** Where one model drafted, a second repaired, and a person accepted the result, the §0.5 note lists each contribution in order and ends with the human review status. Where that person accepted the work without reading it line by line, say that — §0.5 bars recording a review that did not happen, and it does not bar recording a qualified one.
+**Say what the disclosure records when several tools contribute.** Where one model drafted, a second repaired, and a person accepted the result, the §0.5 note lists each contribution in order.
 
 Before converting a corpus, consider auditing it first. A read-only pass that records conflicts and gaps, editing nothing, surfaces most of the defects at a fraction of the cost, and it tells you whether the rewrite is worth doing at all. This is practice, not a rule: whether an audit happened is an event outside the document, so no rule turns on it.
 
@@ -126,9 +137,9 @@ Before converting a corpus, consider auditing it first. A read-only pass that re
 
 ### The design constraint: recall over restatement
 
-**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 22,900–26,000 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
+**The load set must stay loadable in one context window alongside the document being rewritten.** It currently runs 23,254–26,346 tokens depending on the profile, and the working band is **15,000–25,000**. A specification nobody can afford to load is not enforced.
 
-The band is a **target, not a limit**. Nothing fails conformance by exceeding it, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
+The band is a **target, not a limit**. Exceeding it fails no obligation, no change is blocked by exceeding it, and a change that earns its tokens is worth making. What the band asks for is that you notice: measure after a substantive edit, and say in the `CHANGELOG` entry what the change cost and what you cut. A profile drifting over needs a decision eventually; it does not need one today.
 
 The constraint is met by **relying on model recall**, not by writing tersely. ITWS is assembled from standards a competent model already knows — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, IPCC calibrated uncertainty. `spec/ontology.md` names each one and marks it `required` or `optional`. Core does not re-teach any of them. **Core states only where ITWS differs.**
 

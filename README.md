@@ -4,7 +4,7 @@
 
 ITWS gives a working technical reader a **correct shallow model at low reading cost**, while the main text stays complete for the document's declared job and exact detail stays reachable. Conformance does not depend on who or what wrote the text.
 
-One shared core plus thirteen document profiles. A governed unit declares one profile and satisfies the core plus that profile.
+One shared core plus thirteen document profiles. A governed unit declares one profile and applies the core plus that profile.
 
 ## Breaking change in 1.0.0
 
@@ -44,21 +44,23 @@ Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidabili
 
 ## Using it
 
-Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs about 22,000 tokens.
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,254–26,346 tokens depending on the profile.
 
-A conforming document declares:
+The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then report the departure. The owner of the document has final say.
+
+A governed unit declares:
 
 ```text
 ITWS version: 1.0.0
 Profile: design-rfc
-AI disclosure: assisted — drafted the rollout section; reviewed by the platform pod
+AI disclosure: assisted — drafted the rollout section
 ```
 
-The `AI disclosure` field is `none`, `assisted`, or `generated`. It records provenance for transparency; it never affects whether the document conforms.
+The `AI disclosure` field is `none`, `assisted`, or `generated`. It records provenance for transparency; it never affects how the rules apply.
 
-Three obligations carry across every review: cite a rule ID for every finding, report a missing fact instead of generating one, and continue around unresolved spans — returning the best safe draft plus a missing-fact list.
+Three obligations carry across every session: cite a rule ID for every finding, report a missing fact instead of generating one, and continue around unresolved spans — returning the best safe draft plus a missing-fact list.
 
-**ITWS governs text, not process.** The declaration block above is the only process artifact the specification defines. No rule records review state, approval state, or lifecycle position, and none turns on an event outside the document.
+**ITWS governs text, not process.** The declaration block above is the only process artifact the specification defines. The disclosure records provenance, not review. No rule records review state, approval state, or lifecycle position, and none turns on a workflow event: a review, an approval, or a lifecycle transition.
 
 [AGENTS.md](AGENTS.md) has the full sequence.
 

@@ -102,7 +102,7 @@ Field names are **fixed**. No rename, no merge, no section map. An empty require
 | 4.13.12 | M | S | a `converted` record's base = the boundary's pre-conversion state. In a conversion `Change kind` is constant and carries no editorial signal; the base is a version boundary rather than a maintenance edit. |
 | 4.13.13 | M | J | a `converted` record for a comment with no information delta states the empty delta and records it as a §4.13.6 finding. Conversion ! compel the comment's removal — the finding goes to the owner. |
 | 4.13.15 | P | J | one carrier's declarations may cover a **declaration boundary** — a repository, package, or directory tree — rather than one host file |
-| 4.13.16 | M | L | a `change-set` carrier carries one `Comment record` per governed comment. A `corpus-at-rest` carrier may omit the records; conformance then rests on the comment text alone, which core §0.5 already makes the test. |
+| 4.13.16 | M | L | a `change-set` carrier carries one `Comment record` per governed comment. A `corpus-at-rest` carrier may omit the records; the comment text alone is then the governed surface, which core §0.5 already states. |
 | 4.13.17 | M | L | every anchor in a carrier resolves (§4.13.10) |
 
 **§4.13.14 is withdrawn and its ID is reserved.** It recommended a read-only audit before converting. Whether an audit happened is an event outside the document, and core §0.5 keeps ITWS on the text. The practice is sound and now sits in `AGENTS.md` as practice, carrying no class marker for an agent to enforce.

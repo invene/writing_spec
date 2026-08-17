@@ -30,8 +30,8 @@ Rules appear in tables:
 
 - **ID** — permanent rule identifier. Cite this in every finding: "ITWS §2.1.1". IDs are never reused or renumbered.
 - **C** — class, and the rule's normative force:
-  - `M` — **mandatory**. Reads as *shall* / *shall not*. Violation = non-conformance.
-  - `R` — **recommended**. Reads as *should* / *should not*. Deviation is not non-conformance.
+  - `M` — **mandatory**. The strong default. Reads as *shall* / *shall not*. Apply unless applying it makes the passage worse. Then leave the passage and report the departure (core §0.5).
+  - `R` — **recommended**. Reads as *should* / *should not*. Skip where it does not help. Skipping is not an `M` departure.
   - `P` — **permitted**. Reads as *may*. Creates no requirement.
 - **D** — decidability: how much of the rule a machine settles without reading for meaning.
   - `L` — **literal**. A match, a count, or a closed-set test settles it. Reading for an `L` rule is unreliable: a closed list of nineteen prohibited words is not something prose review catches.
