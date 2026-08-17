@@ -1,6 +1,6 @@
 # ITWS glossary
 
-**ITWS version:** 1.0.0 · **Status:** normative, living · 24 admitted entries
+**ITWS version:** 1.0 · **Status:** normative, living · 24 admitted entries
 
 Canonical meanings for terms that recur across governed documents.
 

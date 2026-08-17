@@ -1,6 +1,6 @@
 # ITWS legend — how to read this specification
 
-**ITWS version:** 1.0.0
+**ITWS version:** 1.0
 
 Load this file first. It fixes the notation used by every other ITWS file.
 

@@ -1,6 +1,6 @@
 # ITWS core
 
-**ITWS version:** 1.0.0 · **Status:** normative
+**ITWS version:** 1.0 · **Status:** normative
 
 Shared core. Applies to every profile unless a rule says otherwise. Read [legend.md](legend.md) first — it fixes the `ID | C | Rule` notation and the voice fence.
 
@@ -88,14 +88,14 @@ An agent applying ITWS governs the text and reports. The owner judges. That agen
 **Required declaration.** Every governed unit declares three fields:
 
 ```text
-ITWS version: 1.0.0
+ITWS version: 1.0.<commit-hash>
 Profile: design-rfc
 AI disclosure: assisted — drafted the rollout section and rewrote the summary
 ```
 
 Markdown document → front matter. Hosted comment set → declaration carrier. Tabular document → Title sheet.
 
-A unit is checked against **its declared version**, not the newest one.
+A unit is checked against **its declared version**, not the newest one. The field names a §9 release tag.
 
 Declaration fields are metadata, not governed prose. §3 sentence rules do not apply to them.
 
@@ -435,7 +435,7 @@ Main point may be a requirement, proposal, decision, instruction goal, explanato
 | 4.3.2 | M | J | ! independently perform another profile's primary job; required subordinate content stays inside the declared profile |
 | 4.3.3 | M | L | every required slot for the profile is present, in the profile's stated order |
 | 4.3.4 | M | L | a governed unit declares one `AI disclosure` value from the §0.5 closed set, on the same surface as its other declarations; any value other than `none` carries the provenance note |
-| 4.3.5 | M | L | a governed unit declares the ITWS version it is written against, on the same surface as its other declarations |
+| 4.3.5 | M | L | a governed unit declares the ITWS version it is checked against, on the same surface as its other declarations |
 
 ### 4.4 Applying the skeleton
 
@@ -782,11 +782,20 @@ A statement beyond an established boundary is a different, weaker statement.
 
 ## 9. Versioning
 
-Semantic Versioning.
+Release refs are commit-addressed. Tag form on the 1.0 line: `1.0.<commit-hash>`. Tag form after 1.0: `<major>.<minor>.<commit-hash>`. Third field = git object name of the tagged commit. No patch counter. The branch is the moving edge. Any merged change set may be tagged.
+
+Spec files, profile files, and `README.md` declare the **line** (`1.0`, then `1.1`, `2.0`, …). They never declare a commit hash. A hash does not exist until after the commit that would write it.
+
+A governed unit's §0.5 `ITWS version` names the release tag it was checked against. A reader retrieves that rule set from the specification repository by checking out the named tag or commit. Copying a spec file's line declaration, or a plain `1.0.0`, is not a pin. Documents that declare `1.0.0` are the accepted casualty of this scheme.
+
+A hash-addressed ref does not sort. Two releases cannot be ordered by their names alone without the repository.
 
 - **major** — adds or tightens a mandatory rule; upward reclassification; wider profile applicability; adding, removing, or repurposing a profile ID; removing a reader-baseline item. Any change that can make a unit that conformed under the previous edition no longer conform under this one. A unit conforms when every applicable `M` rule was applied or a departure from it was reported (§0.5).
 - **minor** — adds a recommended or permitted rule; relaxation; downward reclassification; narrower applicability; adding a baseline item, glossary entry, or genre-knowledge item.
-- **patch** — wording, examples, typography; no change to which rules apply, to their class, or to reader assumptions.
+
+Wording, examples, typography: no change to which rules apply, to their class, or to reader assumptions. Line identity stays. A new tag may be cut on the same line.
+
+Until the line is declared stable, every change lands on the current line in place. After that declaration, the declared line moves only on a major or minor change.
 
 **Permanent rule IDs.** Assigned once, never reused — including across profiles. Changed wording or applicability does not give a rule a new ID. A withdrawn ID stays reserved and is never reassigned.
 

@@ -1,6 +1,6 @@
 # ITWS phrase lists
 
-**ITWS version:** 1.0.0 · **Status:** normative
+**ITWS version:** 1.0 · **Status:** normative
 
 Literal strings for the [core.md](core.md) rules that prohibit or replace specific wording. **Match these exactly.** Do not paraphrase, expand, or "modernize" an entry — the string is the rule.
 

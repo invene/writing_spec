@@ -1,6 +1,6 @@
 # ITWS assumed reader
 
-**ITWS version:** 1.0.0 · **Status:** normative
+**ITWS version:** 1.0 · **Status:** normative
 
 Every vocabulary, notation, and explanation rule resolves against this file.
 

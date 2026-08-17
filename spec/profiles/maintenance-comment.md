@@ -1,6 +1,6 @@
 # Profile: `maintenance-comment`
 
-**ITWS version:** 1.0.0 · **Surface:** `hosted-comment-set`
+**ITWS version:** 1.0 · **Surface:** `hosted-comment-set`
 
 Load set: [legend](../legend.md) + [ontology](../ontology.md) + [core](../core.md) + [phrases](../phrases.md) + [glossary](../glossary.md) + [reader](../reader.md) + this file. Load no other profile.
 

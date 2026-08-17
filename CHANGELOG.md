@@ -1,12 +1,61 @@
 # Changelog
 
-Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/).
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: commit-addressed release refs (core §9).
 
 ## [1.0.0] — amended 2026-08-17
 
-**1.0.0 is pre-release.** The amendments below land in 1.0.0 in place, with no version bump, because 1.0.0 has not been declared stable. Core §9's semantic-versioning rules start binding at that declaration. Under §9 as written, several of these changes would be **major**: §5.4.6 adds a mandatory rule, §4.13.3 tightens one, and §5.9.6 and §5.9.8 are withdrawn.
+**1.0.0 is pre-release.** Amendments land in place. Spec files declare the line (`1.0`), not a release tag, and that declaration does not move until the line is declared stable. Under §9 as written, several of these changes would be **major**: §5.4.6 adds a mandatory rule, §4.13.3 tightens one, and §5.9.6 and §5.9.8 are withdrawn.
 
 Each amendment comes from a field report filed against 1.0.0 by a real consumer session, tracked as [STY-71](https://linear.app/inveneprod/issue/STY-71) and its children.
+
+### Changed — commit-addressed release refs (STY-82)
+
+The specification repository publishes 1.0.0 as a branch and carries no git tags. Every consumer instruction that said "pin to 1.0.0" pinned a movable ref. A consuming repository that screens `spec/` at run time in continuous integration takes the entire rule set from that ref. A moved branch head silently changes what that job screens against.
+
+**Release refs are commit-addressed.** `1.0.<commit-hash>` for every release of the 1.0 line. `<major>.<minor>.<commit-hash>` for every release beyond 1.0. The patch number is replaced by the commit hash. There is no counter to maintain. Any merged change set can be tagged mechanically. The branch stays the moving edge of development.
+
+A commit hash cannot be known before the commit exists, so the version a file declares cannot be the hash of the commit that introduces it. Two declarations, two meanings:
+
+1. **Spec files, profile files, and `README.md` declare the line** (`1.0`). They never declare a commit hash.
+2. **A governed unit's §0.5 `ITWS version` names the release tag it was checked against** (`1.0.<commit-hash>`). A reader retrieves that rule set by checking out the named tag from the specification repository, or the commit the third field names. Copying a spec file's line declaration is not a pin.
+
+**Accepted trade.** A plain `1.0.0` is not a pin. Documents that declare it are the accepted casualty. The scheme scales without bookkeeping, at the cost of continuity with the numbers already in circulation. The trade is deliberate and is not engineered away.
+
+**Names do not sort.** A hash-addressed ref has no order. Two releases cannot be ordered by their names alone without the repository. That cost is stated in §9.
+
+**Core §9** no longer opens "Semantic Versioning." Major and minor change categories are kept. The patch category and the numbering are replaced. The permanent-rule-ID paragraph is unchanged.
+
+**`CHANGELOG.md` header** names this scheme and keeps the Keep a Changelog reference.
+
+**`spec/ontology.md`.** Semantic Versioning 2.0.0 is now a fork: it stays in the anchors table for the major and minor categories, and the hash-addressed scheme is a deltas-table row. Keep a Changelog stays followed, as its own anchors row.
+
+**`AGENTS.md`.** Version rules now follow §9. The "bump the version in every file declaring one" instruction is withdrawn. It was false throughout the 1.0.0 alpha, where amendments land in place, and it is false under the new scheme, where spec files declare the line and that declaration moves only on a major or minor change after the line is declared stable. Until that declaration, amendments still land in place. A wording change never moves the line. Every edit still adds a CHANGELOG entry.
+
+No new rule. No rule's `C` value changed. No git tag was created, moved, or deleted. Tagging is an outward-facing act for the owner at publication.
+
+**Reader assumptions.** Unchanged. No §1 or §2 baseline item is added or removed. Retrieval uses version-control and release knowledge already in `reader.md` §1.
+
+No existing rule ID was reused or renumbered. Spec-file headers moved from `1.0.0` to `1.0` because that is the line identity under the scheme, not because §9 moved the line.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,646 (23,290 → 23,646; +356). This is the largest single-change growth of the 1.0.0 amendment session. Eight of sixteen profiles sit over the 25,000 target, three of them newly. The versioning scheme is normative content that every profile carries, and it was not cut to meet the band. The addition is the house scheme in §9, the two declaration answers, the accepted trade, the no-sort cost, and the ontology delta. Header `1.0.0` → `1.0` saved a few characters per file. The band is a target, not a limit.
+
+Three profiles newly sit over 25,000: `research-paper` 25,353 (was 24,996), `role-specification` 25,105 (was 24,748), `technical-report` 25,062 (was 24,706). Five were already over and remain so: `maintenance-comment` 27,822, `task` 26,360, `data-table` 25,892, `epic` 25,594, `subtask` 25,490. Remaining: `investigation-log` 24,614, `feedback-comment` 24,592, `change-request` 24,545, `design-rfc` 24,504, `incident` 24,448, `procedure` 24,384, `decision-record` 24,350, `explanation` 24,231.
+
+Affects: core §9, §0.5 (example and release-tag pointer); `ontology.md` (anchors split, new Versioning delta); every `spec/*.md` and `spec/profiles/*.md` header (`1.0.0` → `1.0`); `README.md`; `AGENTS.md`; `skills/itws-rewrite/SKILL.md`; this file's versioning line. Reader assumptions: unchanged.
+
+**§4.3.5 and §9 now name the same event (review finding).** §4.3.5 said the field names the version the unit is "written against." §9 said it names the release tag the unit was "checked against." Those are different events: a writer may load one ref while drafting and check the result against another. The rule now says "checked against." That is the event `SKILL.md` and §0.5 already use, and it is the event a reader reproduces by retrieving the named tag. `C` and `D` are unchanged. No new rule.
+
+**`README.md` keeps `1.0.0` as a historical name (review finding).** The heading "Breaking change in 1.0.0" and the live instruction "re-check against 1.0.0" read as a current version the scheme cannot produce. The section is now headed as the opening of the 1.0 line, states that 1.0.0 is the name that publication had, and sends a migrating reader to a 1.0 release tag. The identifier stays because that is what the publication was called. This file's `[1.0.0]` headings are unchanged.
+
+**Duplicated "not a pin" sentence merged (review finding).** "Copying a spec file's line declaration is not a pin. A plain `1.0.0` is not a pin." is now one sentence. The accepted-casualty sentence, the no-sort cost, and the hash-cannot-precede-its-commit reason are untouched.
+
+**A further §9 cut left for the owner.** The closing sentence "A governed unit is checked against its **declared** version" restates §0.5. It also now closes the section on the same event §4.3.5 names. Not cut.
+
+No git tag was created, moved, or deleted.
+
+Load-set proxy after this review: base 23,644 (23,646 → 23,644; −2). The merge is the only movement. Eight of sixteen profiles still sit over 25,000: `maintenance-comment` 27,819, `task` 26,358, `data-table` 25,890, `epic` 25,591, `subtask` 25,487, `research-paper` 25,350, `role-specification` 25,103, `technical-report` 25,060. Remaining: `investigation-log` 24,612, `feedback-comment` 24,590, `change-request` 24,542, `design-rfc` 24,502, `incident` 24,446, `procedure` 24,381, `decision-record` 24,348, `explanation` 24,228.
+
+Affects (review): core §4.3.5, §9 (one merged sentence); `README.md` history section. `AGENTS.md`, `SKILL.md`, and `README.md` load-set range follow. Reader assumptions: unchanged.
 
 ### Added — `role-specification` governs hiring role specs (STY-89)
 

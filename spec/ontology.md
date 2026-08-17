@@ -1,6 +1,6 @@
 # ITWS ontology — external standards
 
-**ITWS version:** 1.0.0
+**ITWS version:** 1.0
 
 ITWS is assembled from existing standards. This file names them so the rest of the specification can state **deltas only**.
 
@@ -31,7 +31,8 @@ These standards change on multi-year cycles. A recalled version some years stale
 | ISO/IEC Directives Part 2 · ISO 704 · ISO 10241 | requirements language, precedence discipline, definitions, terminology records | optional | https://www.iso.org/directives-and-policies.html · https://www.iso.org/standard/38109.html |
 | IPCC calibrated uncertainty language | claim-strength calibration mechanism | optional | https://www.ipcc.ch/site/assets/uploads/2017/08/AR5_Uncertainty_Guidance_Note.pdf |
 | Wikipedia, "Signs of AI writing" (WikiProject AI Cleanup) | prohibited vocabulary, formulaic constructions, formatting tells | optional | https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing |
-| Semantic Versioning 2.0.0 · Keep a Changelog 1.1.0 | version and change mechanics | optional | https://semver.org/ · https://keepachangelog.com/ |
+| Semantic Versioning 2.0.0 | major and minor change categories | optional | https://semver.org/ |
+| Keep a Changelog 1.1.0 | change-log format | optional | https://keepachangelog.com/ |
 
 ## Scan-path evidence
 
@@ -58,3 +59,4 @@ Do not resolve these from the source. Core is authoritative.
 | Review artifacts | — | **change-request** (host title + description as one unit) and **feedback-comment** (addressed to a person, about a change, expecting a response) — ITWS-original |
 | Conformance | requirements practice | **guidance applied with judgment** against one declared version + profile; `M` = strong default, departures reported; owner has final say — ITWS-original |
 | Reader | ISO 26514 audience analysis | **one fixed cross-functional software-pod baseline** ([reader.md](reader.md)) — ITWS-original |
+| Versioning | Semantic Versioning 2.0.0 | **commit-addressed refs** (§9): third field = git object name, not a patch counter. Spec files declare the line. A governed unit declares the release tag. Hash-addressed names do not sort |

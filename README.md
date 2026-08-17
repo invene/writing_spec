@@ -1,20 +1,20 @@
 # Invene Technical Writing Specification (ITWS)
 
-**Version 1.0.0** · controlled English for technical documents
+**Version 1.0** · controlled English for technical documents
 
 ITWS gives a working technical reader a **correct shallow model at low reading cost**, while the main text stays complete for the document's declared job and exact detail stays reachable. Conformance does not depend on who or what wrote the text.
 
 One shared core plus sixteen document profiles. A governed unit declares one profile and applies the core plus that profile.
 
-## Breaking change in 1.0.0
+## Breaking change when the 1.0 line opened
 
-1.0.0 replaces the tool-backed 0.10.0-draft tree with a markdown-only specification.
+The first 1.0 publication was named 1.0.0. That identifier is historical: under §9 the line is `1.0` and releases are `1.0.<hash>`. That publication replaced the tool-backed 0.10.0-draft tree with a markdown-only specification.
 
 **Removed:** the `itws` Python package, every `tools/` command, the test suite, the generated navigation catalog under `spec/generated/`, the numbered chapter files, Annexes A–G as separate documents, and the `spec/overlays/` directory.
 
-**Consequence:** there is no machine `pass` / `fail` result. A document is checked by a reader or an agent citing rule IDs. Conformance claims made against 0.10.0-draft do not carry over — re-check against 1.0.0, or keep citing the older version.
+**Consequence:** there is no machine `pass` / `fail` result. A document is checked by a reader or an agent citing rule IDs. Conformance claims made against 0.10.0-draft do not carry over — re-check against a 1.0 release tag, or keep citing the older version.
 
-**Kept:** every permanent rule ID. §2.1.1 in 1.0.0 is the rule §2.1.1 was in 0.10.0-draft. Existing citations remain valid.
+**Kept:** every permanent rule ID. §2.1.1 as it stood in that 1.0.0 publication is the rule §2.1.1 was in 0.10.0-draft. Existing citations remain valid.
 
 ## Layout
 
@@ -45,17 +45,19 @@ Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidabili
 
 ## Using it
 
-Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,290–27,465 tokens depending on the profile.
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,644–27,819 tokens depending on the profile.
 
 The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then report the departure. The owner of the document has final say.
 
-A governed unit declares:
+A governed unit declares the §9 release tag it was checked against:
 
 ```text
-ITWS version: 1.0.0
+ITWS version: 1.0.<commit-hash>
 Profile: design-rfc
 AI disclosure: assisted — drafted the rollout section
 ```
+
+Pin a release tag, not the branch. Spec files on the branch declare the line (`1.0`), which is not a pin. Core §9 states the form and how a reader retrieves the named rule set.
 
 The `AI disclosure` field is `none`, `assisted`, or `generated`. It records provenance for transparency; it never affects how the rules apply.
 

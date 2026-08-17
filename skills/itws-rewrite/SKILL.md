@@ -5,7 +5,7 @@ description: Write, review, or rewrite a document against the Invene Technical W
 
 # Write or rewrite a document against ITWS
 
-ITWS 1.0.0 is a markdown-only specification. There is no validator and no generated catalog. You read the rules, you apply them, and you report what you checked.
+ITWS 1.0 is a markdown-only specification. There is no validator and no generated catalog. You read the rules, you apply them, and you report what you checked.
 
 The specification lives at https://github.com/invene/writing_spec. Work from a checkout; if you are already inside one, the paths below are relative to its root.
 
@@ -26,7 +26,7 @@ spec/profiles/<id>.md   one of: design-rfc decision-record procedure explanation
                         feedback-comment maintenance-comment data-table
 ```
 
-That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,290–27,465 tokens depending on the profile, so it fits alongside the document you are working on.
+That set is the complete applicable rule set. Nothing else needs retrieving, and the whole load runs 23,644–27,819 tokens depending on the profile, so it fits alongside the document you are working on.
 
 Read `spec/legend.md` before anything else. It fixes the `ID | C | Rule` notation, and it states the voice fence described below.
 
@@ -58,7 +58,7 @@ A reported departure carries a strong encouragement to file an issue against the
 
 Read the document first. For each passage, decide its §4.1 chunk purpose and its layer — exact or plain, under the core §1.2 two-layer model. That judgment is yours; nothing decides it for you.
 
-Note the document's declared ITWS version. A document is checked against **its** declared version, not the newest one.
+Note the document's declared ITWS version. A document is checked against **its** declared version, not the newest one. Core §9 defines the pin as a release tag and states how a reader retrieves that rule set.
 
 ## 5. Apply the rules
 
@@ -124,7 +124,7 @@ Spend the attention you save on the `J` rules: §4.13.1, §4.13.6, §4.13.19, §
 
 ## 9. Working on a corpus rather than one document
 
-Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,290–27,465 tokens — so the work becomes many sessions, and four things change.
+Sections 1 through 7 describe one document. A corpus does not fit in one context — the load set alone runs 23,644–27,819 tokens — so the work becomes many sessions, and four things change.
 
 **Verify each session's output, never its report.** A session that reports "all applicable rules were applied and verified" may have inverted a claim in its diff. Check the produced text yourself. A subagent's coverage claim is an input to your coverage statement, not the statement itself.
 
@@ -210,7 +210,7 @@ Each of these has survived a self-check that reported the document clean.
 ## What you must not do
 
 - Do not edit anything under `spec/`. Changing the specification itself is a maintainer session with its own rules and changelog entry; see `AGENTS.md` in the repository.
-- Do not change `CHANGELOG.md` or the declared ITWS version.
+- Do not change `CHANGELOG.md` or the specification's declared line.
 - Do not invent a threshold, a measurement, a source, a locator, an owner, or an acceptance condition. Report it as missing.
 - Do not weaken or widen an exact statement to make a sentence shorter. Core §3.1.4 requires a split; core §5.1.1 forbids the change.
 - Do not report a document as conforming when you did not check the rules that would decide it. Report coverage instead.

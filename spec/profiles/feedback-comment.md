@@ -1,6 +1,6 @@
 # Profile: `feedback-comment`
 
-**ITWS version:** 1.0.0 · **Surface:** `markdown-document` · **Family:** review-time
+**ITWS version:** 1.0 · **Surface:** `markdown-document` · **Family:** review-time
 
 Load set: [legend](../legend.md) + [ontology](../ontology.md) + [core](../core.md) + [phrases](../phrases.md) + [glossary](../glossary.md) + [reader](../reader.md) + this file. Load no other profile.
 
