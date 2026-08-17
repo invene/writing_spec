@@ -1,96 +1,88 @@
-# writing_spec
+# Invene Technical Writing Specification (ITWS)
 
-## For an AI agent
+**Version 1.0** · controlled English for technical documents
 
-You were probably given this repository and a document to rewrite. Read [spec/agent/README.md](spec/agent/README.md) and follow the sequence there. That file is the entry point; nothing else is required reading first.
+ITWS gives a working technical reader a **correct shallow model at low reading cost**, while the main text stays complete for the document's declared job and exact detail stays reachable. Conformance does not depend on who or what wrote the text.
 
-Everything runs from a clone with the Python standard library. There is nothing to install and no network call to make.
+One shared core plus sixteen document profiles. A governed unit declares one profile and applies the core plus that profile.
 
-## Invene Technical Writing Specification (ITWS)
+## Breaking change when the 1.0 line opened
 
-`spec/` contains **ITWS 0.8.0-draft**. ITWS is a controlled-language specification for technical writing.
+The first 1.0 publication was named 1.0.0. That identifier is historical: under §9 the line is `1.0` and releases are `1.0.<hash>`. That publication replaced the tool-backed 0.10.0-draft tree with a markdown-only specification.
 
-The specification combines a shared core with twelve profiles. The profiles cover sustained technical documents, governed work items, and governed code-comment changes.
+**Removed:** the `itws` Python package, every `tools/` command, the test suite, the generated navigation catalog under `spec/generated/`, the numbered chapter files, Annexes A–G as separate documents, and the `spec/overlays/` directory.
 
-The work-item profiles are `epic`, `task`, and `subtask`. The `maintenance-comment` profile governs a comment change set inside a host source file through a JSON declaration carrier; the source code itself stays outside conformance (§0.2.1).
+**Consequence:** there is no machine `pass` / `fail` result. A document is checked by a reader or an agent citing rule IDs. Conformance claims made against 0.10.0-draft do not carry over — re-check against a 1.0 release tag, or keep citing the older version.
 
-Each profile keeps its overlay in its own directory under [spec/overlays/](spec/overlays/). A reader, writer, or tool loads the shared core, the shared annexes, one profile directory, and the shared modules that directory lists. No other overlay is needed.
+**Kept:** every permanent rule ID. §2.1.1 as it stood in that 1.0.0 publication is the rule §2.1.1 was in 0.10.0-draft. Existing citations remain valid.
 
-The base reader is any working member of a software engineering pod. Annex B defines the shared technical baseline, and each overlay defines its own reader conventions.
-
-See [spec/README.md](spec/README.md) for the profile registry, conformance tiers, and contents.
-
-## The application path for a writer
-
-1. Choose a profile from the registry in [spec/README.md](spec/README.md) and a tier no lower than that profile's minimum.
-2. Read Part 1 once. Load the profile's overlay directory and draft from its skeleton.
-3. Generate your checklist and complete the four self-check passes:
-
-   ```text
-   python3 tools/itws_checklist.py \
-     --spec-version 0.8.0-draft \
-     --profile design-rfc \
-     --tier reviewed \
-     --out design-rfc-checklist.md
-   ```
-
-4. Run the linter and read every finding:
-
-   ```text
-   python3 tools/itws_lint.py --input your-document.md
-   ```
-
-5. Validate, and read the state it reports:
-
-   ```text
-   python3 tools/itws_validate.py --input your-document.md
-   ```
-
-A clean linter run is not conformance. Rule 8.2.4 says so, and the validator reports `needs_review` rather than `pass` until a reader has done their part.
-
-For a comment change set, the same path runs through one tool: `python3 tools/itws_comment.py index | scan-path | lint | validate --carrier <set>.json`. The carrier declares the change set, one record per governed comment, and — for machine-proposed comments — the §8.7 proposal record and human disposition.
-
-## The application path for a tool author
-
-The Markdown under `spec/` is authoritative. Everything else derives from it.
-
-| Layer | Where | What it does |
-|---|---|---|
-| Model | `itws/model.py`, `itws/parser.py` | one typed model of the whole specification |
-| Compiler | `itws/compile.py` | writes the deterministic catalog under `spec/generated/agent/` |
-| Catalog | `itws/catalog.py` | rule lookup, search, facets, relation traversal, context packets |
-| Structure | `itws/document.py` | syntactic indexing of a governed document |
-| Comments | `itws/comments/` | the hosted comment-set surface: carrier records, host adapters, extraction |
-| Scaffolds | `itws/analysis.py`, `itws/work.py`, `itws/patch.py` | optional records for agent-authored analysis, plans, and patch guards |
-| Checks | `itws/lint/`, `itws/validate.py` | the repository-local linter and four-state validation |
-
-Regenerate and verify everything with one command:
+## Layout
 
 ```text
-python3 tools/itws_check_all.py
+spec/legend.md          notation and the voice fence — read first
+spec/ontology.md        external standards ITWS borrows from, and where it forks them
+spec/core.md            the shared normative core
+spec/phrases.md         literal prohibited and replacement strings
+spec/glossary.md        canonical admitted terms
+spec/reader.md          what the assumed reader knows
+spec/profiles/*.md      one file per profile
+skills/itws-rewrite/    Claude skill for a consumer session
+decisions/              recorded decisions about the specification
+appendices/             non-normative background, outside the load set
+fixtures/               worked example units, outside the load set
+tools/                  optional, non-normative; outside the load set
+AGENTS.md               working instructions for agent sessions
+CHANGELOG.md            version history
 ```
 
-The individual commands are listed in [spec/README.md](spec/README.md), so a failure can be isolated.
+Every rule carries three markers: an ID, a class (`M`/`R`/`P`), and a decidability (`D`) saying whether a machine settles it — `L` literal, `S` screened, `J` judgment. `D` allocates attention; it changes no rule's force.
 
-## A kickoff prompt you can copy
+`tools/itws_literal.py` screens a corpus for the `L` and `S` rules and reports what it did not evaluate. It decides no conformance question, no rule refers to it, and deleting it changes no obligation.
 
-Give an agent the repository and this message:
+## Profiles
+
+`design-rfc` · `decision-record` · `procedure` · `explanation` · `role-specification` · `incident` · `technical-report` · `research-paper` · `investigation-log` · `epic` · `task` · `subtask` · `change-request` · `feedback-comment` · `maintenance-comment` · `data-table`
+
+## Using it
+
+Load `legend` → `ontology` → `core` → `phrases` → `glossary` → `reader` → **exactly one** profile. That set is the complete applicable rule set; there is nothing else to retrieve. It runs 23,736–27,912 tokens depending on the profile.
+
+The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then report the departure. The owner of the document has final say.
+
+A governed unit declares the §9 release tag it was checked against:
 
 ```text
-Clone or open <repository URL>. Read spec/agent/README.md and follow the
-sequence it describes. Rewrite <document> so it conforms to ITWS.
-
-The intended audience is <audience>, so the profile is probably <profile>.
-If you disagree with that profile, say which one you chose and why.
-
-Cite a rule for every change you propose. If a rewrite would need a fact the
-document does not contain, stop and tell me what is missing instead of
-supplying it. Report the validation state you reach, including
-needs_review or blocked.
+ITWS version: 1.0.<commit-hash>
+Profile: design-rfc
+AI disclosure: assisted — drafted the rollout section
 ```
 
-The same instruction is available as an installable skill in [skills/itws-rewrite/SKILL.md](skills/itws-rewrite/SKILL.md). Both are optional. The entry-point README alone is enough.
+Pin a release tag, not the branch. Spec files on the branch declare the line (`1.0`), which is not a pin.
 
-## Lineage
+The `ITWS version` field takes the release tag name, copied verbatim. In a specification checkout, list the tags (`git tag -l '1.0.*'`) and copy the one you checked against. Do not compute the hash; the tag name is the string.
 
-Annex G records the Research Writing Specification (RWS) 0.1 lineage. This repository does not contain a checkable 0.1 snapshot.
+`python3 tools/itws_version.py` prints that string when HEAD is the tagged commit and the tree is clean. A consuming repository's CI pins the tag and proves the checkout has not floated:
+
+```bash
+python3 tools/itws_version.py --check 1.0.<commit-hash>
+```
+
+This tool lives in the specification repository. A consumer runs it against a specification checkout. Nothing from `tools/` is copied into a consuming repository. No ITWS conformance tooling belongs in a consuming repository (STY-83); this tool is not an exception.
+
+The `AI disclosure` field is `none`, `assisted`, or `generated`. It records provenance for transparency; it never affects how the rules apply.
+
+Three obligations carry across every session: cite a rule ID for every finding, report a missing fact instead of generating one, and continue around unresolved spans — returning the best safe draft plus a missing-fact list.
+
+**ITWS governs text, not process.** The declaration block above is the only process artifact the specification defines. The disclosure records provenance, not review. No rule records review state, approval state, or lifecycle position, and none turns on a workflow event: a review, an approval, or a lifecycle transition.
+
+[AGENTS.md](AGENTS.md) has the full sequence.
+
+## A note on voice
+
+The specification is written in compressed notation for agent reading. **Governed documents are not.** Documents written against ITWS use normal professional English. [spec/legend.md](spec/legend.md) states the fence.
+
+## Where it comes from
+
+ITWS assembles existing standards — ASD-STE100, PlainLanguage.gov, the Google and Microsoft style guides, Diátaxis, ISO/IEC/IEEE 26514, IEC/IEEE 82079-1, RFC 2119, IPCC calibrated uncertainty language, and others. [spec/ontology.md](spec/ontology.md) names each source, says whether you need to recall it, and states exactly where ITWS forks it.
+
+ITWS-original: the two-layer exact/plain model, the term ladder, the scan path, path-agnostic prose, the work-item hierarchy, the maintenance-comment surface, the tabular-document surface, the review-time profiles, and the role-specification profile.
