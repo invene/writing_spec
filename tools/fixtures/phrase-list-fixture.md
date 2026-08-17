@@ -1,6 +1,6 @@
 ITWS version: 1.0.0
 Profile: explanation
-AI disclosure: generated — written as a deliberate violation corpus for tools/itws_literal.py; not yet reviewed
+AI disclosure: generated — written as a deliberate violation corpus for tools/itws_literal.py
 
 # Phrase-list fixture
 

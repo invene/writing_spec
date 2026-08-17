@@ -1,6 +1,6 @@
 ITWS version: 1.0.0
 Profile: decision-record
-AI disclosure: generated — drafted every section from the STY-79 ticket and the ITWS 1.0.0 rule set; not yet reviewed
+AI disclosure: generated — drafted every section from the STY-79 ticket and the ITWS 1.0.0 rule set
 
 # A CSV set names its sheets in its filenames
 

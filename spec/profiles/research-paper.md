@@ -1,6 +1,6 @@
 # Profile: `research-paper`
 
-**ITWS version:** 1.0.0 · **Surface:** `markdown-document` · **Family:** report
+**ITWS version:** 1.0 · **Surface:** `markdown-document` · **Family:** report
 
 Load set: [legend](../legend.md) + [ontology](../ontology.md) + [core](../core.md) + [phrases](../phrases.md) + [glossary](../glossary.md) + [reader](../reader.md) + this file. Load no other profile.
 
@@ -19,6 +19,22 @@ The reader recognizes IMRaD-derived navigation, treats citations as source point
 **This overlay expressly assumes no machine-learning knowledge.** Every ML term, method, benchmark, dataset, metric, convention, or symbol absent from [reader.md](../reader.md) §1–§2 requires admission — including *model*, *training*, *loss*, *gradient*, *embedding*, *transformer*, *attention*, *fine-tuning*, and *inference*. [glossary.md](../glossary.md) supplies canonical wording for many of them; an entry does not make a term assumed.
 
 The overlay also assumes no formal statistics, algebra beyond arithmetic, linear algebra, calculus, optimization, research-community shorthand, venue conventions, or benchmark names.
+
+## Anchors — research sources
+
+Shared with `research-paper`, `technical-report`. Recall `optional`. Every ITWS obligation stays in core, phrases, and this profile's rules.
+
+| Source | ITWS borrows | Recall | Where |
+|---|---|---|---|
+| APA JARS | method, statistical, and result-reporting disclosures | optional | https://apastyle.apa.org/jars |
+| NeurIPS Paper Checklist · ML Reproducibility Checklist | reproducibility and limitations disclosure | optional | https://neurips.cc/public/guides/PaperChecklist |
+| Model Cards · Datasheets for Datasets | artifact, data, and use-context disclosure | optional | https://arxiv.org/abs/1810.03993 · https://arxiv.org/abs/1803.09010 |
+
+IMRaD is this profile only. Recall `optional`.
+
+| Source | ITWS borrows | Recall | Where |
+|---|---|---|---|
+| IMRaD | research section order; results ≠ discussion | optional | https://en.wikipedia.org/wiki/IMRAD |
 
 ## Skeleton
 

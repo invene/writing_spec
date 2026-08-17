@@ -3,8 +3,8 @@
 
 This tool is NOT part of ITWS. No rule refers to it, it is outside the load set,
 and deleting it changes no obligation. It decides no conformance question: ITWS
-§0.5 keeps conformance binary and textual, and a clean run here is a coverage
-statement rather than a result.
+§0.5 keeps the result textual — applied `M` rules plus reported departures — and
+a clean run here is a coverage statement rather than a result.
 
 Load the full seven-file rule set first, always. This tool replaces *reading for*
 the literal rules. It never replaces loading them.
@@ -17,7 +17,7 @@ IDs it evaluates; a rule whose ID no longer has a row in `spec/` stops the run.
 Usage:
     itws_literal.py FILE [FILE ...]        screen a corpus
     itws_literal.py --json FILE            machine-readable findings
-    itws_literal.py --self-test            run the fixture
+    itws_literal.py --self-test            run the fixtures
 
 Exit status is 0 whenever the run completed. A finding is not an error: a person
 decides every screened finding, and the exit code must never read as a verdict.
@@ -26,6 +26,7 @@ decides every screened finding, and the exit code must never read as a verdict.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -523,8 +524,8 @@ def check_declarations(path: Path, text: str, lines: list[Line],
         elif value != "none" and not note.strip().startswith("—"):
             findings.append(Finding(
                 str(path), 1, "4.3.4", EVALUATED["4.3.4"],
-                f"`{value}` carries no scope-and-review note "
-                "(`<value> — <what the tooling did>; reviewed by <who>`)",
+                f"`{value}` carries no provenance note "
+                "(`<value> — <what the tooling did>`)",
             ))
     return findings
 
@@ -624,6 +625,146 @@ def check_section_length(path: Path, lines: list[Line]) -> list[Finding]:
 
 
 # --------------------------------------------------------------------------
+# Comment-hash recipe (maintenance-comment profile)
+#
+# The recipe lives in spec/profiles/maintenance-comment.md. This function is
+# the computation that recipe describes. Expected hashes live in the fixture,
+# not here: a hardcoded table in this file cannot be regenerated from the
+# recipe, and would drift. `--self-test` recomputes every fixture hash.
+# --------------------------------------------------------------------------
+
+_STRING_PREFIXES = ("rf", "fr", "rb", "br", "r", "f", "b", "u")
+_BLOCK_OPENERS = ("/**", "/*", "<!--", '"""', "'''")
+_BLOCK_CLOSERS = ("*/", "-->", '"""', "'''")
+_LINE_INTROS = ("///", "//!", "//", "#", "--")
+_TRIPLE_QUOTES = ('"""', "'''")
+
+REQUIRED_HASH_VECTORS = (
+    "interior-indentation",
+    "block-no-continuation-marker",
+    "line-comments-differing-indents",
+    "blank-interior-line",
+    "non-ascii",
+)
+
+
+def _starts_with_block_opener(body: str) -> bool:
+    if any(body.startswith(op) for op in _BLOCK_OPENERS):
+        return True
+    return any(
+        body.startswith(prefix + quote)
+        for prefix in _STRING_PREFIXES
+        for quote in _TRIPLE_QUOTES
+    )
+
+
+def _strip_opener(line: str) -> str:
+    body = line.lstrip(" \t")
+    for prefix in _STRING_PREFIXES:
+        for quote in _TRIPLE_QUOTES:
+            token = prefix + quote
+            if body.startswith(token):
+                return body[len(token):]
+    for opener in _BLOCK_OPENERS:
+        if body.startswith(opener):
+            return body[len(opener):]
+    return line
+
+
+def _strip_closer(line: str) -> str:
+    trimmed = line.rstrip(" \t")
+    for closer in _BLOCK_CLOSERS:
+        if trimmed.endswith(closer):
+            return trimmed[:-len(closer)]
+    return line
+
+
+def _strip_block_continuation(line: str) -> str:
+    i = 0
+    n = len(line)
+    while i < n and line[i] in " \t":
+        i += 1
+    if i < n and line[i] == "*" and not line[i:].startswith("*/"):
+        i += 1
+        if i < n and line[i] == " ":
+            i += 1
+        return line[i:]
+    return line
+
+
+def _strip_line_introducer(line: str) -> str:
+    i = 0
+    n = len(line)
+    while i < n and line[i] in " \t":
+        i += 1
+    rest = line[i:]
+    for intro in _LINE_INTROS:
+        if rest.startswith(intro):
+            rest = rest[len(intro):]
+            if rest.startswith(" "):
+                rest = rest[1:]
+            return rest
+    return line
+
+
+def normalize_comment(source: str) -> str:
+    """Apply the maintenance-comment hash recipe, steps 1–7."""
+    lines = source.split("\n")
+    first = lines[0].lstrip(" \t") if lines else ""
+    if _starts_with_block_opener(first):
+        lines[0] = _strip_opener(lines[0])
+        lines[-1] = _strip_closer(lines[-1])
+        lines = [_strip_block_continuation(line) for line in lines]
+    else:
+        lines = [_strip_line_introducer(line) for line in lines]
+    lines = [line.rstrip(" \t") for line in lines]
+    return "\n".join(lines).strip()
+
+
+def comment_hash(source: str) -> str:
+    """SHA-256 of the normalized comment, lowercase hex (recipe steps 8–9)."""
+    return hashlib.sha256(normalize_comment(source).encode("utf-8")).hexdigest()
+
+
+def load_hash_vectors(path: Path) -> list[dict]:
+    records = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        records.append(json.loads(line))
+    return records
+
+
+def self_test_comment_hashes(fixture: Path) -> int:
+    records = load_hash_vectors(fixture)
+    ids = [r["id"] for r in records]
+    missing = [v for v in REQUIRED_HASH_VECTORS if v not in ids]
+    print(f"hash fixture: {fixture}")
+    print(f"vectors: {len(records)}")
+    failed = False
+    if missing:
+        print("FAIL — missing required vector: " + ", ".join(missing))
+        failed = True
+    for record in records:
+        computed = comment_hash(record["source"])
+        expected = record["sha256"]
+        if computed != expected:
+            print(
+                f"FAIL — {record['id']}: computed {computed}, "
+                f"fixture {expected}"
+            )
+            failed = True
+        elif comment_hash(record["source"]) != computed:
+            print(f"FAIL — {record['id']}: recipe is not deterministic")
+            failed = True
+    if failed:
+        return 1
+    print("OK — every vector's hash matches the recipe.")
+    return 0
+
+
+# --------------------------------------------------------------------------
 # Driver
 # --------------------------------------------------------------------------
 
@@ -698,7 +839,7 @@ def unmatchable_items(lists: list[PhraseList]) -> list[tuple[str, str, str]]:
     return broken
 
 
-def self_test(spec_dir: Path, fixture: Path) -> int:
+def self_test(spec_dir: Path, fixture: Path, hash_fixture: Path) -> int:
     lists = parse_phrase_lists(spec_dir / "phrases.md")
     findings = screen_file(
         fixture, lists,
@@ -717,13 +858,17 @@ def self_test(spec_dir: Path, fixture: Path) -> int:
           f"/{len(expected)}")
     print(f"list entries that can match their own string: "
           f"{total_items - len(broken)}/{total_items}")
+    phrase_failed = bool(missed or broken)
     if missed:
         print("FAIL — no finding for: " + ", ".join("§" + r for r in missed))
     for rule, item, why in broken:
         print(f"FAIL — §{rule} entry {item!r}: {why}")
-    if missed or broken:
+    if not phrase_failed:
+        print("OK — every screened list produced a finding, and every entry can match.")
+    print()
+    hash_rc = self_test_comment_hashes(hash_fixture)
+    if phrase_failed or hash_rc:
         return 1
-    print("OK — every screened list produced a finding, and every entry can match.")
     return 0
 
 
@@ -741,7 +886,11 @@ def main(argv: list[str]) -> int:
     EVALUATED.update(parse_decidability(spec_dir))
 
     if args.self_test:
-        return self_test(spec_dir, here / "fixtures" / "phrase-list-fixture.md")
+        return self_test(
+            spec_dir,
+            here / "fixtures" / "phrase-list-fixture.md",
+            here / "fixtures" / "comment-hash-vectors.jsonl",
+        )
 
     if not args.files:
         parser.error("name at least one file to screen")

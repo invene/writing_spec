@@ -1,12 +1,14 @@
 ITWS version: 1.0.0
 Profile: decision-record
-AI disclosure: generated — drafted every section from the STY-79 ticket and the ITWS 1.0.0 rule set; not yet reviewed
+AI disclosure: generated — drafted every section from the STY-79 ticket and the ITWS 1.0.0 rule set
 
 # A tabular document declares one AI disclosure for the whole workbook
 
 ## Status
 
 Proposed. No superseding record exists.
+
+The review-status ending this record named for the disclosure note was removed from core §0.5 by STY-87. The one-disclosure-per-workbook decision is unchanged.
 
 Recorded against [STY-79](https://linear.app/inveneprod/issue/STY-79), the ticket
 carrying both questions the spreadsheet-overlay proposal left open. This record
@@ -87,9 +89,10 @@ An edit to any cell is an edit to the workbook. The writer updates the Title
 sheet note to describe what the tooling did. Core §4.3.4 places that obligation
 on every other governed unit already.
 
-Where several tools contributed, the note lists each contribution in order. The
-note then ends with the human review status. `AGENTS.md` already states that form
-for a corpus, and the table surface adopts it unchanged.
+Where several tools contributed, the note lists each contribution in order.
+`AGENTS.md` already states that form for a corpus, and the table surface adopts
+it unchanged. STY-87 removed the review-status ending from the §0.5 form. The
+ordered list remains.
 
 ## Consequences
 

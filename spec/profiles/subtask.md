@@ -1,6 +1,6 @@
 # Profile: `subtask`
 
-**ITWS version:** 1.0.0 · **Surface:** `markdown-document` · **Family:** work-item
+**ITWS version:** 1.0 · **Surface:** `markdown-document` · **Family:** work-item
 
 Load set: [legend](../legend.md) + [ontology](../ontology.md) + [core](../core.md) + [phrases](../phrases.md) + [glossary](../glossary.md) + [reader](../reader.md) + this file. Load no other profile.
 

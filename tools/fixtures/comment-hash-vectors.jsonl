@@ -1,0 +1,9 @@
+# Comment-hash vectors for tools/itws_literal.py --self-test.
+# Each record is source span plus the SHA-256 the recipe in
+# spec/profiles/maintenance-comment.md produces. The tool recomputes
+# every hash from the recipe; it does not carry a copy of these digests.
+{"id": "interior-indentation", "source": "    /**\n     * Retry the handshake\n     *   after a 50 ms pause\n     */", "sha256": "f9894917f85ea61f08c415a7bafeeed457a83c75140320df7310a014969b53cc"}
+{"id": "block-no-continuation-marker", "source": "    /*\n    Hello\n      indented\n    */", "sha256": "a458e9bf7ddc2b086e6c0c577a50d2ddc650b25af1cbbe32cb989682fb87f447"}
+{"id": "line-comments-differing-indents", "source": "    # Hello\n        # world", "sha256": "46e0ea795802f17d0b340983ca7d7068c94d7d9172ee4daea37a1ab1168649ec"}
+{"id": "blank-interior-line", "source": "    # Hello\n    #\n    # world", "sha256": "1ed44dc8048c17985fdcf9fbff0471c9bc3eff9eb06cfa57554ac522bba637d6"}
+{"id": "non-ascii", "source": "    # café in 50 μs", "sha256": "ac36dad184d68a8c5cdc28fd4ffa8a8adca6da4291a8bfe6d8b5a2dcf70158a9"}

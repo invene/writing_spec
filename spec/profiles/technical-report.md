@@ -1,6 +1,6 @@
 # Profile: `technical-report`
 
-**ITWS version:** 1.0.0 · **Surface:** `markdown-document` · **Family:** report
+**ITWS version:** 1.0 · **Surface:** `markdown-document` · **Family:** report
 
 Load set: [legend](../legend.md) + [ontology](../ontology.md) + [core](../core.md) + [phrases](../phrases.md) + [glossary](../glossary.md) + [reader](../reader.md) + this file. Load no other profile.
 
@@ -15,6 +15,16 @@ The scan path lets the assumed reader state **the technical question or outcome,
 ## Reader overlay (genre knowledge only)
 
 The reader recognizes a report separating system or method, evidence, interpretation, limitations, and reproducibility or verification. Navigation only.
+
+## Anchors — research sources
+
+Shared with `research-paper`, `technical-report`. Recall `optional`. Every ITWS obligation stays in core, phrases, and this profile's rules.
+
+| Source | ITWS borrows | Recall | Where |
+|---|---|---|---|
+| APA JARS | method, statistical, and result-reporting disclosures | optional | https://apastyle.apa.org/jars |
+| NeurIPS Paper Checklist · ML Reproducibility Checklist | reproducibility and limitations disclosure | optional | https://neurips.cc/public/guides/PaperChecklist |
+| Model Cards · Datasheets for Datasets | artifact, data, and use-context disclosure | optional | https://arxiv.org/abs/1810.03993 · https://arxiv.org/abs/1803.09010 |
 
 ## Skeleton
 

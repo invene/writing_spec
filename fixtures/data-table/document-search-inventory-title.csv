@@ -2,7 +2,7 @@ Key,Value
 Title,Document search service: technology inventory
 ITWS version,1.0.0
 Profile,data-table
-AI disclosure,generated — every sheet drafted by generative AI tooling as fictional fixture material; not yet reviewed
+AI disclosure,generated — every sheet drafted by generative AI tooling as fictional fixture material
 Built from,"Nothing. Every row is invented for this fixture. No source system, engagement, or measurement stands behind any cell, and no row reports an observation."
 Coverage,"The components a fictional document search service runs, one row per component, plus the approaches it rejected. Rows X1 and X2 record rejected approaches and name no component in use."
 Omitted,"Cost, staffing, delivery dates, security controls, and data classification. The table names components and reasons, and nothing else."

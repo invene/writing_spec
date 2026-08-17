@@ -8,7 +8,7 @@ and deleting the directory changes no obligation. Read `spec/` for the rules and
 
 ITWS 1.0.0 removed the 0.x tool suite because agents used the tools to *navigate*
 the specification instead of loading it, then applied only the retrieved subset of
-rules. That failure is what the roughly 22,000-token load set exists to prevent:
+rules. That failure is what the roughly 23,000-token load set exists to prevent:
 loading the whole specification has to stay affordable, so that nothing competes
 with loading it.
 
@@ -30,7 +30,7 @@ decides each one).
 ```bash
 python3 tools/itws_literal.py docs/**/*.md      # screen a corpus
 python3 tools/itws_literal.py --json FILE       # machine-readable findings
-python3 tools/itws_literal.py --self-test       # run the fixture
+python3 tools/itws_literal.py --self-test       # run the fixtures
 ```
 
 It carries no copy of any rule string. Every phrase list, profile ID, disclosure
@@ -44,7 +44,8 @@ moved to a profile file is found there; a rule whose ID was withdrawn stops the
 run with a message rather than screening silently against nothing.
 
 **What a run does not tell you.** It decides no conformance question — ITWS §0.5
-keeps that binary and textual, and §8 states what a checker may establish. Every
+keeps the result textual (applied `M` rules plus reported departures), and §8
+states what a checker may establish. Every
 run ends with its own coverage statement naming what it did not evaluate, which is
 every rule marked `D = J` and most of what a reader actually has to judge. A clean
 run means the literal rules are clean. It means nothing else.
@@ -63,3 +64,52 @@ That guarantee is per rule ID, not per entry, so one broken entry inside a worki
 list would stay green — which is how `"certainly!"` compiled to a pattern that
 could never match while §2.6.11 kept passing. `--self-test` therefore also asks
 every entry to match its own source string, and names any that cannot.
+
+## `fixtures/comment-hash-vectors.jsonl`
+
+Five source spans plus the SHA-256 the `maintenance-comment` hash recipe produces
+for each one. The set covers interior indentation, a block comment without
+continuation markers, a line-comment run at differing indents, a blank interior
+line, and non-ASCII content (including a combining character).
+
+`--self-test` recomputes every digest from the recipe in
+`spec/profiles/maintenance-comment.md` and fails on a mismatch. The tool does not
+carry a copy of the hashes: they live in this fixture, and they are regenerated
+by applying the recipe to the `source` field. That is what the vectors guarantee:
+two implementations of the recipe, given the same source span, reach the digest
+the fixture records. They do not guarantee that the Python function is the
+profile; agreement with the prose is a maintainer check, walked by hand on the
+`interior-indentation` vector in `skills/itws-rewrite/SKILL.md`.
+
+## `itws_version.py`
+
+Prints, tags, and checks the §9 version string. The tag name is the version
+string; this tool's job is to produce that string the same way every time.
+
+```bash
+python3 tools/itws_version.py              # --current: print this checkout's version
+python3 tools/itws_version.py --tag        # create the annotated tag on HEAD (does not push)
+python3 tools/itws_version.py --check VER  # does this checkout match the declared pin
+```
+
+It reads the line (`1.0`, `1.1`, …) from `spec/` at run time and the hash length
+from core §9. It never hardcodes the line, never uses git's default abbreviation,
+never pushes, and never creates a tag on a remote.
+
+**What a run guarantees.**
+
+- `--current` prints a declarable string only when HEAD is a tagged release and
+  the tree is clean. An untagged commit is reported as not a release. A dirty tree
+  is refused: a modified spec checkout matches no commit.
+- `--tag` creates a local annotated tag whose name is the version string, then
+  prints the `git push` command. Publishing is the owner's act.
+- `--check` compares this checkout to a declared version string. Exit 0 means the
+  pin holds; non-zero means it has floated or the string is not a §9 form.
+
+Exit 0 only for those success cases. Every other outcome — dirty tree, untagged
+HEAD, mismatch, already tagged, no git, not a repository, spec files that
+disagree about the line — exits 1 with a message.
+
+This tool is not ITWS conformance tooling for a consuming repository. It lives
+here. A consumer runs it against a specification checkout. Nothing is copied into
+the consuming repository.

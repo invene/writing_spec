@@ -1,12 +1,264 @@
 # Changelog
 
-Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/).
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: commit-addressed release refs (core §9).
 
-## [1.0.0] — amended 2026-08-04
+## [1.0.0] — amended 2026-08-17
 
-**1.0.0 is pre-release.** The amendments below land in 1.0.0 in place, with no version bump, because 1.0.0 has not been declared stable. Core §9's semantic-versioning rules start binding at that declaration. Under §9 as written, several of these changes would be **major**: §5.4.6 adds a mandatory rule, §4.13.3 tightens one, and §5.9.6 and §5.9.8 are withdrawn.
+**1.0.0 is pre-release.** Amendments land in place. Spec files declare the line (`1.0`), not a release tag, and that declaration does not move until the line is declared stable. Under §9 as written, several of these changes would be **major**: §5.4.6 adds a mandatory rule, §4.13.3 tightens one, and §5.9.6 and §5.9.8 are withdrawn.
 
 Each amendment comes from a field report filed against 1.0.0 by a real consumer session, tracked as [STY-71](https://linear.app/inveneprod/issue/STY-71) and its children.
+
+### Changed — §9 fixes the hash at twelve hex characters (STY-93)
+
+STY-82 made release refs commit-addressed: `1.0.<commit-hash>`. "Git object name" does not settle how many characters. Git's default abbreviation length grows with the repository, so a maintainer tagging today and a consumer running `git rev-parse --short HEAD` later produce two different version strings for the same rule set. That is the same class of defect STY-86 fixed for the comment hash, and it matters more here because §4.3.5 makes the declaration mandatory and a consumer's CI pins on it.
+
+**The third field is exactly 12 lowercase hex characters.** Twelve is unambiguous for any realistic repository size and short enough to read in a declaration. The number lives in §9; it is not left to a tool's default.
+
+**A consumer does not compute the hash.** They copy the tag name verbatim. The tag name is the version string. Computing is the fallback when the tag is absent, and that fallback must produce the identical string.
+
+**`tools/itws_version.py`** prints, tags, and checks that string. It reads the line from `spec/` at run time and the hash length from §9. `--current` prints a declarable string only when HEAD is a tagged release and the tree is clean; an untagged commit is not a release; a dirty tree is refused. `--tag` creates the local annotated tag and prints the `git push` command; it never pushes and never creates a tag on a remote. `--check` is the CI pin: exit 0 if this specification checkout matches the declared string.
+
+This tool lives in the specification repository. A consumer runs it against a specification checkout. Nothing is copied into a consuming repository. That is STY-83's position; this tool is not an exception to it.
+
+No new rule. No rule's `C` value changed. No version string changed. Spec files still declare `1.0`.
+
+**Reader assumptions.** Unchanged. No §1 or §2 baseline item is added or removed. The 12-character abbreviation and copying a tag name use version-control and release knowledge already in `reader.md` §1.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,736 (23,644 → 23,736; +92). The tool and the consumer/maintainer instructions sit outside the load set. Growth is the §9 precision (fixed length, tag name is the version string, compute-as-fallback) and a matching ontology delta. Nothing normative was cut. Eight of sixteen profiles still sit over 25,000, the same eight as after STY-82. The band is a target, not a limit.
+
+Eight over 25,000: `maintenance-comment` 27,912, `task` 26,450, `data-table` 25,982, `epic` 25,684, `subtask` 25,580, `research-paper` 25,443, `role-specification` 25,195, `technical-report` 25,152. Remaining: `investigation-log` 24,704, `feedback-comment` 24,682, `change-request` 24,635, `design-rfc` 24,594, `incident` 24,538, `procedure` 24,474, `decision-record` 24,440, `explanation` 24,321.
+
+Affects: core §9; `ontology.md` (Versioning delta). `tools/itws_version.py` (new); `tools/README.md`; `README.md` (how to fill `ITWS version`, CI `--check`, STY-83); `AGENTS.md` (maintainer publish steps); `skills/itws-rewrite/SKILL.md` (load-set range). Reader assumptions: unchanged.
+
+### Changed — commit-addressed release refs (STY-82)
+
+The specification repository publishes 1.0.0 as a branch and carries no git tags. Every consumer instruction that said "pin to 1.0.0" pinned a movable ref. A consuming repository that screens `spec/` at run time in continuous integration takes the entire rule set from that ref. A moved branch head silently changes what that job screens against.
+
+**Release refs are commit-addressed.** `1.0.<commit-hash>` for every release of the 1.0 line. `<major>.<minor>.<commit-hash>` for every release beyond 1.0. The patch number is replaced by the commit hash. There is no counter to maintain. Any merged change set can be tagged mechanically. The branch stays the moving edge of development.
+
+A commit hash cannot be known before the commit exists, so the version a file declares cannot be the hash of the commit that introduces it. Two declarations, two meanings:
+
+1. **Spec files, profile files, and `README.md` declare the line** (`1.0`). They never declare a commit hash.
+2. **A governed unit's §0.5 `ITWS version` names the release tag it was checked against** (`1.0.<commit-hash>`). A reader retrieves that rule set by checking out the named tag from the specification repository, or the commit the third field names. Copying a spec file's line declaration is not a pin.
+
+**Accepted trade.** A plain `1.0.0` is not a pin. Documents that declare it are the accepted casualty. The scheme scales without bookkeeping, at the cost of continuity with the numbers already in circulation. The trade is deliberate and is not engineered away.
+
+**Names do not sort.** A hash-addressed ref has no order. Two releases cannot be ordered by their names alone without the repository. That cost is stated in §9.
+
+**Core §9** no longer opens "Semantic Versioning." Major and minor change categories are kept. The patch category and the numbering are replaced. The permanent-rule-ID paragraph is unchanged.
+
+**`CHANGELOG.md` header** names this scheme and keeps the Keep a Changelog reference.
+
+**`spec/ontology.md`.** Semantic Versioning 2.0.0 is now a fork: it stays in the anchors table for the major and minor categories, and the hash-addressed scheme is a deltas-table row. Keep a Changelog stays followed, as its own anchors row.
+
+**`AGENTS.md`.** Version rules now follow §9. The "bump the version in every file declaring one" instruction is withdrawn. It was false throughout the 1.0.0 alpha, where amendments land in place, and it is false under the new scheme, where spec files declare the line and that declaration moves only on a major or minor change after the line is declared stable. Until that declaration, amendments still land in place. A wording change never moves the line. Every edit still adds a CHANGELOG entry.
+
+No new rule. No rule's `C` value changed. No git tag was created, moved, or deleted. Tagging is an outward-facing act for the owner at publication.
+
+**Reader assumptions.** Unchanged. No §1 or §2 baseline item is added or removed. Retrieval uses version-control and release knowledge already in `reader.md` §1.
+
+No existing rule ID was reused or renumbered. Spec-file headers moved from `1.0.0` to `1.0` because that is the line identity under the scheme, not because §9 moved the line.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,646 (23,290 → 23,646; +356). This is the largest single-change growth of the 1.0.0 amendment session. Eight of sixteen profiles sit over the 25,000 target, three of them newly. The versioning scheme is normative content that every profile carries, and it was not cut to meet the band. The addition is the house scheme in §9, the two declaration answers, the accepted trade, the no-sort cost, and the ontology delta. Header `1.0.0` → `1.0` saved a few characters per file. The band is a target, not a limit.
+
+Three profiles newly sit over 25,000: `research-paper` 25,353 (was 24,996), `role-specification` 25,105 (was 24,748), `technical-report` 25,062 (was 24,706). Five were already over and remain so: `maintenance-comment` 27,822, `task` 26,360, `data-table` 25,892, `epic` 25,594, `subtask` 25,490. Remaining: `investigation-log` 24,614, `feedback-comment` 24,592, `change-request` 24,545, `design-rfc` 24,504, `incident` 24,448, `procedure` 24,384, `decision-record` 24,350, `explanation` 24,231.
+
+Affects: core §9, §0.5 (example and release-tag pointer); `ontology.md` (anchors split, new Versioning delta); every `spec/*.md` and `spec/profiles/*.md` header (`1.0.0` → `1.0`); `README.md`; `AGENTS.md`; `skills/itws-rewrite/SKILL.md`; this file's versioning line. Reader assumptions: unchanged.
+
+**§4.3.5 and §9 now name the same event (review finding).** §4.3.5 said the field names the version the unit is "written against." §9 said it names the release tag the unit was "checked against." Those are different events: a writer may load one ref while drafting and check the result against another. The rule now says "checked against." That is the event `SKILL.md` and §0.5 already use, and it is the event a reader reproduces by retrieving the named tag. `C` and `D` are unchanged. No new rule.
+
+**`README.md` keeps `1.0.0` as a historical name (review finding).** The heading "Breaking change in 1.0.0" and the live instruction "re-check against 1.0.0" read as a current version the scheme cannot produce. The section is now headed as the opening of the 1.0 line, states that 1.0.0 is the name that publication had, and sends a migrating reader to a 1.0 release tag. The identifier stays because that is what the publication was called. This file's `[1.0.0]` headings are unchanged.
+
+**Duplicated "not a pin" sentence merged (review finding).** "Copying a spec file's line declaration is not a pin. A plain `1.0.0` is not a pin." is now one sentence. The accepted-casualty sentence, the no-sort cost, and the hash-cannot-precede-its-commit reason are untouched.
+
+**A further §9 cut left for the owner.** The closing sentence "A governed unit is checked against its **declared** version" restates §0.5. It also now closes the section on the same event §4.3.5 names. Not cut.
+
+No git tag was created, moved, or deleted.
+
+Load-set proxy after this review: base 23,644 (23,646 → 23,644; −2). The merge is the only movement. Eight of sixteen profiles still sit over 25,000: `maintenance-comment` 27,819, `task` 26,358, `data-table` 25,890, `epic` 25,591, `subtask` 25,487, `research-paper` 25,350, `role-specification` 25,103, `technical-report` 25,060. Remaining: `investigation-log` 24,612, `feedback-comment` 24,590, `change-request` 24,542, `design-rfc` 24,502, `incident` 24,446, `procedure` 24,381, `decision-record` 24,348, `explanation` 24,228.
+
+Affects (review): core §4.3.5, §9 (one merged sentence); `README.md` history section. `AGENTS.md`, `SKILL.md`, and `README.md` load-set range follow. Reader assumptions: unchanged.
+
+### Added — `role-specification` governs hiring role specs (STY-89)
+
+Invene has three shipped job descriptions written against ITWS: a Databricks data-transformation engineer spec, a Fabric variant, and a Gen AI forward-deployed engineer spec. All three fork `explanation` the same way. Those forks were unstated deviations. This change codifies them as a profile.
+
+**Why a profile, not an overlay.** Core §0.4: an overlay grants genre knowledge only and never changes a slot. Every fork below changes a slot or displaces a core rule, so an overlay cannot carry them.
+
+**Profile ID.** `role-specification`. The document specifies a role for an operator running a hiring screen. The ID follows the vendor-neutral pattern (`change-request`, not `pull-request`): it names the job, not an HR artifact. `job-description` would import process jargon the baseline does not assume. `hiring-screen` would overweight Screening against the explanation of the role. No objection to the proposed ID.
+
+**Skeleton.** Required slots: Summary · Concepts · Mechanism · Screening · Limits. Renames follow the ticket's observed skeleton: `Key concepts`, `How the role works`, `Limits and trade-offs`. Screening replaces `explanation`'s required Examples slot. Core §4.3.3 still applies: it tests this profile's slots, not `explanation`'s. §4.2.4 applies (main point in Summary). §4.12.1 is not replaced.
+
+**Example slot.** No required Examples slot. A worked example of the role's mechanism, when present, lives in Mechanism. Two of the three shipped documents drop a top-level example and still serve the operator. The third keeps one inside Mechanism. Naming the domain and running the screen is the job, not tracing a mechanism through a worked case. A required Examples slot would force invented cases into the data specs. New rule §4.17.10 (`M`, `J`) is the named exception to §6.2.1 that makes the example not required.
+
+**Screening shape and operator-directed imperatives.** Screening is a numbered list of paired ask / listen-for imperatives, plus a named ramp set (topics the screen does not filter on, because they ramp on the job). The reader is an operator running a screen, so reader-directed imperatives also appear outside Screening ("Weight three attributes."). New rules: §4.17.1 (`M`, `S`) numbered screening signals. §4.17.2 (`M`, `S`) names the ramp set and states that those topics ramp on the job. §4.17.3 (`M`, `J`) named exception to §4.3.2: procedure-shaped content whose job is running this role's screen is permitted; the document still must not independently perform `procedure`'s primary job. §4.17.4 (`M`, `J`) named exception to §3.4.1: operator-directed instructions use imperative mood. Other prose follows the §3.4 table.
+
+**Term density.** These documents admit 20–30 terms. §4.8.1's 3-per-500-word cap is unworkable where naming the domain vocabulary is the document's job. Precedent: `data-table` §4.14.9 / §4.14.10. New rules: §4.17.5 (`M`, `J`) named exception to §4.8.1; the bound is Concepts completeness. §4.17.6 (`M`, `J`) Concepts is the only admission home. §4.17.7 (`R`, `S`) the document admits ≤ 30 non-baseline terms — the substitute reader-effort bound. 30 is the observed upper end, taken from the ticket, not from a reading of the three documents. It is `R` because those documents were not in hand, and a mandatory cap invented from a range would bind the next denser spec without evidence.
+
+**Confidentiality.** Anonymized client profiles and internal measurements currently appear as unmarked declaratives with no locator. New rule §4.17.8 (`M`, `J`) is the named exception to §5.4.6 and to §2.6.8's cite-the-source clause: the claim may omit a resolvable locator when the same sentence or its immediate context states the confidentiality basis that prevents one. The §5.4.1 evidence field records the class (anonymized client or internal measurement) plus that basis. The exception makes a limitation visible and licenses no unsupported claim. Inventing a source remains prohibited (core §8 obligation 2). Listed vague-authority phrases stay prohibited. §5.4.1 itself is not displaced. New rule §4.17.9 (`M`, `J`) states how §5.6 lands: such evidence takes at most the observed tier; unmarked it carries verified-tier force and fails §5.6.2. An internal measurement nobody can check is not verified-tier. No profile exception to §5.6.
+
+**§7.1 subset.** The two data specs limit Limits to role boundaries. The Gen AI spec shows the fuller form is workable. **Decision: the full §7.1.1–§7.1.6 set applies.** Limits always carries role boundaries (what the role is not, what it does not own, hire-versus-ramp) and every applicable core dimension. §7.1.4–§7.1.6 apply unchanged. The thinner form is the silent omission §7.1.6 forbids. Requiring only role boundaries would license that gap and would collide with the confidentiality fork: an internal measurement with a stated basis still needs its unverified-condition and provenance bounds. The Gen AI spec is evidence the fuller form works for this job. Applying the full set does not make the passage worse. `M` is the strong default.
+
+**STY-89's disclosure defect is already closed.** The ticket records that both shipped data JDs carry an AI disclosure without the review-status clause §0.5 then required. Commit `3d6151e` (STY-87) removed that clause from the disclosure entirely. Those documents are correct as written. This change adds nothing that would recreate the obligation.
+
+**Amended.** Core §0.1 (registry row after `explanation`). §0.5 (sixteen profiles). New pointer section §4.17. §4.2.4 and §4.12.1 unchanged: the profile uses both. Ontology count and the Diátaxis Document-types delta (sixteen profiles, and `role-specification` as explanation-family with a named Screening exception). `reader.md` §4 overlay pointer. `AGENTS.md`, `README.md`, and `skills/itws-rewrite/SKILL.md` profile lists and counts. The "sixty, then thirteen, then two" findings line in `SKILL.md` is untouched.
+
+**Reader assumptions.** No §1 or §2 baseline item is added or removed. The profile overlays an operator running a hiring screen. That is genre knowledge: the reader recognizes Concepts, Mechanism, and Screening. Hiring-method terms still enter through core §2.3. A profile-specific audience declaration may narrow the actual audience; it does not change the baseline (`reader.md` §4). Existing documents' admission obligations do not change.
+
+No existing rule ID was reused or renumbered. No version string changed. Under §9 as written, adding a profile ID would be major.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,290 (23,192 → 23,290; +98). `role-specification` 24,748 (profile 1,459), under the 25,000 target. Five profiles sit over it, the same five as after STY-88: `maintenance-comment` 27,465, `task` 26,003, `data-table` 25,536, `epic` 25,237, `subtask` 25,133. Remaining: `research-paper` 24,996, `technical-report` 24,706, `investigation-log` 24,258, `feedback-comment` 24,235, `change-request` 24,188, `design-rfc` 24,147, `incident` 24,092, `procedure` 24,027, `decision-record` 23,994, `explanation` 23,874. Genre content went into the profile file. Base growth is the registry row, the §0.5 count, the §4.17 pointer, the ontology count and Diátaxis clause, and the reader overlay pointer. A standalone ontology delta row and a longer reader pointer were folded so `research-paper` would not cross the target (it sits at 24,996). Nothing normative was cut. The band is a target, not a limit. The overage on the five already-over profiles is recorded.
+
+Affects: core §0.1, §0.5, new §4.17; new file `spec/profiles/role-specification.md`; `ontology.md`; `reader.md` §4. `AGENTS.md`, `README.md`, and `skills/itws-rewrite/SKILL.md` follow. Reader assumptions: overlay convention added. No baseline item added or removed.
+
+### Added — `change-request` and `feedback-comment` govern review-time text (STY-88)
+
+ITWS governed no text produced at code review. Sixteen pull request descriptions rewritten against 1.0.0 on 2026-08-07 were classified `technical-report` by analogy, and the fit broke in three places: §5.8's checkability promise, a skeleton with no review-path slot, and a report's shallow-model outcome. The title had no rule. Review comments sat in the §0.3 exclusion. Those three gaps are one outcome: a reviewer reads title, description, and comments in one sitting, and §4.12.1 starts at a title no rule reached.
+
+**Two new profiles, linked to each other.** `change-request` governs the change description and carries the title rule. `feedback-comment` governs the feedback comment. The IDs follow the existing vendor-neutral pattern: `change-request` covers a GitHub pull request, a GitLab merge request, and a Gerrit change alike. A `maintenance-comment` records a durable information delta about code for every future reader. A feedback comment is addressed to a person, about a change, and expects a response. The profile does not reuse comment hash, host-anchor triple, or declaration carrier.
+
+**Surface decision.** Both profiles sit on `markdown-document`. No fourth surface. Issue-tracker items that declare `epic` | `task` | `subtask` are already hosted Markdown on that surface, so hosted-ness does not require a new surface. `hosted-comment-set` is comments inside host source files with a JSON carrier, which `feedback-comment` must not take on. `tabular-document` is a workbook. A new surface would have cost every load set. Core §0.2 already makes heading and section rules inapplicable where those constructs are absent, which is how a one-sentence comment lives on Markdown.
+
+**§0.3.** Review comments leave the exclusion. Chat, status events, unstructured tickets, and issue-tracker comments stay out. A change description or review comment is governed only when it declares the matching profile and carries every required slot, the same carve-out shape as issue-tracker work items. The distinction: a durable review artifact is a declared change description or feedback comment a later reader can retrieve. A status event is a host-generated or bot-generated notice of workflow state. Chat is ephemeral conversation.
+
+**`change-request`.** Shallow-model outcome: what changed, what could break, what to read first. Four required slots — `Summary`, `Risk`, `Review path`, `Verification` — with the existing rename and merge mechanism. A one-line dependency bump and a large migration are both this profile. `Verification` names the suite that ran and the commit it ran against, or `None` with a reason. That is this profile's checkability form. §5.8 does not apply.
+
+New rules: §4.15.1 (`M`, `J`) host title is the document title for §4.12.1. §4.15.2 (`M`, `J`) the title states the observable change. §4.15.3 (`M`, `S`) `Verification` names suite and commit, or `None` with a reason.
+
+**`feedback-comment`.** One required slot, `Comment`, which may be the whole body with no heading. The shortest conforming instance is the three §0.5 declarations plus one sentence. New rules: §4.16.1 (`M`, `L`) scan path is the comment body, replacing §4.12.1. §4.16.2 (`M`, `L`) the three declarations occupy the start of the body and every line after them is governed prose. §5.6 keeps its force: a request and a question are not material claims, so most comments never meet the rule; an observation is a material claim, unmarked it takes verified-tier force, and the honest tier from a diff is `observed`; a writer who states it flat because that is how the comment reads best departs and reports it (core §0.5). No profile exception to §5.6.
+
+**Amended.** Core §0.1 (two registry rows). §0.2 (`markdown-document` is every profile except `maintenance-comment` and `data-table`; still three surfaces). §0.3 (exclusion, carve-out, durable-vs-status distinction). §0.5 (fifteen profiles). §4.2.4 (exception list gains `feedback-comment`). §4.12.1 (parenthetical gains `feedback-comment`). New pointer sections §4.15 and §4.16. Ontology count and a review-artifact delta row. `AGENTS.md`, `README.md`, and `skills/itws-rewrite/SKILL.md` profile lists and counts. The "sixty, then thirteen, then two" findings line in `SKILL.md` is untouched.
+
+**Reader assumptions.** No §1 or §2 baseline item is added or removed. Both profiles add a named-in-the-change overlay: an identifier, path, or suite name appearing in the attached change may be repeated as a name without admission. That is genre knowledge, the same shape as the `maintenance-comment` host-language supplement. `reader.md` §4 points at both profile files. Existing documents' admission obligations do not change.
+
+No existing rule ID was reused or renumbered. No version string changed. Under §9 as written, adding two profile IDs would be major.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,207 (22,883 → 23,207; +324). The two new files are lean: `change-request` 24,106 (profile 899), `feedback-comment` 24,004 (profile 796). Five profiles sit over the 25,000 target, up from three, because the base grew: `maintenance-comment` 27,382, `task` 25,921, `data-table` 25,453, `epic` 25,154, `subtask` 25,050. Remaining: `research-paper` 24,914, `technical-report` 24,623, `investigation-log` 24,175, `design-rfc` 24,065, `incident` 24,009, `procedure` 23,944, `decision-record` 23,911, `explanation` 23,792. Genre content went into the profile files. Base growth is the registry rows, the §0.3 carve-out and distinction, the §4.12.1 parenthetical, the §4.15 and §4.16 pointers, the ontology count and delta row, and the reader overlay pointer. Nothing restated from a named source was cut, because nothing restated was added. The band is a target, not a limit. The content wins. The overage is recorded.
+
+Affects: core §0.1, §0.2, §0.3, §0.5, §4.2.4, §4.12.1, new §4.15, new §4.16; new files `spec/profiles/change-request.md` and `spec/profiles/feedback-comment.md`; `ontology.md`; `reader.md` §4. `AGENTS.md`, `README.md`, and `skills/itws-rewrite/SKILL.md` follow. Reader assumptions: overlay convention added for the two new profiles. No baseline item added or removed.
+
+**§5.6 on `feedback-comment` is scoped, not excepted (review finding).** The interaction is decided in the profile's *Applicable core rules with profile scope* section, not left unresolved and not as a core exception. A request and a question are not material claims; §5.6 does not reach them. An observation is a material claim; unmarked it takes verified-tier force; the honest tier from a diff is `observed` (`we observed` · `we find`). Stating the observation flat because that is how the comment reads best is a reported departure under core §0.5, not a violation to hide.
+
+**`change-request` `Risk` needs no profile note (review finding).** The slot names a possibility — uncertain condition plus consequence — not a proposition presented as true. §5.6's unmarked-declarative rule therefore does not fire on the native form. Interpretive phrases (`this suggests` · `the evidence indicates`) are for claims about what evidence means, not for a failure-mode list. §3.9 still applies as usual: a listed hedge on a risk is prohibited, and an expression of confidence is a §5.6 phrase. No rule was added.
+
+**§0.3 rationale sentence cut (review finding).** "Nobody authors a status event or a chat line to a skeleton" restated the distinction the three definitions already carry. Cut. The exclusion list, the three definitions, and the carve-out stay. Nothing normative was cut to chase the band.
+
+Load-set proxy after this review: base 23,192 (23,207 → 23,192; −15). `change-request` 24,091 (profile 899). `feedback-comment` 24,138 (profile 946; the §5.6 scoping note). Five profiles still sit over the 25,000 target: `maintenance-comment` 27,368, `task` 25,906, `data-table` 25,438, `epic` 25,140, `subtask` 25,036. Remaining: `research-paper` 24,899, `technical-report` 24,608, `investigation-log` 24,160, `design-rfc` 24,050, `incident` 23,994, `procedure` 23,930, `decision-record` 23,896, `explanation` 23,777. The band is a target, not a limit. The overage is recorded.
+
+Affects (review): core §0.3; `feedback-comment` Applicable core rules. `AGENTS.md`, `README.md`, and `skills/itws-rewrite/SKILL.md` load-set range follow. Reader assumptions: unchanged.
+
+### Amended — guidance with judgment, not a binary gate (STY-87)
+
+ITWS is a general guideline. Agents loading it were spending a rewrite session clearing a pass/fail gate. Two posture changes, and no individual style rule is reclassified.
+
+**What `M` means.** Every rule keeps its current `C` value. The binary statement in core §0.5 is gone. The rules are guidance a writer applies with judgment. An `M` rule is the strong default: apply it unless applying it makes the passage worse, then leave the passage and report the departure. The owner of the document has final say. `legend.md` now states this force for `M`, `R`, and `P`. The ontology Conformance delta no longer says "binary textual conformance".
+
+A unit conforms when every applicable `M` rule was applied or a departure from it was reported. The word stays. Its gate meaning does not.
+
+**Boundary narrowed to workflow events (review finding).** The `conforms` definition lets a reported departure change the result, and that report lives in the session's coverage statement, not in the unit. STY-81's boundary sentence ("None conditions a result on an event outside the text") forbade that. **Resolved by narrowing the boundary, not by requiring the departure inside the unit.** The boundary now bars conditioning on a workflow event: a review, an approval, or a lifecycle transition. A reported departure is the writer's account of the text, named in the session's coverage statement (§8 obligation 5). STY-81 stays closed: no rule records review, approval, or lifecycle state; none of those events changes the result; the subject-versus-passage test is unchanged. `AGENTS.md` and `README.md` restatements of the boundary follow. STY-81's CHANGELOG entry is left as the historical record of what that change closed.
+
+**Duplicated agent-scope lead merged (review finding).** The *Owner has final say* paragraph no longer ends "An agent applying ITWS governs the text and reports. The owner judges." That statement now appears once, in the *Text, not process* block, with that block's specific prohibitions intact.
+
+**Load-set figures updated (review finding).** `README.md` and `AGENTS.md` stated the pre-STY-87 22,000 / 22,900–26,000 range. Both now state the measured range. `SKILL.md` carried the same stale range and was updated with them.
+
+**The departure loop (practice, not a rule).** A reported departure carries a strong encouragement — never a requirement — to file an issue against the specification repository's issue tracker, recording how, when, and why applying the rule would have worsened the passage. This sits in core §0.5 prose, `AGENTS.md`, and `skills/itws-rewrite/SKILL.md`. It carries no rule ID and no class marker. Filing is an event outside the document; §4.13.14 was withdrawn for that reason, and this change does not put the same event back in a rule table.
+
+**The review clause leaves the AI disclosure.** The disclosure keeps its provenance note. The review half goes.
+
+- **Amended §4.3.4 (`M`).** Any value other than `none` carries the provenance note. The scope-and-review note is gone. `C` is unchanged.
+- **Amended core §0.5.** The form is `<value> — <what the tooling did>`. The `reviewed by` clause, the `not yet reviewed` line, and the example's review clause are gone.
+- **Amended `data-table` Title-sheet guidance.** Several tools still list each contribution in order. The note no longer ends with human review status.
+- **Amended `AGENTS.md` and `SKILL.md`.** Consumer step 5 no longer writes `not yet reviewed`. Core §8 obligation 2 still bars inventing a reviewer.
+
+**§8 and §9.** A partial check names what it evaluated and what it did not; it does not stand in for applying the load set. Obligation 5 names coverage and reported departures; it no longer frames a self-check as a certification. §9 major still turns on a change that can make a unit that conformed under the previous edition no longer conform under this one, with "conforms" now meaning applied-with-departures-reported. Patch no longer says "no change to conformance".
+
+**Amended §4.13.16.** A `corpus-at-rest` carrier that omits records leaves the comment text as the governed surface. The row no longer says conformance "rests on" that text as a test.
+
+No `C` value moved. No rule ID was reused or renumbered. No version string changed.
+
+Load-set proxy (characters ÷ 4) after this change: base 23,254. Five profiles sit over the 25,000 target: `maintenance-comment` 26,346, `task` 25,968, `data-table` 25,501, `epic` 25,202, `subtask` 25,098. Nothing was cut; the §0.5 rewrite, the departure-loop paragraph, and the workflow-event clarification are new normative prose. Cost of this review round against the prior STY-87 measurement: base +35 (23,219 → 23,254). The band is a target, not a limit.
+
+Affects: core §0.5, §4.3.4, §8, §9; `legend.md` class definitions; `ontology.md` Conformance delta; `data-table` (Title-sheet disclosure guidance); `maintenance-comment` (§4.13.16 wording). `AGENTS.md`, `SKILL.md`, `README.md`, `tools/itws_literal.py`, and `tools/README.md` follow. Reader assumptions: unchanged.
+
+### Changed — load-set partitions, comment hash, comment proportion, rationale-once, and conversion product (STY-90)
+
+This section records [STY-90](https://linear.app/inveneprod/issue/STY-90). Round A is STY-91 and STY-86. Round B is STY-83, STY-84, and STY-85. The heading was renamed so it covers both rounds.
+
+**STY-91 — the ontology partitions.**
+
+Dropping `spec/ontology.md` from the consumer load set was considered and **rejected**. The file does two jobs the recall-compression strategy rests on, and both stay. **Recall activation:** the anchors table names each source and what ITWS borrows, and the recall policy gives a model that does not know a source a fetch escape hatch. **Recall correction:** the deltas table stops a model that knows a source well from resolving ITWS's forks from that source. The better the recall, the more that guard matters. The recall policy, the general anchors table, and the deltas table stay in the base load set.
+
+What left the base is what only some profiles use.
+
+The research-only anchors moved into `research-paper` and `technical-report`, repeated verbatim under a "shared with" heading. The previous heading read "`research-paper`; `technical-report` where noted" while the closing line charged both profiles for all four sources. **Resolved:** APA JARS, the NeurIPS Paper Checklist and ML Reproducibility Checklist, and Model Cards / Datasheets for Datasets are shared by both. IMRaD is `research-paper` only. The split follows the genre fork already on the page. `research-paper`'s overlay and skeleton are IMRaD — section order, and results kept apart from discussion. `technical-report`'s overlay and skeleton are not: they separate system or method, evidence, interpretation, limitations, and checkability. §5.8.1 already diverges on purpose: a research paper promises reproducibility, and a technical report widens the same ID to reproducibility, verification, or both. The three shared sources serve method, result, reproducibility, and artifact disclosure, which both profiles ask for.
+
+Ousterhout, *A Philosophy of Software Design* (2018), moved to `maintenance-comment`. It is the comment-knowledge source that profile forks, and it serves no other.
+
+The scan-path evidence — nine citations justifying core §4.12 — moved to `appendices/scan-path-evidence.md`, outside `spec/` and outside the load set. `ontology.md` keeps a pointer: trust your own recall of that research and your judgment of the §4.12 rules; open the appendix only when a judgment call on §4.12 genuinely turns on a citation; never block on opening it. This is context discipline. A discovered file gets pulled into context reflexively, and this one is background a reader almost never needs. The rules remain complete without it.
+
+**STY-86 — the comment hash is reproducible.**
+
+The recipe said to strip each line's leading continuation marker "and the whitespace around it". That does not settle interior indentation — the leading whitespace inside a docstring after the marker is gone. Two implementations of the same comment text hashed two different ways. Nothing detected it until later anchors stopped resolving. §4.13.10 and §4.13.17 are both `M` with `D = L`. A `D = L` marker tells a reader the question is mechanically settled, which is where an under-specified recipe does the most damage.
+
+The `comment hash` vocabulary entry now points at a numbered computation. Interior indentation is part of the text. The recipe also settles a block comment whose continuation lines carry no marker, a line-comment run at differing host indents, a blank interior line, and non-ASCII content including combining characters, with no Unicode normalization form applied.
+
+- **Amended §4.13.10 (`M`, `L`).** An anchor now resolves when exactly one comment in its **enclosing named construct**, in the named source, matches its hash. Zero and two-or-more matches are restated against that construct. The construct is already part of the anchor under §4.13.3, so this costs no new data and resolves identical comments in different functions. `C` is unchanged.
+- **New §4.13.18 (`M`, `S`).** Identical normalized text inside one enclosing named construct is out of scope for anchoring. The carrier names each such comment in `Boundaries`. No comment is edited to make an anchor unique. This answers the case where §4.13.17 previously mandated something unsatisfiable: a file with two byte-identical comments could never make every anchor resolve. An occurrence ordinal was **rejected** because position-derived data is what §4.13.11 keeps out of an anchor.
+- **Amended the `Comment text` record field.** It now records the normalized text the recipe produces, before UTF-8 encoding. The recorded text is the hash input, so §4.13.11's cached-span check — a span whose text does not match the hash is a finding against the carrier — has something to compare against.
+- **Amended the `Boundaries` slot and the boundary-locations list** to carry the §4.13.18 residue. No new slot.
+
+§4.13.3, §4.13.11, §4.13.16, and §4.13.17 are unchanged in their rule rows. The "Why the anchor is content-addressed" paragraph now names the construct as resolution scope and the §4.13.18 residue.
+
+Test vectors ship at `tools/fixtures/comment-hash-vectors.jsonl`, outside the load set. `--self-test` recomputes every digest from the recipe in the profile rather than hardcoding hashes the tool cannot regenerate. The worked example — hashing a comment with interior indentation by hand — lives in `SKILL.md`, outside the load set, per the budget policy on micro-examples.
+
+**Classes, IDs, versions.** No `C` value moved except the new §4.13.18. No rule ID was reused or renumbered. §4.13.14 stays withdrawn and reserved. No version string changed.
+
+Load-set proxy (characters ÷ 4) after this change: base 22,883 (23,254 → 22,883; STY-91 bought 371 tokens). Three profiles sit over the 25,000 target, down from five: `maintenance-comment` 26,757, `task` 25,597, `data-table` 25,130. `epic` 24,831 and `subtask` 24,727 came back under. Remaining: `research-paper` 24,590, `technical-report` 24,299, `investigation-log` 23,852, `design-rfc` 23,741, `incident` 23,686, `procedure` 23,621, `decision-record` 23,587, `explanation` 23,468. `maintenance-comment` rose from 26,346 because the hash recipe is normative prose that cannot be cut, and it is the profile that most needed the headroom STY-91 bought. The band is a target, not a limit; the content wins; the overage is recorded.
+
+Affects: `ontology.md` (research and Ousterhout rows removed from the base; scan-path pointer); `research-paper` and `technical-report` (research anchors); `maintenance-comment` (Ousterhout, hash recipe, §4.13.10, new §4.13.18, `Comment text`, `Boundaries`). `appendices/scan-path-evidence.md` is new and outside the load set. `AGENTS.md`, `SKILL.md`, `README.md`, `tools/itws_literal.py`, `tools/README.md`, and `tools/fixtures/comment-hash-vectors.jsonl` follow. Reader assumptions: unchanged. No baseline or genre-knowledge item is added or removed.
+
+**STY-84 — a governed comment is bounded by the code it anchors.**
+
+A conversion that met §4.13.1 on every added sentence still grew comment characters 61%. Sentence quality improved. The growth was sentence count. Nothing in the rule set weighed an added sentence against the cost of reading it beside the code.
+
+**Rule row, not profile prose.** §4.13.1 and the length test fail independently: a comment can add information and still cost more than the code it sits on. Separate IDs follow the format rule. `M` is the strong default a writer departs from and reports, not a gate, so a recommended row is no longer needed to keep judgment available. `R` would recreate the skip that produced the growth. The exception a writer needs — a long comment on a subtle invariant — is applying the rule, not departing from it: length answers to that code.
+
+- **New §4.13.19 (`M`, `J`).** A governed comment's length answers to the anchored code and the cost of reading it there. Length is earned by recording what a reader cannot recover from that code. The row names four examples of that recovery — a hazard, a measured fact, a decision and its consequence, a defect a test pins — as illustrations, not a closed set. No character or word cap.
+- **Placement.** The principle sits in the same §4.13 section, in a paragraph a writer reads immediately before the §4.13.1 row, and in the §4.13.19 row itself. Document profiles are out of scope: their reader has no adjacent code. Stated there, not in the rule's test, because a profile-only row already does not apply to them.
+- **Worked pair** (one comment that earned its length, one that did not) lives in `skills/itws-rewrite/SKILL.md`, outside the load set.
+
+§4.13.1 is unchanged in wording and in `C`.
+
+**STY-85 — one rationale per declaration boundary.**
+
+Inside one file, one rationale appeared fourteen times at fourteen anchors. Each restatement was freshly worded for its site, so each passed §4.13.1 and no string match found the set. Redundancy is visible at the declaration boundary §4.13.15 already names.
+
+**Rule row, not profile prose.** Same independence: every per-comment test can pass while the boundary still restates. `M` with a stated exception is the right force. Stated without the exception the row reads as "never repeat", and the first casualty is the restatement that was carrying its weight. The exception is a `may` clause inside the row, the same pattern as §4.13.4's `None` with a reason.
+
+- **New §4.13.20 (`M`, `J`).** A rationale is recorded once inside a declaration boundary. A later dependent anchor refers to that recording by enclosing construct or module docstring, never by line number. Exception: the site where getting it wrong is fatal may state the thing rather than point. Scope is the declaration boundary, not the repository. A test pinning a specific defect keeps that defect's rationale.
+- **Optional checker: not added.** Counting a distinctive phrase inside one host file was considered. The observed restatements were freshly worded, which is why a string match measured 0.4% verbatim duplication and missed the defect. The rule is `D = J`. The checker screens Markdown, not host-language comments. A screen that cannot find the reported failure is not a screen.
+
+**STY-83 — a conversion leaves rewritten copy and nothing else.**
+
+One conversion produced 28,602 lines of scaffolding against 20,238 lines of rewritten comments. Optional per-comment records on `corpus-at-rest` carriers took on §4.13.17 for free. Every carrier claimed the §4.13.16 omission and carried the records anyway. A pre-commit screen treated an absent hash as "ungoverned", which §4.13.16 does not say.
+
+**Practice, not a rule row.** This content is what a converter *does*, not what the text *is*. §4.13.14 was withdrawn for putting that kind of event in a rule table. The conversion product, the teardown, the audit's output location, the ban on conformance tooling in a consuming repository, and the handoff case sit in `AGENTS.md` and `SKILL.md` §9, which a converter reads before starting. Two things always survive teardown: the declaration block, which keeps ITWS boilerplate out of source files, and the `change-set` carrier, which a repository governing its own future changes uses continuously. Neither is conversion scaffolding. Per-comment records on a `corpus-at-rest` carrier come out by default; they stay where the repository has chosen to govern its corpus with them and will maintain them under §4.13.17. The audit itself is not forbidden; two urgent production defects were found on the run that produced this ticket. Only leaving its output in the converted repository is wrong.
+
+The one textual amendment:
+
+- **Amended §4.13.16 (`M`, `L`).** A `corpus-at-rest` carrier that carries records incurs §4.13.17. The cost is also named on the `Comment record` slot, where the choice is made. `C` and `D` are unchanged. The permission to omit records is unchanged.
+
+The profile's adopting paragraph now states the conversion's product: rewritten comments and a `corpus-at-rest` carrier of declarations only.
+
+**Classes, IDs, versions (round B).** New rows: §4.13.19 `M` `J`, §4.13.20 `M` `J`. Amended: §4.13.16, `C` unchanged. §4.13.1 is untouched. No `C` value moved on an existing row. No rule ID was reused or renumbered. §4.13.14 stays withdrawn and reserved. No version string changed.
+
+**§4.13.19 forms are illustrative (review finding).** The row named four earned forms in the colon-plus-`·` list this specification uses for closed sets. A writer would treat an unlisted legitimate comment — a non-obvious performance characteristic, a constraint an external contract imposes, the reason an obvious simpler implementation fails — as unearned length, and delete it. The test is unchanged: what a reader cannot recover from the anchored code earns length. The four forms are examples. The label is now "Examples, not a closed set", and the list uses an em dash and commas rather than the closed-set notation. §4.13.18, §4.13.16, and §4.13.20 were checked for the same hazard; none of them writes an open collection in closed-set form. §4.13.20's "enclosing construct or module docstring" names the permitted referral method, not an illustrative list of content.
+
+**Teardown item 4 is the default, not a ban (review finding).** §4.13.16 permits per-comment records on a `corpus-at-rest` carrier at §4.13.17's cost. Teardown listed their removal unconditionally. Removal remains the default at handoff, matching the conversion product. Keep the records where the repository has chosen to govern its corpus with them and will maintain them. `AGENTS.md` and `SKILL.md` now state that case on the conversion paragraph, teardown item 4, and the skill's "must not do" list. The profile's adopting paragraph is unchanged: conversion still delivers a declarations-only carrier; keeping records is an ongoing-governance choice, not leftover scaffolding.
+
+Load-set proxy (characters ÷ 4) after round B: base 22,883 (unchanged). `maintenance-comment` 27,059 (26,757 → 27,059; +297). Other profiles unchanged. Three profiles sit over the 25,000 target: `maintenance-comment` 27,059, `task` 25,597, `data-table` 25,130. Nothing normative was cut. Examples, the worked pair, the conversion teardown, and the handoff case were pushed to `SKILL.md` and `AGENTS.md`, outside the load set. The band is a target, not a limit; the content wins; the overage is recorded. The review-finding wording on §4.13.19 does not change these figures materially.
+
+Affects (round B): `maintenance-comment` (new §4.13.19, new §4.13.20, amended §4.13.16, `Comment record` slot, §4.13 orientation paragraph, adopting paragraph). `AGENTS.md`, `SKILL.md`, and `README.md` follow. `tools/itws_literal.py` is unchanged. Reader assumptions: unchanged. No baseline or genre-knowledge item is added or removed.
 
 ### Amended — text is governed, process is not (STY-81, closing STY-68 and STY-70)
 

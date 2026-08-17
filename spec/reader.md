@@ -1,6 +1,6 @@
 # ITWS assumed reader
 
-**ITWS version:** 1.0.0 · **Status:** normative
+**ITWS version:** 1.0 · **Status:** normative
 
 Every vocabulary, notation, and explanation rule resolves against this file.
 
@@ -82,6 +82,10 @@ Each profile file states its genre-knowledge overlay: the navigation conventions
 `research-paper` expressly assumes **no machine-learning knowledge**.
 
 `maintenance-comment` additionally carries a conditional host-language supplement — see its profile file.
+
+`change-request` and `feedback-comment` each carry a conditional named-in-the-change supplement — see the profile file.
+
+`role-specification` overlays an operator running a hiring screen — see the profile file.
 
 A profile-specific audience declaration may narrow the actual audience. It does not change ITWS conformance.
 
